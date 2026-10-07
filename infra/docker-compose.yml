@@ -1,0 +1,60 @@
+# Infraestructura local: PostgreSQL (una base por microservicio) + RabbitMQ
+#
+# Uso:
+#   cp .env.example .env        # y ajusta las contraseñas
+#   docker compose up -d
+#   docker compose ps           # ambos servicios deben quedar "healthy"
+#
+# Reiniciar desde cero (borra TODOS los datos y vuelve a ejecutar init-db/):
+#   docker compose down -v
+
+name: transporte
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: transporte-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+      # Contraseña que usará init-db/01-crear-bases.sh para los usuarios svc_*
+      SVC_DB_PASSWORD: ${SVC_DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Los scripts de esta carpeta se ejecutan UNA sola vez, con el volumen vacío
+      - ./init-db:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: transporte-rabbitmq
+    # RabbitMQ guarda sus datos según el hostname: se fija para no perderlos al recrear el contenedor
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"     # AMQP (los microservicios)
+      - "15672:15672"   # Consola web: http://localhost:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
