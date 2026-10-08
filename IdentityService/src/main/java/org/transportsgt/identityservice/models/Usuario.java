@@ -28,7 +28,9 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** Único sin distinguir mayúsculas ({@code uq_usuario_correo}). */
+    /**
+     * Único sin distinguir mayúsculas ({@code uq_usuario_correo}).
+     */
     @Column(name = "correo", nullable = false, length = 150)
     private String correo;
 
@@ -42,7 +44,9 @@ public class Usuario {
     @Column(name = "rol", nullable = false, length = 20)
     private Rol rol;
 
-    /** Obligatoria para ADMIN_SUCURSAL, CAJERO y CHOFER; nula para ADMIN_SISTEMA y CLIENTE. */
+    /**
+     * Obligatoria para ADMIN_SUCURSAL, CAJERO y CHOFER; nula para ADMIN_SISTEMA y CLIENTE.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_sucursal")
     private Sucursal sucursal;
@@ -51,7 +55,9 @@ public class Usuario {
     @Column(name = "activo", nullable = false)
     private Boolean activo = true;
 
-    /** Usuario que lo creó (auditoría). */
+    /**
+     * Usuario que lo creó (auditoría).
+     */
     @Column(name = "creado_por")
     private UUID creadoPor;
 

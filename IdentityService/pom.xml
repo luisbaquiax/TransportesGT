@@ -23,7 +23,7 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <jacoco.version>0.8.11</jacoco.version>
         <!-- Cobertura mínima de líneas que exige "mvn verify". -->
-        <jacoco.minimum>0.60</jacoco.minimum>
+        <jacoco.minimum>0.85</jacoco.minimum>
     </properties>
     <repositories>
         <repository>
@@ -175,12 +175,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -245,12 +239,11 @@
                 <version>${jacoco.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/internal/**</exclude>
-                        <exclude>**/exception/**</exclude>
-                        <exclude>**/utils/**</exclude>
-                        <exclude>**/dto/**</exclude>
-                        <exclude>**/mappers/**</exclude>
+                        <!-- Sin lógica que probar: configuración, DTO, entidades, código generado y main -->
                         <exclude>**/config/**</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/models/**</exclude>
+                        <exclude>**/mappers/*Impl.class</exclude>
                         <exclude>**/*Application.class</exclude>
                     </excludes>
                 </configuration>
