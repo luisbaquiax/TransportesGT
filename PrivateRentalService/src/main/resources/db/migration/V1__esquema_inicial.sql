@@ -73,7 +73,12 @@ CREATE TABLE alquiler (
     fecha_hora_llegada_estimada TIMESTAMPTZ,              -- la fija el administrador al cotizar
     ida_y_vuelta         BOOLEAN       NOT NULL DEFAULT FALSE,
     numero_pasajeros     SMALLINT      NOT NULL CHECK (numero_pasajeros > 0),
-    distancia_estimada_km NUMERIC(8,2)  NOT NULL CHECK (distancia_estimada_km > 0),   -- la indica el solicitante; el administrador puede corregirla al cotizar
+    -- Coordenadas elegidas en el mapa (Leaflet). Opcionales: si no se implementa el mapa, quedan en NULL
+    latitud_origen       NUMERIC(9,6)  CHECK (latitud_origen  BETWEEN -90  AND 90),
+    longitud_origen      NUMERIC(9,6)  CHECK (longitud_origen BETWEEN -180 AND 180),
+    latitud_destino      NUMERIC(9,6)  CHECK (latitud_destino  BETWEEN -90  AND 90),
+    longitud_destino     NUMERIC(9,6)  CHECK (longitud_destino BETWEEN -180 AND 180),
+    distancia_estimada_km NUMERIC(8,2)  NOT NULL CHECK (distancia_estimada_km > 0),   -- con coordenadas la calcula el backend; si no, la indica el solicitante. El administrador puede corregirla al cotizar
     precio_estimado      NUMERIC(12,2) NOT NULL CHECK (precio_estimado >= 0),
     precio_final         NUMERIC(12,2) CHECK (precio_final >= 0),
     id_pago              UUID,                                -- movimiento de cartera
@@ -88,6 +93,11 @@ CREATE TABLE alquiler (
     version              BIGINT        NOT NULL DEFAULT 0,
     creado_en            TIMESTAMPTZ   NOT NULL DEFAULT now(),
     actualizado_en       TIMESTAMPTZ   NOT NULL DEFAULT now(),
+    -- las cuatro coordenadas vienen juntas o ninguna
+    CONSTRAINT ck_alquiler_coordenadas CHECK (
+        (latitud_origen IS NULL AND longitud_origen IS NULL AND latitud_destino IS NULL AND longitud_destino IS NULL)
+     OR (latitud_origen IS NOT NULL AND longitud_origen IS NOT NULL AND latitud_destino IS NOT NULL AND longitud_destino IS NOT NULL)
+    ),
     CONSTRAINT ck_alquiler_retorno CHECK (
         (ida_y_vuelta AND fecha_hora_retorno IS NOT NULL AND fecha_hora_retorno > fecha_hora_salida)
      OR (NOT ida_y_vuelta AND fecha_hora_retorno IS NULL)

@@ -77,7 +77,26 @@ public class Alquiler {
     @Column(name = "numero_pasajeros", nullable = false)
     private Short numeroPasajeros;
 
-    /** La indica el solicitante; el administrador puede corregirla al cotizar. */
+    /**
+     * Coordenadas elegidas en el mapa (Leaflet). Opcionales, pero las cuatro vienen juntas o ninguna
+     * ({@code ck_alquiler_coordenadas}). No viajan en eventos.
+     */
+    @Column(name = "latitud_origen", precision = 9, scale = 6)
+    private BigDecimal latitudOrigen;
+
+    @Column(name = "longitud_origen", precision = 9, scale = 6)
+    private BigDecimal longitudOrigen;
+
+    @Column(name = "latitud_destino", precision = 9, scale = 6)
+    private BigDecimal latitudDestino;
+
+    @Column(name = "longitud_destino", precision = 9, scale = 6)
+    private BigDecimal longitudDestino;
+
+    /**
+     * Con coordenadas la calcula el backend (Haversine × factor de carretera); si no, la indica el solicitante.
+     * El administrador puede corregirla al cotizar.
+     */
     @Column(name = "distancia_estimada_km", nullable = false, precision = 8, scale = 2)
     private BigDecimal distanciaEstimadaKm;
 
