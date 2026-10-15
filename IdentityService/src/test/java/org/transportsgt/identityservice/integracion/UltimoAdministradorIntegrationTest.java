@@ -102,8 +102,8 @@ class UltimoAdministradorIntegrationTest extends IntegracionBase {
     void triggerCreadorAdminSucursal_exigeAdminSistemaActivo() {
         // Act
         DataAccessException ex = assertThrows(DataAccessException.class, () -> jdbc.update("""
-                INSERT INTO usuario (correo, hash_contrasena, nombre_completo, rol, id_sucursal, creado_por)
-                VALUES (?, 'x', 'Intruso', 'ADMIN_SUCURSAL', ?, ?)""",
+                        INSERT INTO usuario (correo, hash_contrasena, nombre_completo, rol, id_sucursal, creado_por)
+                        VALUES (?, 'x', 'Intruso', 'ADMIN_SUCURSAL', ?, ?)""",
                 unico("intruso") + "@transportes.gt", ID_XELA, idUsuarioPorCorreo(CAJERO_XELA)));
 
         // Assert

@@ -37,7 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(ContenedoresConfig.class)
 public abstract class IntegracionBase {
 
-    /** Datos de V2__datos_iniciales.sql */
+    /**
+     * Datos de V2__datos_iniciales.sql
+     */
     protected static final String ADMIN_SISTEMA = "admin@transportes.gt";
     protected static final UUID ID_ADMIN_SISTEMA = UUID.fromString("00000000-0000-4000-8000-000000000001");
     protected static final String ADMIN_XELA = "admin.xela@transportes.gt";
@@ -82,7 +84,9 @@ public abstract class IntegracionBase {
         return prefijo + "." + UUID.randomUUID().toString().substring(0, 8);
     }
 
-    /** Token en claro del último enlace emitido al usuario (solo viaja en el outbox). */
+    /**
+     * Token en claro del último enlace emitido al usuario (solo viaja en el outbox).
+     */
     protected String ultimoTokenEnlace(UUID idUsuario, String proposito) {
         return jdbc.queryForObject("""
                 SELECT datos ->> 'token' FROM outbox_evento

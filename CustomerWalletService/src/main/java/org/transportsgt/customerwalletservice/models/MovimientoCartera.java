@@ -14,14 +14,14 @@ import java.util.UUID;
 /**
  * Libro de movimientos de la cartera. Inmutable: el trigger {@code trg_movimiento_inmutable} bloquea UPDATE y DELETE.
  * Su {@code id} es el {@code idPago} / {@code idMovimiento} de los eventos y de la API.
+ * Sin setters: se crea con el builder y nunca se modifica.
  */
 @Entity
 @Table(name = "movimiento_cartera")
 @Immutable
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class MovimientoCartera {
 
