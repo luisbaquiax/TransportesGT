@@ -69,7 +69,7 @@ public class FiltroClaveInterna extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private static String rutaSinContexto(HttpServletRequest request) {
+    private String rutaSinContexto(HttpServletRequest request) {
         String ruta = request.getRequestURI().substring(request.getContextPath().length());
         return ruta.endsWith("/") && ruta.length() > 1 ? ruta.substring(0, ruta.length() - 1) : ruta;
     }

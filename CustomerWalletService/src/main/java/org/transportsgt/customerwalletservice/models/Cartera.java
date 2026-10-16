@@ -30,6 +30,10 @@ public class Cartera {
     @JoinColumn(name = "id_cliente", nullable = false, unique = true, updatable = false)
     private Cliente cliente;
 
+    /**
+     * Se modifica solo con {@code ReglasCartera.acreditar} y {@code ReglasCartera.debitar}, que aplican la regla del
+     * saldo (nunca negativo, 2 decimales). El {@code CHECK (saldo >= 0)} de la base queda de respaldo.
+     */
     @Builder.Default
     @Column(name = "saldo", nullable = false, precision = 12, scale = 2)
     private BigDecimal saldo = BigDecimal.ZERO;

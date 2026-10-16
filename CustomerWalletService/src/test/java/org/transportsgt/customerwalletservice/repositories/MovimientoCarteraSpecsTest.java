@@ -63,7 +63,7 @@ class MovimientoCarteraSpecsTest {
             ArgumentCaptor<Predicate[]> captor = ArgumentCaptor.forClass(Predicate[].class);
 
             // Act
-            MovimientoCarteraSpecs.filtrar(idCartera, TipoMovimiento.PAGO, fecha, fecha).toPredicate(root, query, cb);
+            new MovimientoCarteraSpecs().filtrar(idCartera, TipoMovimiento.PAGO, fecha, fecha).toPredicate(root, query, cb);
 
             // Assert
             verify(cb).and(captor.capture());
@@ -80,7 +80,7 @@ class MovimientoCarteraSpecsTest {
             ArgumentCaptor<Predicate[]> captor = ArgumentCaptor.forClass(Predicate[].class);
 
             // Act
-            MovimientoCarteraSpecs.filtrar(idCartera, null, null, null).toPredicate(root, query, cb);
+            new MovimientoCarteraSpecs().filtrar(idCartera, null, null, null).toPredicate(root, query, cb);
 
             // Assert
             verify(cb).and(captor.capture());

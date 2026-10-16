@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.transportsgt.customerwalletservice.fixture.EventoFixture;
 import org.transportsgt.customerwalletservice.services.ReembolsoService;
+import org.transportsgt.customerwalletservice.utils.Fechas;
 import org.transportsgt.eventos.EventoNoRecuperableException;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
@@ -40,8 +41,8 @@ class ManejadoresReembolsoTest {
 
     @BeforeEach
     void setUp() {
-        boletos = new ManejadorBoletosAnulados(reembolsoService);
-        alquiler = new ManejadorAlquilerCancelado(reembolsoService);
+        boletos = new ManejadorBoletosAnulados(reembolsoService, new ValidacionEventos(), new Fechas());
+        alquiler = new ManejadorAlquilerCancelado(reembolsoService, new ValidacionEventos(), new Fechas());
         idReferencia = UUID.randomUUID();
         idPago = UUID.randomUUID();
     }

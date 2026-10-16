@@ -22,6 +22,8 @@ import java.time.Instant;
 public class ManejadorAlquilerCancelado implements ManejadorEvento<DatosAlquilerCancelado> {
 
     private final ReembolsoService reembolsoService;
+    private final ValidacionEventos validacion;
+    private final Fechas fechas;
 
     @Override
     public TipoEvento tipo() {
@@ -37,11 +39,11 @@ public class ManejadorAlquilerCancelado implements ManejadorEvento<DatosAlquiler
                     + " no trae idAlquiler o la fecha de cancelación");
         }
         if (datos.idPago() == null) {
-            ValidacionEventos.registrar(evento, false);
+            validacion.registrar(evento, false);
             return;
         }
         boolean aplicado = reembolsoService.reembolsar(TipoReferencia.ALQUILER, datos.idAlquiler(), datos.idPago(),
-                Fechas.enGuatemala(cancelado), datos.motivo());
-        ValidacionEventos.registrar(evento, aplicado);
+                fechas.enGuatemala(cancelado), datos.motivo());
+        validacion.registrar(evento, aplicado);
     }
 }

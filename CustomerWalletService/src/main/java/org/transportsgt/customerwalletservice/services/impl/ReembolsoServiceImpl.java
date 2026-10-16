@@ -11,7 +11,6 @@ import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
 import org.transportsgt.customerwalletservice.services.ReembolsoService;
-import org.transportsgt.customerwalletservice.utils.Dinero;
 import org.transportsgt.eventos.EventoNoRecuperableException;
 import org.transportsgt.eventos.payload.TipoReferencia;
 
@@ -30,6 +29,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
     private final CarteraRepository carteraRepository;
     private final MovimientoCarteraRepository movimientoRepository;
     private final EventosCartera eventos;
+    private final ReglasCartera reglas;
 
     @Override
     @Transactional
@@ -50,7 +50,7 @@ public class ReembolsoServiceImpl implements ReembolsoService {
             return false;
         }
         BigDecimal monto = pago.get().getMonto();
-        BigDecimal saldoPosterior = Dinero.escalar(cartera.getSaldo().add(monto));
+        BigDecimal saldoPosterior = reglas.acreditar(cartera, monto);
         String motivoFinal = motivo == null || motivo.isBlank() ? MOTIVO_POR_DEFECTO : motivo;
         MovimientoCartera reembolso = movimientoRepository.save(MovimientoCartera.builder()
                 .cartera(cartera)
@@ -62,7 +62,6 @@ public class ReembolsoServiceImpl implements ReembolsoService {
                 .fechaMovimiento(fechaMovimiento)
                 .descripcion("Reembolso: " + motivoFinal)
                 .build());
-        cartera.setSaldo(saldoPosterior);
         Cartera guardada = carteraRepository.saveAndFlush(cartera);
         eventos.carteraReembolsada(guardada, reembolso, motivoFinal);
         return true;

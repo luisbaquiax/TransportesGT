@@ -16,6 +16,7 @@ import org.transportsgt.eventos.payload.DatosUsuario;
 public class ManejadorUsuarioCreado implements ManejadorEvento<DatosUsuario> {
 
     private final ClienteService clienteService;
+    private final ValidacionEventos validacion;
 
     @Override
     public TipoEvento tipo() {
@@ -24,7 +25,7 @@ public class ManejadorUsuarioCreado implements ManejadorEvento<DatosUsuario> {
 
     @Override
     public void manejar(SobreEvento<DatosUsuario> evento) {
-        ValidacionEventos.usuario(evento);
-        ValidacionEventos.registrar(evento, clienteService.aplicarUsuario(evento.datos(), evento.versionAgregado()));
+        validacion.usuario(evento);
+        validacion.registrar(evento, clienteService.aplicarUsuario(evento.datos(), evento.versionAgregado()));
     }
 }
