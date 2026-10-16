@@ -43,6 +43,7 @@ import org.transportsgt.customerwalletservice.dto.response.Resultado;
 import org.transportsgt.customerwalletservice.exception.RespuestaError;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.services.CarteraService;
+import org.transportsgt.customerwalletservice.services.PagoService;
 import org.transportsgt.eventos.payload.TipoReferencia;
 
 import java.net.URI;
@@ -58,6 +59,7 @@ public class CarteraController {
     public static final String CABECERA_IDEMPOTENCIA = "Clave-Idempotencia";
 
     private final CarteraService carteraService;
+    private final PagoService pagoService;
 
     @GetMapping("/yo")
     @Operation(summary = "Mi saldo")
@@ -163,7 +165,7 @@ public class CarteraController {
             @Parameter(description = "Igual a idReferencia (idCompra o idAlquiler)")
             @RequestHeader(value = CABECERA_IDEMPOTENCIA, required = false) String claveIdempotencia,
             @Valid @RequestBody PagoRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Resultado<PagoResponse> resultado = carteraService.pagar(UsuarioAutenticado.de(jwt), claveIdempotencia, request);
+        Resultado<PagoResponse> resultado = pagoService.pagar(UsuarioAutenticado.de(jwt), claveIdempotencia, request);
         if (!resultado.creado()) {
             return ResponseEntity.ok(resultado.valor());
         }
@@ -200,6 +202,6 @@ public class CarteraController {
         UUID idUsuario = autenticacion instanceof JwtAuthenticationToken token
                 ? UsuarioAutenticado.de(token.getToken()).id()
                 : null;
-        return carteraService.consultarPago(idUsuario, tipoReferencia, idReferencia);
+        return pagoService.consultarPago(idUsuario, tipoReferencia, idReferencia);
     }
 }

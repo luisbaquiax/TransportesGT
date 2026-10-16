@@ -13,7 +13,9 @@ import java.util.UUID;
 
 public interface CarteraRepository extends JpaRepository<Cartera, UUID> {
 
-    /** Consulta de saldo (sin bloqueo). Trae el cliente para validar {@code activo}. */
+    /**
+     * Consulta de saldo (sin bloqueo). Trae el cliente para validar {@code activo}.
+     */
     @EntityGraph(attributePaths = "cliente")
     Optional<Cartera> findByClienteIdUsuario(UUID idUsuario);
 
@@ -25,7 +27,9 @@ public interface CarteraRepository extends JpaRepository<Cartera, UUID> {
     @Query("SELECT c FROM Cartera c JOIN FETCH c.cliente WHERE c.cliente.idUsuario = :idUsuario")
     Optional<Cartera> findByIdUsuarioParaActualizar(@Param("idUsuario") UUID idUsuario);
 
-    /** Reembolsos: la cartera sale del PAGO original, no del usuario del evento. */
+    /**
+     * Reembolsos: la cartera sale del PAGO original, no del usuario del evento.
+     */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM Cartera c JOIN FETCH c.cliente WHERE c.id = :id")
     Optional<Cartera> findByIdParaActualizar(@Param("id") UUID id);

@@ -2,6 +2,7 @@ package org.transportsgt.customerwalletservice.repositories;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.transportsgt.customerwalletservice.models.MovimientoCartera;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 
@@ -13,13 +14,11 @@ import java.util.UUID;
 /**
  * Filtros opcionales del libro de movimientos de una cartera. Un filtro nulo no restringe.
  */
-public final class MovimientoCarteraSpecs {
+@Component
+public class MovimientoCarteraSpecs {
 
-    private MovimientoCarteraSpecs() {
-    }
-
-    public static Specification<MovimientoCartera> filtrar(UUID idCartera, TipoMovimiento tipo,
-                                                          LocalDate desde, LocalDate hasta) {
+    public Specification<MovimientoCartera> filtrar(UUID idCartera, TipoMovimiento tipo,
+                                                   LocalDate desde, LocalDate hasta) {
         return (root, query, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
             condiciones.add(cb.equal(root.get("cartera").get("id"), idCartera));

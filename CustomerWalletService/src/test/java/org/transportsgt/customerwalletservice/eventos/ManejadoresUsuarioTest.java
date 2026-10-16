@@ -35,8 +35,8 @@ class ManejadoresUsuarioTest {
 
     @BeforeEach
     void setUp() {
-        creado = new ManejadorUsuarioCreado(clienteService);
-        actualizado = new ManejadorUsuarioActualizado(clienteService);
+        creado = new ManejadorUsuarioCreado(clienteService, new ValidacionEventos());
+        actualizado = new ManejadorUsuarioActualizado(clienteService, new ValidacionEventos());
         idUsuario = UUID.randomUUID();
     }
 

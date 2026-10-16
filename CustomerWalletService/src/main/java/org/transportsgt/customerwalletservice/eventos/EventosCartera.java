@@ -14,8 +14,6 @@ import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
 /**
  * Arma los payloads de Clientes y Cartera y los guarda en {@code outbox_evento} con la librería de eventos.
  *
- * <p>Debe llamarse dentro de la transacción del cambio y DESPUÉS de {@code flush()}:
- * {@code versionAgregado} es la {@code version} de la entidad ya incrementada.
  */
 @Component
 @RequiredArgsConstructor
@@ -23,7 +21,9 @@ public class EventosCartera {
 
     private final RegistroOutbox outbox;
 
-    /** Instantánea del perfil comercial: {@code idAgregado = id_usuario}, versión del cliente. */
+    /**
+     * Instantánea del perfil comercial: {@code idAgregado = id_usuario}, versión del cliente.
+     */
     public void perfilClienteActualizado(Cliente cliente) {
         DatosPerfilClienteActualizado datos = new DatosPerfilClienteActualizado(cliente.getIdUsuario(),
                 cliente.getNit(), cliente.getNombreCompleto(), cliente.getActivo());

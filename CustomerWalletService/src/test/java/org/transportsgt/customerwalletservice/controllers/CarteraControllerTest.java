@@ -30,6 +30,7 @@ import org.transportsgt.customerwalletservice.dto.response.Resultado;
 import org.transportsgt.customerwalletservice.fixture.ClienteFixture;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.services.CarteraService;
+import org.transportsgt.customerwalletservice.services.PagoService;
 import org.transportsgt.eventos.payload.Rol;
 import org.transportsgt.eventos.payload.TipoReferencia;
 
@@ -55,6 +56,8 @@ class CarteraControllerTest {
 
     @Mock
     private CarteraService carteraService;
+    @Mock
+    private PagoService pagoService;
 
     private CarteraController controlador;
     private UUID idUsuario;
@@ -65,7 +68,7 @@ class CarteraControllerTest {
 
     @BeforeEach
     void setUp() {
-        controlador = new CarteraController(carteraService);
+        controlador = new CarteraController(carteraService, pagoService);
         idUsuario = UUID.randomUUID();
         jwt = ClienteFixture.jwt(idUsuario, Rol.CLIENTE);
         idReferencia = UUID.randomUUID();
@@ -148,7 +151,7 @@ class CarteraControllerTest {
             // Arrange
             PagoRequest request = new PagoRequest(TipoReferencia.BOLETOS, idReferencia, new BigDecimal("170.00"),
                     FECHA, null);
-            when(carteraService.pagar(any(), eq(idReferencia.toString()), eq(request))).thenReturn(Resultado.nuevo(pago));
+            when(pagoService.pagar(any(), eq(idReferencia.toString()), eq(request))).thenReturn(Resultado.nuevo(pago));
 
             // Act
             ResponseEntity<PagoResponse> respuesta = controlador.pagar(idReferencia.toString(), request, jwt);
@@ -167,7 +170,7 @@ class CarteraControllerTest {
         void pagar_cuandoYaExistia_responde200SinLocation() {
             // Arrange
             PagoRequest request = new PagoRequest(TipoReferencia.ALQUILER, idReferencia, BigDecimal.TEN, FECHA, null);
-            when(carteraService.pagar(any(), eq(idReferencia.toString()), eq(request)))
+            when(pagoService.pagar(any(), eq(idReferencia.toString()), eq(request)))
                     .thenReturn(Resultado.existente(pago));
 
             // Act
@@ -188,7 +191,7 @@ class CarteraControllerTest {
         void consultarPago_conJwt_filtraPorElUsuarioDelToken() {
             // Arrange
             PagoConsultaResponse consulta = new PagoConsultaResponse(UUID.randomUUID(), BigDecimal.ONE, FECHA);
-            when(carteraService.consultarPago(idUsuario, TipoReferencia.BOLETOS, idReferencia)).thenReturn(consulta);
+            when(pagoService.consultarPago(idUsuario, TipoReferencia.BOLETOS, idReferencia)).thenReturn(consulta);
 
             // Act
             PagoConsultaResponse respuesta = controlador.consultarPago(TipoReferencia.BOLETOS, idReferencia,
@@ -202,7 +205,7 @@ class CarteraControllerTest {
         void consultarPago_conClaveInterna_consultaSinUsuario() {
             // Arrange
             PagoConsultaResponse consulta = new PagoConsultaResponse(UUID.randomUUID(), BigDecimal.ONE, FECHA);
-            when(carteraService.consultarPago(null, TipoReferencia.ALQUILER, idReferencia)).thenReturn(consulta);
+            when(pagoService.consultarPago(null, TipoReferencia.ALQUILER, idReferencia)).thenReturn(consulta);
             ArgumentCaptor<UUID> captor = ArgumentCaptor.forClass(UUID.class);
 
             // Act
@@ -211,7 +214,7 @@ class CarteraControllerTest {
                             List.of(new SimpleGrantedAuthority(FiltroClaveInterna.ROL_INTERNO))));
 
             // Assert
-            verify(carteraService).consultarPago(captor.capture(), eq(TipoReferencia.ALQUILER), eq(idReferencia));
+            verify(pagoService).consultarPago(captor.capture(), eq(TipoReferencia.ALQUILER), eq(idReferencia));
             assertNull(captor.getValue());
         }
     }

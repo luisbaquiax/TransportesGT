@@ -131,7 +131,7 @@ public class ClienteServiceImpl implements ClienteService {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private static String textoONulo(String valor) {
+    private String textoONulo(String valor) {
         return valor == null || valor.isBlank() ? null : valor.trim();
     }
 }

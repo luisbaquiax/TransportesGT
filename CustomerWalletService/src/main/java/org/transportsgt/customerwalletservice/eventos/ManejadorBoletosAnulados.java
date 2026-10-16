@@ -21,6 +21,8 @@ import org.transportsgt.eventos.payload.TipoReferencia;
 public class ManejadorBoletosAnulados implements ManejadorEvento<DatosBoletosAnulados> {
 
     private final ReembolsoService reembolsoService;
+    private final ValidacionEventos validacion;
+    private final Fechas fechas;
 
     @Override
     public TipoEvento tipo() {
@@ -34,11 +36,11 @@ public class ManejadorBoletosAnulados implements ManejadorEvento<DatosBoletosAnu
             throw new EventoNoRecuperableException("El evento " + evento.idEvento() + " no trae idCompra u ocurridoEn");
         }
         if (datos.canal() != Canal.EN_LINEA) {
-            ValidacionEventos.registrar(evento, false);
+            validacion.registrar(evento, false);
             return;
         }
         boolean aplicado = reembolsoService.reembolsar(TipoReferencia.BOLETOS, datos.idCompra(), datos.idPago(),
-                Fechas.enGuatemala(evento.ocurridoEn()), datos.motivo());
-        ValidacionEventos.registrar(evento, aplicado);
+                fechas.enGuatemala(evento.ocurridoEn()), datos.motivo());
+        validacion.registrar(evento, aplicado);
     }
 }

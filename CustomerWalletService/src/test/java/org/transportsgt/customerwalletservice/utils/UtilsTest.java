@@ -1,5 +1,6 @@
 package org.transportsgt.customerwalletservice.utils;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +16,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilsTest {
 
+    private Dinero dinero;
+    private Fechas fechas;
+
+    @BeforeEach
+    void setUp() {
+        dinero = new Dinero();
+        fechas = new Fechas();
+    }
+
     @Nested
     class Escalar {
 
         @Test
         void escalar_redondeaAMitadHaciaArribaConDosDecimales() {
             assertAll(
-                    () -> assertEquals(new BigDecimal("10.13"), Dinero.escalar(new BigDecimal("10.125"))),
-                    () -> assertEquals(new BigDecimal("10.12"), Dinero.escalar(new BigDecimal("10.1249"))),
-                    () -> assertEquals(new BigDecimal("7.00"), Dinero.escalar(new BigDecimal("7"))),
-                    () -> assertNull(Dinero.escalar(null))
+                    () -> assertEquals(new BigDecimal("10.13"), dinero.escalar(new BigDecimal("10.125"))),
+                    () -> assertEquals(new BigDecimal("10.12"), dinero.escalar(new BigDecimal("10.1249"))),
+                    () -> assertEquals(new BigDecimal("7.00"), dinero.escalar(new BigDecimal("7"))),
+                    () -> assertNull(dinero.escalar(null))
             );
         }
     }
@@ -35,10 +45,10 @@ class UtilsTest {
         @Test
         void iguales_comparaSinImportarLaEscala() {
             assertAll(
-                    () -> assertTrue(Dinero.iguales(new BigDecimal("10.0"), new BigDecimal("10.00"))),
-                    () -> assertFalse(Dinero.iguales(new BigDecimal("10.01"), new BigDecimal("10.00"))),
-                    () -> assertFalse(Dinero.iguales(null, BigDecimal.ONE)),
-                    () -> assertFalse(Dinero.iguales(BigDecimal.ONE, null))
+                    () -> assertTrue(dinero.iguales(new BigDecimal("10.0"), new BigDecimal("10.00"))),
+                    () -> assertFalse(dinero.iguales(new BigDecimal("10.01"), new BigDecimal("10.00"))),
+                    () -> assertFalse(dinero.iguales(null, BigDecimal.ONE)),
+                    () -> assertFalse(dinero.iguales(BigDecimal.ONE, null))
             );
         }
     }
@@ -50,9 +60,9 @@ class UtilsTest {
         void enGuatemala_cuandoEnUtcYaEsOtroDia_devuelveLaFechaLocal() {
             assertAll(
                     () -> assertEquals(LocalDate.parse("2026-10-21"),
-                            Fechas.enGuatemala(Instant.parse("2026-10-22T05:59:59Z"))),
+                            fechas.enGuatemala(Instant.parse("2026-10-22T05:59:59Z"))),
                     () -> assertEquals(LocalDate.parse("2026-10-22"),
-                            Fechas.enGuatemala(Instant.parse("2026-10-22T06:00:00Z")))
+                            fechas.enGuatemala(Instant.parse("2026-10-22T06:00:00Z")))
             );
         }
     }

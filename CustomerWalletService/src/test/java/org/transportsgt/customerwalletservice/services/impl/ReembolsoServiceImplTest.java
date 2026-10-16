@@ -16,6 +16,7 @@ import org.transportsgt.customerwalletservice.models.MovimientoCartera;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
+import org.transportsgt.customerwalletservice.utils.Dinero;
 import org.transportsgt.eventos.EventoNoRecuperableException;
 import org.transportsgt.eventos.payload.TipoReferencia;
 
@@ -53,7 +54,8 @@ class ReembolsoServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        servicio = new ReembolsoServiceImpl(carteraRepository, movimientoRepository, eventos);
+        servicio = new ReembolsoServiceImpl(carteraRepository, movimientoRepository, eventos,
+                new ReglasCartera(new Dinero()));
         // El reembolso se aplica aunque el cliente esté inactivo
         cartera = CarteraFixture.cartera(ClienteFixture.inactivo(UUID.randomUUID()), "30.00");
         idCompra = UUID.randomUUID();
