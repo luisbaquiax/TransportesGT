@@ -15,8 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * Sin CORS (lo resuelve el gateway) y sin login (lo hace Identidad).
- *
- * <p>Rutas relativas al context-path {@code /v1/customers}.
  * Lo único que cambia entre servicios es el bloque de reglas (y aquí, el filtro de la clave interna).
  */
 @Configuration
@@ -42,10 +40,9 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Clientes y Cartera ----
+                        // Reglas propias de Clientes y Cartera
                         .requestMatchers(HttpMethod.GET, "/clientes/buscar").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
                         .requestMatchers("/clientes/**", "/cartera/**").authenticated()
-                        // ----------------------------------------------
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)

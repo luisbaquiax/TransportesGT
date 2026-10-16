@@ -33,8 +33,11 @@ public class ReembolsoServiceImpl implements ReembolsoService {
 
     @Override
     @Transactional
-    public boolean reembolsar(TipoReferencia tipoReferencia, UUID idReferencia, UUID idPago,
-                              LocalDate fechaMovimiento, String motivo) {
+    public boolean reembolsar(TipoReferencia tipoReferencia,
+                              UUID idReferencia,
+                              UUID idPago,
+                              LocalDate fechaMovimiento,
+                              String motivo) {
         Optional<MovimientoCartera> pago = buscarPago(tipoReferencia, idReferencia, idPago);
         if (pago.isEmpty()) {
             log.info("Sin PAGO para {} {}: no hay nada que reembolsar", tipoReferencia, idReferencia);

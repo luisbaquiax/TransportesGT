@@ -63,7 +63,7 @@ public class MovimientoCartera {
     private String claveIdempotencia;
 
     /**
-     * Fecha de negocio elegida por el usuario; en reembolsos, la fecha del evento en hora de Guatemala.
+     * Fecha de negocio elegida por el usuario; en reembolsos,
      */
     @Column(name = "fecha_movimiento", nullable = false)
     private LocalDate fechaMovimiento;
