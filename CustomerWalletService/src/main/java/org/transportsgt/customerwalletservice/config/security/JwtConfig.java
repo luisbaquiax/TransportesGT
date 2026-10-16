@@ -33,7 +33,9 @@ public class JwtConfig {
         return decoder;
     }
 
-    /** Claim "rol" = "ADMIN_SISTEMA" → authority "ROLE_ADMIN_SISTEMA". */
+    /**
+     * Claim "rol" = "ADMIN_SISTEMA" -> authority "ROLE_ADMIN_SISTEMA".
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();

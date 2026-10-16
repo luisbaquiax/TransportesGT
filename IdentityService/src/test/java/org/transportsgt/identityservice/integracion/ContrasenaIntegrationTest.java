@@ -134,7 +134,7 @@ class ContrasenaIntegrationTest extends IntegracionBase {
         // Assert: solo se emitieron 3 enlaces
         assertAll(
                 () -> assertEquals(3, jdbc.queryForObject("""
-                        SELECT count(*) FROM token_contrasena WHERE id_usuario = ? AND proposito = 'RESTABLECIMIENTO'""",
+                                SELECT count(*) FROM token_contrasena WHERE id_usuario = ? AND proposito = 'RESTABLECIMIENTO'""",
                         Integer.class, idUsuario)),
                 () -> assertEquals(3, contarOutbox(idUsuario, "EnlaceContrasenaEmitido"))
         );

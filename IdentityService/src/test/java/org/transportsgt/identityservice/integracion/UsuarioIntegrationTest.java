@@ -190,8 +190,8 @@ class UsuarioIntegrationTest extends IntegracionBase {
                 () -> assertEquals(3, contarOutbox(idCajero, "UsuarioActualizado")),
                 () -> assertEquals(2, contarOutbox(idCajero, "EnlaceContrasenaEmitido")),
                 () -> assertEquals("false", jdbc.queryForObject("""
-                        SELECT datos ->> 'activo' FROM outbox_evento
-                         WHERE id_agregado = ? AND tipo_evento = 'UsuarioActualizado' AND version_agregado = 2""",
+                                SELECT datos ->> 'activo' FROM outbox_evento
+                                 WHERE id_agregado = ? AND tipo_evento = 'UsuarioActualizado' AND version_agregado = 2""",
                         String.class, idCajero))
         );
     }
