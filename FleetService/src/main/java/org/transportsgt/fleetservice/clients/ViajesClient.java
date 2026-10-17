@@ -1,15 +1,15 @@
 package org.transportsgt.fleetservice.clients;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.core.IntervalFunction;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import org.transportsgt.eventos.ContextoCorrelacion;
@@ -25,7 +25,6 @@ import java.util.UUID;
  * operación se rechaza con 503 (falla cerrada): nunca se asume que no hay viajes activos.
  */
 @Component
-@RequiredArgsConstructor
 public class ViajesClient {
 
     private static final Logger log = LoggerFactory.getLogger(ViajesClient.class);
@@ -35,15 +34,17 @@ public class ViajesClient {
     private final CircuitBreaker circuitBreaker;
 
     public ViajesClient(RestClient.Builder builder, ViajesProperties propiedades) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(3));
+        factory.setReadTimeout(Duration.ofSeconds(3));
         this.restClient = builder
                 .baseUrl(propiedades.url())
-                .requestFactory(new org.springframework.http.client.SimpleClientHttpRequestFactory(
-                        Duration.ofSeconds(3), Duration.ofSeconds(3)))
+                .requestFactory(factory)
                 .build();
         this.retry = Retry.of("viajes", RetryConfig.custom()
                 .maxAttempts(3)                                   // 1 + 2 reintentos
                 .waitDuration(Duration.ofMillis(200))
-                .intervalFunction(io.github.resilience4j.core.functions.IntervalFunction
+                .intervalFunction(IntervalFunction
                         .ofExponentialBackoff(Duration.ofMillis(200), 2))
                 .retryExceptions(ViajesNoDisponibleException.class)
                 .build());
@@ -86,7 +87,7 @@ public class ViajesClient {
                     .retrieve()
                     .body(Object[].class);
             return cuerpo != null && cuerpo.length > 0;
-        } catch (ResourceAccessException | RestClientException e) {
+        } catch (RestClientException e) {
             log.warn("Viajes no respondió para el bus {}: {}", idBus, e.getMessage());
             throw new ViajesNoDisponibleException(e);
         }

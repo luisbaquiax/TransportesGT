@@ -88,7 +88,11 @@ public class FotoServiceImpl implements FotoService {
     public void borrar(Tipo tipo, UUID id) {
         Path directorio = Path.of(propiedades.directorio(), carpeta(tipo));
         if (Files.isDirectory(directorio)) {
-            borrarAnteriores(directorio, id);
+            try {
+                borrarAnteriores(directorio, id);
+            } catch (IOException e) {
+                log.warn("No se pudieron borrar las fotos anteriores de {}", id, e);
+            }
         }
     }
 

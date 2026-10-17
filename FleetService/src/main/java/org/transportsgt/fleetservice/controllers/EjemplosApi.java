@@ -33,6 +33,13 @@ final class EjemplosApi {
 
     static final String BUS = """
             {"id":"5d1c0a7e-8b43-4f2e-9a51-2d8f8c0e9a11","idSucursal":"10000000-0000-4000-8000-000000000001","placa":"P123XYZ","marca":"Toyota","modelo":"Hiace","anioFabricacion":2019,"capacidadPasajeros":45,"estadoOperativo":"DISPONIBLE","kilometrajeActual":12500.5,"fotoUrl":null,"activo":true,"version":0,"creadoEn":"2026-10-14T10:15:30-06:00","actualizadoEn":"2026-10-14T10:15:30-06:00"}""";
+
+    static final String PAGINA_BUSES = """
+            {"contenido":[{"id":"5d1c0a7e-8b43-4f2e-9a51-2d8f8c0e9a11","idSucursal":"10000000-0000-4000-8000-000000000001","placa":"P123XYZ","marca":"Toyota","modelo":"Hiace","anioFabricacion":2019,"capacidadPasajeros":45,"estadoOperativo":"DISPONIBLE","kilometrajeActual":12500.5,"fotoUrl":null,"activo":true,"version":0,"creadoEn":"2026-10-14T10:15:30-06:00","actualizadoEn":"2026-10-14T10:15:30-06:00"}],"pagina":0,"tamano":20,"totalElementos":1,"totalPaginas":1}""";
+
     static final String CHOFER = """
             {"id":"7b1f0c1e-8f43-4b8e-9a51-2d8f8c0e9a11","idUsuario":null,"idSucursal":"10000000-0000-4000-8000-000000000001","nombreCompleto":"Juan Carlos Pérez","correo":"chofer.xela@transportes.gt","telefono":"5555-1234","numeroLicencia":"LIC-XEL-001","tipoLicencia":"B","fechaVencimientoLicencia":"2027-03-15","salarioBaseViaje":"150.00","fotoUrl":null,"activo":true,"version":0,"creadoEn":"2026-10-14T10:15:30-06:00","actualizadoEn":"2026-10-14T10:15:30-06:00"}""";
+
+    static final String PAGINA_CHOFERES = """
+            {"contenido":[{"id":"7b1f0c1e-8f43-4b8e-9a51-2d8f8c0e9a11","idUsuario":null,"idSucursal":"10000000-0000-4000-8000-000000000001","nombreCompleto":"Juan Carlos Pérez","correo":"chofer.xela@transportes.gt","telefono":"5555-1234","numeroLicencia":"LIC-XEL-001","tipoLicencia":"B","fechaVencimientoLicencia":"2027-03-15","salarioBaseViaje":"150.00","fotoUrl":null,"activo":true,"version":0,"creadoEn":"2026-10-14T10:15:30-06:00","actualizadoEn":"2026-10-14T10:15:30-06:00"}],"pagina":0,"tamano":20,"totalElementos":1,"totalPaginas":1}""";
 }

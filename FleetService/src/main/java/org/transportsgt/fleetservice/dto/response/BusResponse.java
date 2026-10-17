@@ -13,7 +13,7 @@ public record BusResponse(
         String marca,
         String modelo,
         Short anioFabricacion,
-        Short capacidadPasajeros,s
+        Short capacidadPasajeros,
         EstadoOperativo estadoOperativo,
         BigDecimal kilometrajeActual,
         String fotoUrl,
