@@ -8,14 +8,25 @@ import java.util.UUID;
 
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
 
-    /** El cliente del usuario autenticado y el que actualizan UsuarioCreado/Actualizado. */
+    /**
+     * El cliente del usuario autenticado y el que actualizan UsuarioCreado/Actualizado.
+     */
     Optional<Cliente> findByIdUsuario(UUID idUsuario);
 
     boolean existsByIdUsuario(UUID idUsuario);
 
-    /** NIT único ({@code uq_cliente_nit}); recibe el NIT ya normalizado. */
+    /**
+     * Búsqueda de mostrador; recibe el NIT ya normalizado.
+     */
+    Optional<Cliente> findByNit(String nit);
+
+    /**
+     * NIT único ({@code uq_cliente_nit}); recibe el NIT ya normalizado.
+     */
     boolean existsByNitAndIdNot(String nit, UUID id);
 
-    /** DPI único ({@code uq_cliente_dpi}). */
+    /**
+     * DPI único ({@code uq_cliente_dpi}).
+     */
     boolean existsByDpiAndIdNot(String dpi, UUID id);
 }
