@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.transportsgt.eventos.payload.EstadoOperativo;
-import org.transportsgt.fleetservice.clients.ViajesClient;
+import org.transportsgt.fleetservice.clients.ConsultaViajes;
 import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.request.ActualizarBusRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarActivoRequest;
@@ -21,19 +21,15 @@ import org.transportsgt.fleetservice.exception.BusNoEncontradoException;
 import org.transportsgt.fleetservice.exception.EstadoOperativoInvalidoException;
 import org.transportsgt.fleetservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.fleetservice.exception.PlacaDuplicadaException;
-import org.transportsgt.fleetservice.exception.RegistroModificadoException;
-import org.transportsgt.fleetservice.exception.SucursalInactivaException;
-import org.transportsgt.fleetservice.exception.SucursalNoEncontradaException;
 import org.transportsgt.fleetservice.mappers.BusMapper;
 import org.transportsgt.fleetservice.models.Bus;
 import org.transportsgt.fleetservice.repositories.BusRepository;
 import org.transportsgt.fleetservice.repositories.BusSpecs;
-import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
+import org.transportsgt.fleetservice.services.AutorizacionSucursal;
 import org.transportsgt.fleetservice.services.BusService;
 import org.transportsgt.fleetservice.services.FotoService;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -42,8 +38,8 @@ import java.util.UUID;
 public class BusServiceImpl implements BusService {
 
     private final BusRepository busRepository;
-    private final SucursalRefRepository sucursalRefRepository;
-    private final ViajesClient viajesClient;
+    private final AutorizacionSucursal autorizacion;
+    private final ConsultaViajes consultaViajes;
     private final FotoService fotoService;
     private final BusMapper busMapper;
     private final EventosFlota eventos;
@@ -51,7 +47,7 @@ public class BusServiceImpl implements BusService {
     @Override
     @Transactional
     public BusResponse crear(CrearBusRequest request, UsuarioAutenticado autenticado) {
-        validarSucursalGestionada(autenticado.idSucursal());
+        autorizacion.validarSucursalGestionada(autenticado.idSucursal());
         String placa = request.placa().trim();
         if (busRepository.existsByPlacaIgnoreCase(placa)) {
             throw new PlacaDuplicadaException(placa);
@@ -91,7 +87,7 @@ public class BusServiceImpl implements BusService {
     @Override
     public BusResponse obtener(UUID id, UsuarioAutenticado autenticado) {
         Bus bus = buscar(id);
-        verificarPuedeGestionar(autenticado, bus);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
         return busMapper.toResponse(bus);
     }
 
@@ -99,8 +95,8 @@ public class BusServiceImpl implements BusService {
     @Transactional
     public BusResponse actualizar(UUID id, ActualizarBusRequest request, UsuarioAutenticado autenticado) {
         Bus bus = buscar(id);
-        verificarPuedeGestionar(autenticado, bus);
-        verificarVersion(request.version(), bus);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
+        autorizacion.verificarVersion(request.version(), bus.getVersion());
         String placa = request.placa().trim();
         if (busRepository.existsByPlacaIgnoreCaseAndIdNot(placa, id)) {
             throw new PlacaDuplicadaException(placa);
@@ -116,14 +112,14 @@ public class BusServiceImpl implements BusService {
     @Transactional
     public BusResponse cambiarActivo(UUID id, CambiarActivoRequest request, UsuarioAutenticado autenticado) {
         Bus bus = buscar(id);
-        verificarPuedeGestionar(autenticado, bus);
-        verificarVersion(request.version(), bus);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
+        autorizacion.verificarVersion(request.version(), bus.getVersion());
         boolean activo = request.activo();
         if (Boolean.valueOf(activo).equals(bus.getActivo())) {
             return busMapper.toResponse(bus);   // sin cambio: no se publica evento
         }
         // Falla cerrada: sin respuesta de Viajes no se asume que no hay viajes (plan §4.3)
-        if (!activo && viajesClient.hayViajesActivos(id)) {
+        if (!activo && consultaViajes.hayViajesActivos(id)) {
             throw new BusConViajesException(id);
         }
         bus.setActivo(activo);
@@ -141,8 +137,8 @@ public class BusServiceImpl implements BusService {
                     "EN_TRANSITO solo cambia al registrar la salida y la llegada de un viaje");
         }
         Bus bus = buscar(id);
-        verificarPuedeGestionar(autenticado, bus);
-        verificarVersion(request.version(), bus);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
+        autorizacion.verificarVersion(request.version(), bus.getVersion());
         if (request.estadoOperativo() == bus.getEstadoOperativo()) {
             return busMapper.toResponse(bus);   // sin cambio: no se publica evento
         }
@@ -156,7 +152,7 @@ public class BusServiceImpl implements BusService {
     @Transactional
     public BusResponse guardarFoto(UUID id, MultipartFile archivo, UsuarioAutenticado autenticado) {
         Bus bus = buscar(id);
-        verificarPuedeGestionar(autenticado, bus);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
         bus.setFotoUrl(fotoService.guardar(FotoService.Tipo.BUSES, id, archivo));
         return busMapper.toResponse(busRepository.saveAndFlush(bus));
     }
@@ -165,33 +161,4 @@ public class BusServiceImpl implements BusService {
         return busRepository.findById(id).orElseThrow(() -> new BusNoEncontradoException(id));
     }
 
-    /**
-     * Cada bus pertenece a una sola sucursal y el administrador solo gestiona los suyos.
-     */
-    private void verificarPuedeGestionar(UsuarioAutenticado autenticado, Bus bus) {
-        if (autenticado.esAdminSistema()) {
-            return;   // SIS consulta, no modifica (las reglas de escritura están en el SecurityConfig)
-        }
-        if (!autenticado.esAdminSucursal() || !Objects.equals(bus.getIdSucursal(), autenticado.idSucursal())) {
-            throw new OperacionNoAutorizadaException("No puede gestionar este bus");
-        }
-    }
-
-    private void validarSucursalGestionada(UUID idSucursal) {
-        if (idSucursal == null) {
-            throw new OperacionNoAutorizadaException("El token no tiene sucursal asignada");
-        }
-        if (!sucursalRefRepository.existsById(idSucursal)) {
-            throw new SucursalNoEncontradaException(idSucursal);
-        }
-        if (!sucursalRefRepository.existsByIdAndActivaTrue(idSucursal)) {
-            throw new SucursalInactivaException(idSucursal.toString());
-        }
-    }
-
-    private static void verificarVersion(Long version, Bus bus) {
-        if (version != null && !version.equals(bus.getVersion())) {
-            throw new RegistroModificadoException();
-        }
-    }
 }

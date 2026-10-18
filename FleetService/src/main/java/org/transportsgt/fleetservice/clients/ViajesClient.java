@@ -25,7 +25,7 @@ import java.util.UUID;
  * operación se rechaza con 503 (falla cerrada): nunca se asume que no hay viajes activos.
  */
 @Component
-public class ViajesClient {
+public class ViajesClient implements ConsultaViajes {
 
     private static final Logger log = LoggerFactory.getLogger(ViajesClient.class);
 
@@ -64,6 +64,7 @@ public class ViajesClient {
      *
      * @throws ViajesNoDisponibleException si Viajes no responde o el circuit breaker está abierto
      */
+    @Override
     public boolean hayViajesActivos(UUID idBus) {
         java.util.function.Supplier<Boolean> llamada = retry.decorateSupplier(() -> consulta(idBus));
         try {

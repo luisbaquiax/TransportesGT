@@ -16,19 +16,15 @@ import org.transportsgt.fleetservice.eventos.EventosFlota;
 import org.transportsgt.fleetservice.exception.ChoferNoEncontradoException;
 import org.transportsgt.fleetservice.exception.LicenciaDuplicadaException;
 import org.transportsgt.fleetservice.exception.OperacionNoAutorizadaException;
-import org.transportsgt.fleetservice.exception.RegistroModificadoException;
-import org.transportsgt.fleetservice.exception.SucursalInactivaException;
-import org.transportsgt.fleetservice.exception.SucursalNoEncontradaException;
 import org.transportsgt.fleetservice.exception.UsuarioYaEnlazadoException;
 import org.transportsgt.fleetservice.mappers.ChoferMapper;
 import org.transportsgt.fleetservice.models.Chofer;
 import org.transportsgt.fleetservice.repositories.ChoferRepository;
 import org.transportsgt.fleetservice.repositories.ChoferSpecs;
-import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
+import org.transportsgt.fleetservice.services.AutorizacionSucursal;
 import org.transportsgt.fleetservice.services.ChoferService;
 import org.transportsgt.fleetservice.services.FotoService;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -37,7 +33,7 @@ import java.util.UUID;
 public class ChoferServiceImpl implements ChoferService {
 
     private final ChoferRepository choferRepository;
-    private final SucursalRefRepository sucursalRefRepository;
+    private final AutorizacionSucursal autorizacion;
     private final FotoService fotoService;
     private final ChoferMapper choferMapper;
     private final EventosFlota eventos;
@@ -45,7 +41,7 @@ public class ChoferServiceImpl implements ChoferService {
     @Override
     @Transactional
     public ChoferResponse crear(CrearChoferRequest request, UsuarioAutenticado autenticado) {
-        validarSucursalGestionada(autenticado.idSucursal());
+        autorizacion.validarSucursalGestionada(autenticado.idSucursal());
         String licencia = request.numeroLicencia().trim();
         if (choferRepository.existsByNumeroLicencia(licencia)) {
             throw new LicenciaDuplicadaException(licencia);
@@ -88,7 +84,7 @@ public class ChoferServiceImpl implements ChoferService {
     @Override
     public ChoferResponse obtener(UUID id, UsuarioAutenticado autenticado) {
         Chofer chofer = buscar(id);
-        verificarPuedeGestionar(autenticado, chofer);
+        autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
         return choferMapper.toResponse(chofer);
     }
 
@@ -96,10 +92,8 @@ public class ChoferServiceImpl implements ChoferService {
     @Transactional
     public ChoferResponse actualizar(UUID id, ActualizarChoferRequest request, UsuarioAutenticado autenticado) {
         Chofer chofer = buscar(id);
-        verificarPuedeGestionar(autenticado, chofer);
-        if (request.version() != null && !request.version().equals(chofer.getVersion())) {
-            throw new RegistroModificadoException();
-        }
+        autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
+        autorizacion.verificarVersion(request.version(), chofer.getVersion());
         String licencia = request.numeroLicencia().trim();
         if (choferRepository.existsByNumeroLicenciaAndIdNot(licencia, id)) {
             throw new LicenciaDuplicadaException(licencia);
@@ -118,10 +112,8 @@ public class ChoferServiceImpl implements ChoferService {
     @Transactional
     public ChoferResponse cambiarActivo(UUID id, CambiarActivoRequest request, UsuarioAutenticado autenticado) {
         Chofer chofer = buscar(id);
-        verificarPuedeGestionar(autenticado, chofer);
-        if (request.version() != null && !request.version().equals(chofer.getVersion())) {
-            throw new RegistroModificadoException();
-        }
+        autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
+        autorizacion.verificarVersion(request.version(), chofer.getVersion());
         boolean activo = request.activo();
         if (Boolean.valueOf(activo).equals(chofer.getActivo())) {
             return choferMapper.toResponse(chofer);   // sin cambio: no se publica evento
@@ -136,7 +128,7 @@ public class ChoferServiceImpl implements ChoferService {
     @Transactional
     public ChoferResponse guardarFoto(UUID id, MultipartFile archivo, UsuarioAutenticado autenticado) {
         Chofer chofer = buscar(id);
-        verificarPuedeGestionar(autenticado, chofer);
+        autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
         chofer.setFotoUrl(fotoService.guardar(FotoService.Tipo.CHOFERES, id, archivo));
         return choferMapper.toResponse(choferRepository.saveAndFlush(chofer));
     }
@@ -145,27 +137,4 @@ public class ChoferServiceImpl implements ChoferService {
         return choferRepository.findById(id).orElseThrow(() -> new ChoferNoEncontradoException(id));
     }
 
-    /**
-     * Cada chofer pertenece a una sola sucursal y el administrador solo gestiona los suyos.
-     */
-    private void verificarPuedeGestionar(UsuarioAutenticado autenticado, Chofer chofer) {
-        if (autenticado.esAdminSistema()) {
-            return;   // SIS consulta, no modifica (las reglas de escritura están en el SecurityConfig)
-        }
-        if (!autenticado.esAdminSucursal() || !Objects.equals(chofer.getIdSucursal(), autenticado.idSucursal())) {
-            throw new OperacionNoAutorizadaException("No puede gestionar este chofer");
-        }
-    }
-
-    private void validarSucursalGestionada(UUID idSucursal) {
-        if (idSucursal == null) {
-            throw new OperacionNoAutorizadaException("El token no tiene sucursal asignada");
-        }
-        if (!sucursalRefRepository.existsById(idSucursal)) {
-            throw new SucursalNoEncontradaException(idSucursal);
-        }
-        if (!sucursalRefRepository.existsByIdAndActivaTrue(idSucursal)) {
-            throw new SucursalInactivaException(idSucursal.toString());
-        }
-    }
 }

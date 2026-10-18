@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Fotos de buses y choferes en disco (decisión de equipo: alternativa al bucket de Cloud Storage).
- * Se sirven por GET /fotos/{tipo}/{nombre} con lectura pública.
+ * Fotos de buses y choferes. Se sirven por GET /fotos/{tipo}/{nombre} con lectura pública.
+ * Dónde se guardan lo decide la variable {@code FOTOS_NUBE_HABILITADA}: disco local en
+ * desarrollo (por ejemplo {@code ./public/fotos}) o Cloud Storage en producción (plan §5).
  */
 public interface FotoService {
 
