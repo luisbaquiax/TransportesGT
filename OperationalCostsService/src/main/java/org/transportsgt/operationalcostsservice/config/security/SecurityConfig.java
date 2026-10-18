@@ -14,8 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Sin CORS (lo resuelve el gateway) y sin login (lo hace Identidad).
  *
- * <p>Rutas relativas al context-path {@code /v1/fleet}.
- * Lo único que cambia entre servicios es el bloque de reglas.
+ * <p>Rutas relativas al context-path {@code /v1/costs}.
  */
 @Configuration
 @EnableWebSecurity
@@ -39,11 +38,20 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Flota (ajustar en cada servicio) ----
-                        .requestMatchers(HttpMethod.GET, "/buses/**", "/choferes/**")
+                        // Depreciación
+                        .requestMatchers(HttpMethod.GET, "/costos/depreciacion/tarifa-vigente")
                                 .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
-                        .requestMatchers("/buses/**", "/choferes/**").hasRole("ADMIN_SUCURSAL")
-                        // ------------------------------------------------------------
+                        .requestMatchers(HttpMethod.GET, "/costos/depreciacion/tarifas")
+                                .hasRole("ADMIN_SISTEMA")
+                        .requestMatchers(HttpMethod.POST, "/costos/depreciacion/tarifas")
+                                .hasRole("ADMIN_SISTEMA")
+                        // Categorías (catálogo administrable)
+                        .requestMatchers("/costos/categorias/**").hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
+                        // Taller: registrar es de sucursal; lectura SUC+SIS
+                        .requestMatchers(HttpMethod.POST, "/costos/taller")
+                                .hasRole("ADMIN_SUCURSAL")
+                        .requestMatchers("/costos/taller/**", "/costos/viajes/**")
+                                .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)

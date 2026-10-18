@@ -21,9 +21,9 @@ public class OpenApiConfig {
     public OpenAPI identidadOpenApi(@Value("${server.servlet.context-path:}") String contextPath) {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Servicio de choferes y buses")
-                        .version("v1")
-                        .description("Choferes y buses de la empresa TransportsGT"))
+.title("Servicio de costos operativos")
+                        .version("1.0")
+                        .description("Costos operativos de TransportesGT: taller, combustible, depreciación y salario del chofer"))
                 .servers(List.of(new Server().url(contextPath.isBlank() ? "/" : contextPath)))
                 .components(new Components().addSecuritySchemes(ESQUEMA_JWT, new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)

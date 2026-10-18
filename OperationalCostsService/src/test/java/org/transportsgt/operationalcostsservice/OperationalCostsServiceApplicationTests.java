@@ -1,10 +1,9 @@
 package org.transportsgt.operationalcostsservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.transportsgt.operationalcostsservice.integracion.IntegracionBase;
 
-@SpringBootTest
-class OperationalCostsServiceApplicationTests {
+class OperationalCostsServiceApplicationTests extends IntegracionBase {
 
     @Test
     void contextLoads() {
