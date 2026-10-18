@@ -1,0 +1,178 @@
+{
+  "info": {
+    "name": "Costos — TransportesGT",
+    "description": "Colección para costos operativos: tarifas, categorías, taller y resumen de viaje.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8087/v1/costs" },
+    { "key": "tokenAdminSistema", "value": "" },
+    { "key": "tokenAdminSucursal", "value": "" },
+    { "key": "idBus", "value": "20000000-0000-4000-8000-000000000001" },
+    { "key": "idCategoria", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Tarifas de depreciación",
+      "item": [
+        {
+          "name": "Tarifa vigente",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/costos/depreciacion/tarifa-vigente"
+          }
+        },
+        {
+          "name": "Historial (SIS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/depreciacion/tarifas"
+          }
+        },
+        {
+          "name": "Cambiar tarifa (SIS)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"montoPorKm\": 2.50, \"vigenteDesde\": \"2026-10-18\"}"
+            },
+            "url": "{{baseUrl}}/costos/depreciacion/tarifas"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categorías",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/categorias"
+          }
+        },
+        {
+          "name": "Crear (SIS/SUC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Neumáticos\", \"descripcion\": \"Llantas y servicios\"}"
+            },
+            "url": "{{baseUrl}}/costos/categorias"
+          }
+        },
+        {
+          "name": "Actualizar (SIS/SUC)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Neumáticos\", \"descripcion\": \"Llantas y servicios\"}"
+            },
+            "url": "{{baseUrl}}/costos/categorias/{{idCategoria}}"
+          }
+        },
+        {
+          "name": "Activar/desactivar (SIS/SUC)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"activa\": false}"
+            },
+            "url": "{{baseUrl}}/costos/categorias/{{idCategoria}}/activa"
+          }
+        },
+        {
+          "name": "Eliminar (SIS/SUC)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/categorias/{{idCategoria}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Taller",
+      "item": [
+        {
+          "name": "Registrar gasto (SUC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSucursal}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idBus\": \"{{idBus}}\", \"fechaServicio\": \"2026-10-18\", \"observaciones\": \"Cambio de llantas\", \"lineas\": [{\"idCategoria\": \"{{idCategoria}}\", \"descripcion\": \"Llantas Goodyear\", \"tipo\": \"REPUESTO\", \"monto\": 1200.00}, {\"idCategoria\": \"{{idCategoria}}\", \"descripcion\": \"Mano de obra\", \"tipo\": \"MANO_DE_OBRA\", \"monto\": 300.00}]}"
+            },
+            "url": "{{baseUrl}}/costos/taller"
+          }
+        },
+        {
+          "name": "Listar gastos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/taller?pagina=0&tamano=20"
+          }
+        },
+        {
+          "name": "Detalle gasto",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/taller/{{idGasto}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Viajes",
+      "item": [
+        {
+          "name": "Resumen costos viaje",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenAdminSistema}}" }
+            ],
+            "url": "{{baseUrl}}/costos/viajes/{{idViaje}}"
+          }
+        }
+      ]
+    }
+  ]
+}

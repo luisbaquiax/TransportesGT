@@ -14,8 +14,14 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Sin CORS (lo resuelve el gateway) y sin login (lo hace Identidad).
  *
- * <p>Rutas relativas al context-path {@code /v1/fleet}.
- * Lo único que cambia entre servicios es el bloque de reglas.
+ * <p>Rutas relativas al context-path {@code /v1/rentals}.
+ * Reglas por rol (coarse-grained en Spring Security; las de negocio, en el servicio):
+ * - POST /solicitudes: cualquier usuario autenticado (cliente en línea).
+ * - POST /mostrador, /pago-mostrador: SUC o CAJ.
+ * - POST /{id}/cotizacion: SUC (la sucursal del alquiler se valida en el servicio).
+ * - POST /{id}/pago: el cliente dueño del alquiler (se valida en el servicio).
+ * - GET /mios: autenticado. GET /, /{id}: SUC o CAJ (filtros por sucursal en el servicio).
+ * - POST /admin/republicar-eventos: SIS.
  */
 @Configuration
 @EnableWebSecurity
@@ -39,11 +45,23 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Flota (ajustar en cada servicio) ----
-                        .requestMatchers(HttpMethod.GET, "/buses/**", "/choferes/**")
-                                .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
-                        .requestMatchers("/buses/**", "/choferes/**").hasRole("ADMIN_SUCURSAL")
-                        // ------------------------------------------------------------
+                        // ---- Reglas propias de Alquileres ----
+                        .requestMatchers(HttpMethod.POST, "/alquileres/solicitudes")
+                                .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/alquileres/mostrador",
+                                "/alquileres/*/pago-mostrador")
+                                .hasAnyRole("ADMIN_SUCURSAL", "CAJERO")
+                        .requestMatchers(HttpMethod.POST, "/alquileres/*/cotizacion")
+                                .hasRole("ADMIN_SUCURSAL")
+                        .requestMatchers(HttpMethod.POST, "/alquileres/*/pago")
+                                .authenticated()
+                        .requestMatchers(HttpMethod.POST, "/alquileres/admin/republicar-eventos")
+                                .hasRole("ADMIN_SISTEMA")
+                        .requestMatchers(HttpMethod.GET, "/alquileres/mios", "/alquileres/*")
+                                .authenticated()
+                        .requestMatchers(HttpMethod.GET, "/alquileres")
+                                .hasAnyRole("ADMIN_SUCURSAL", "CAJERO", "ADMIN_SISTEMA")
+                        // ---------------------------------------
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)
