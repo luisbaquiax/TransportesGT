@@ -33,3 +33,7 @@ build/
 .vscode/
 
 .env
+
+# Fotos subidas en desarrollo (no versionar binarios)
+public/
+

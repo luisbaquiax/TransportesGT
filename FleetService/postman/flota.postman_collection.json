@@ -1,0 +1,379 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "name": "TransportesGT - Flota",
+    "description": "servicio-flota. baseUrl directo: http://localhost:8082/v1/fleet · por el gateway: http://localhost:8080/v1/fleet. Ejecute primero un Login en la colección Identidad y copie el token a {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8082/v1/fleet"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "idBus",
+      "value": ""
+    },
+    {
+      "key": "idChofer",
+      "value": ""
+    },
+    {
+      "key": "idSucursal",
+      "value": "10000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Buses",
+      "item": [
+        {
+          "name": "Listar buses (ADMIN_SISTEMA ve todos)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/buses?size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses"],
+              "query": [
+                { "key": "idSucursal", "value": "", "disabled": true },
+                { "key": "estadoOperativo", "value": "", "disabled": true, "description": "DISPONIBLE, EN_TRANSITO, EN_TALLER, FUERA_DE_SERVICIO" },
+                { "key": "activo", "value": "", "disabled": true },
+                { "key": "texto", "value": "", "disabled": true, "description": "contiene en placa, marca o modelo" },
+                { "key": "size", "value": "20" },
+                { "key": "page", "value": "0" }
+              ]
+            },
+            "description": "ADMIN_SUCURSAL solo ve los de su sucursal."
+          }
+        },
+        {
+          "name": "Obtener bus por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/buses/{{idBus}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses", "{{idBus}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear bus (ADMIN_SUCURSAL)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/buses",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"P-NEW-001\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Hiace\",\n  \"anioFabricacion\": 2022,\n  \"capacidadPasajeros\": 30,\n  \"kilometrajeActual\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Guarda el id creado en {{idBus}}. Placa única sin distinguir mayúsculas."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('idBus', body.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar bus (requiere version)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/buses/{{idBus}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses", "{{idBus}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"placa\": \"P-NEW-001\",\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Coaster\",\n  \"anioFabricacion\": 2022,\n  \"capacidadPasajeros\": 30,\n  \"version\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Si version ya no coincide → 409 CONFLICTO."
+          }
+        },
+        {
+          "name": "Desactivar bus (consulta Viajes)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/buses/{{idBus}}/activo",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses", "{{idBus}}", "activo"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false,\n  \"version\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Si el bus tiene viajes programados o en tránsito → 409 BUS_CON_VIAJES. Si Viajes no responde → 503 (falla cerrada)."
+          }
+        },
+        {
+          "name": "Cambiar estado operativo",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/buses/{{idBus}}/estado-operativo",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses", "{{idBus}}", "estado-operativo"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estadoOperativo\": \"EN_TALLER\",\n  \"version\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "DISPONIBLE, EN_TALLER o FUERA_DE_SERVICIO. EN_TRANSITO solo cambia con SalidaRegistrada/LlegadaRegistrada."
+          }
+        },
+        {
+          "name": "Subir foto de bus (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "src": [],
+                  "description": "JPEG, PNG o WebP"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/buses/{{idBus}}/foto",
+              "host": ["{{baseUrl}}"],
+              "path": ["buses", "{{idBus}}", "foto"]
+            },
+            "description": "Devuelve el bus con fotoUrl pública (GET /fotos/buses/{nombre} sin token)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Choferes",
+      "item": [
+        {
+          "name": "Listar choferes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/choferes?size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes"],
+              "query": [
+                { "key": "idSucursal", "value": "", "disabled": true },
+                { "key": "activo", "value": "", "disabled": true },
+                { "key": "texto", "value": "", "disabled": true, "description": "contiene en nombre, correo o licencia" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener chofer por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/choferes/{{idChofer}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes", "{{idChofer}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear chofer (ADMIN_SUCURSAL)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/choferes",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Juan Pérez\",\n  \"correo\": \"juan.perez@transportes.gt\",\n  \"telefono\": \"5555-1234\",\n  \"numeroLicencia\": \"LIC-TEST-001\",\n  \"tipoLicencia\": \"B\",\n  \"fechaVencimientoLicencia\": \"2027-03-15\",\n  \"salarioBaseViaje\": \"150.00\",\n  \"idUsuario\": null\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Guarda el id en {{idChofer}}. Licencia única; idUsuario opcional (rol CHOFER de Identidad)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.collectionVariables.set('idChofer', body.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar chofer (requiere version)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/choferes/{{idChofer}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes", "{{idChofer}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreCompleto\": \"Juan Pérez Actualizado\",\n  \"correo\": \"juan.perez@transportes.gt\",\n  \"telefono\": \"5555-5678\",\n  \"numeroLicencia\": \"LIC-TEST-001\",\n  \"tipoLicencia\": \"C\",\n  \"fechaVencimientoLicencia\": \"2028-06-30\",\n  \"salarioBaseViaje\": \"175.00\",\n  \"version\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Activar/desactivar chofer",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/choferes/{{idChofer}}/activo",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes", "{{idChofer}}", "activo"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false,\n  \"version\": 0\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Subir foto de chofer (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "archivo",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/choferes/{{idChofer}}/foto",
+              "host": ["{{baseUrl}}"],
+              "path": ["choferes", "{{idChofer}}", "foto"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fotos (públicas, sin token)",
+      "item": [
+        {
+          "name": "Leer foto de bus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{baseUrl}}/fotos/buses/{{nombreFoto}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["fotos", "buses", "{{nombreFoto}}"]
+            },
+            "description": "nombreFoto = último segmento de fotoUrl (p. ej. <uuid>.jpg). Sin Authorization."
+          }
+        },
+        {
+          "name": "Leer foto de chofer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{baseUrl}}/fotos/choferes/{{nombreFoto}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["fotos", "choferes", "{{nombreFoto}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Administración (ADMIN_SISTEMA)",
+      "item": [
+        {
+          "name": "Republicar eventos (outbox)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/republicar-eventos",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "republicar-eventos"]
+            },
+            "description": "Encola BusRegistrado y ChoferRegistrado de todo lo existente. Idempotente."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Actuator health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

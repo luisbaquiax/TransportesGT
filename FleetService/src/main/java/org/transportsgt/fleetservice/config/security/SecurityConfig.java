@@ -26,7 +26,9 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/actuator/health/**"
+            "/actuator/health/**",
+            // Lectura de fotos: el frontend las pide en <img src> sin Authorization
+            "/fotos/**"
     };
 
     @Bean
