@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.transportsgt.eventos.payload.Canal;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.models.EstadoAlquiler;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -36,4 +38,20 @@ public interface AlquilerRepository extends JpaRepository<Alquiler, UUID>, JpaSp
     /** Bandeja del administrador: solicitudes por cotizar, cotizados sin pagar, etc. */
     List<Alquiler> findAllByIdSucursalOrigenAndEstadoInOrderByFechaHoraSalida(
             UUID idSucursalOrigen, Collection<EstadoAlquiler> estados);
+
+    /**
+     * Job de recuperación (plan §4.2): alquileres en línea cotizados cuyo pago pudo quedar en duda
+     * (Cartera no respondió o Alquileres cayó antes de confirmar). {@code limite} es cuándo
+     * {@code actualizadoEn} deja de ser reciente.
+     */
+    @Query("""
+            SELECT a FROM Alquiler a
+             WHERE a.estado = :estado
+               AND a.canal = :canal
+               AND a.idPago IS NULL
+               AND a.actualizadoEn <= :limite
+            """)
+    List<Alquiler> findPagosEnDuda(@Param("estado") EstadoAlquiler estado,
+                                   @Param("canal") Canal canal,
+                                   @Param("limite") OffsetDateTime limite);
 }

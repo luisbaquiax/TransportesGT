@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -37,12 +38,16 @@ public class CarteraClient {
     private final Retry retry;
     private final CircuitBreaker circuitBreaker;
 
+    private final String claveInterna;
+
     public CarteraClient(RestClient.Builder builder,
-                         @Value("${cartera.url:http://localhost:8085/v1/customers}") String url) {
+                         @Value("${cartera.url:http://localhost:8085/v1/customers}") String url,
+                         @Value("${alquileres.clave-interna:}") String claveInterna) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(Duration.ofSeconds(3));
         factory.setReadTimeout(Duration.ofSeconds(5));
         this.restClient = builder.baseUrl(url).requestFactory(factory).build();
+        this.claveInterna = claveInterna;
         this.retry = Retry.of("cartera", RetryConfig.custom()
                 .maxAttempts(2)
                 .waitDuration(Duration.ofMillis(300))
@@ -75,6 +80,45 @@ public class CarteraClient {
             log.warn("Circuit breaker de Cartera abierto: no se pudo cobrar el alquiler {}", idAlquiler);
             throw new ServicioNoDisponibleException("Cartera", e);
         }
+    }
+
+    /**
+     * Consulta si ya existe el pago de un alquiler (plan §4.2: recuperación de la saga).
+     * Se usa con la clave interna del job, sin token de usuario.
+     *
+     * @return el pago si existe; vacío si Cartera responde 404
+     * @throws ServicioNoDisponibleException si Cartera no responde
+     */
+    public Optional<PagoEncontrado> consultarPago(UUID idAlquiler) {
+        try {
+            Map<?, ?> respuesta = restClient.get()
+                    .uri("/cartera/pagos?tipoReferencia={tipo}&idReferencia={id}",
+                            TipoReferencia.ALQUILER.name(), idAlquiler)
+                    .header("X-Clave-Interna", claveInterna)
+                    .headers(h -> {
+                        UUID correlacion = ContextoCorrelacion.actual();
+                        if (correlacion != null) {
+                            h.set("X-Correlation-Id", correlacion.toString());
+                        }
+                    })
+                    .retrieve()
+                    .body(Map.class);
+            if (respuesta == null || respuesta.get("idPago") == null) {
+                return Optional.empty();
+            }
+            return Optional.of(new PagoEncontrado(
+                    UUID.fromString(respuesta.get("idPago").toString()),
+                    respuesta.get("fechaPago") == null ? null : LocalDate.parse(respuesta.get("fechaPago").toString())));
+        } catch (org.springframework.web.client.HttpClientErrorException.NotFound e) {
+            return Optional.empty();
+        } catch (RestClientException e) {
+            log.warn("Cartera no respondió al consultar el pago del alquiler {}: {}", idAlquiler, e.getMessage());
+            throw new ServicioNoDisponibleException("Cartera", e);
+        }
+    }
+
+    /** Resultado de {@link #consultarPago}. */
+    public record PagoEncontrado(UUID idPago, LocalDate fechaPago) {
     }
 
     private UUID ejecutar(String jwtUsuario, UUID idAlquiler, BigDecimal monto, LocalDate fechaPago, String descripcion) {
