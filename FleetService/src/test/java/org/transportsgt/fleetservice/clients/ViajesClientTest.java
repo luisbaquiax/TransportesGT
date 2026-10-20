@@ -54,7 +54,7 @@ class ViajesClientTest {
 
     private ViajesClient cliente() {
         return new ViajesClient(org.springframework.web.client.RestClient.builder(),
-                new ViajesProperties(baseUrl));
+                new ViajesProperties(baseUrl), "clave-interna-prueba");
     }
 
     @Test
