@@ -32,11 +32,14 @@ public class ViajesClient implements ConsultaViajes {
     private final RestClient restClient;
     private final Retry retry;
     private final CircuitBreaker circuitBreaker;
+    private final String claveInterna;
 
-    public ViajesClient(RestClient.Builder builder, ViajesProperties propiedades) {
+    public ViajesClient(RestClient.Builder builder, ViajesProperties propiedades,
+                        @org.springframework.beans.factory.annotation.Value("${viajes.clave-interna:}") String claveInterna) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(Duration.ofSeconds(3));
         factory.setReadTimeout(Duration.ofSeconds(3));
+        this.claveInterna = claveInterna;
         this.restClient = builder
                 .baseUrl(propiedades.url())
                 .requestFactory(factory)
@@ -83,6 +86,9 @@ public class ViajesClient implements ConsultaViajes {
                         UUID correlacion = ContextoCorrelacion.actual();
                         if (correlacion != null) {
                             encabezados.set("X-Correlation-Id", correlacion.toString());
+                        }
+                        if (claveInterna != null && !claveInterna.isBlank()) {
+                            encabezados.set("X-Clave-Interna", claveInterna);
                         }
                     })
                     .retrieve()
