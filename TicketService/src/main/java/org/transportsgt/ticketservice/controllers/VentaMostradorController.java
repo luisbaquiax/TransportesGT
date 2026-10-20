@@ -23,7 +23,7 @@ import org.transportsgt.ticketservice.dto.request.VentaMostradorRequest;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.dto.response.Resultado;
 import org.transportsgt.ticketservice.exception.RespuestaError;
-import org.transportsgt.ticketservice.services.VentaMostradorService;
+import org.transportsgt.ticketservice.services.compra.VentaMostradorService;
 
 import java.net.URI;
 

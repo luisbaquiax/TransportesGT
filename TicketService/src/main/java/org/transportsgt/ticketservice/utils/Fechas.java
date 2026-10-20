@@ -15,9 +15,6 @@ public class Fechas {
 
     public static final ZoneId ZONA_GUATEMALA = ZoneId.of("America/Guatemala");
 
-    /**
-     * Inicio (00:00) del día en Guatemala: para filtrar los viajes de una fecha.
-     */
     public OffsetDateTime inicioDelDia(LocalDate fecha) {
         return fecha.atStartOfDay(ZONA_GUATEMALA).toOffsetDateTime();
     }

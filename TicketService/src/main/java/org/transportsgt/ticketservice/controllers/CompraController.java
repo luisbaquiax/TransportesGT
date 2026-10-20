@@ -32,8 +32,8 @@ import org.transportsgt.ticketservice.dto.response.PaginaResponse;
 import org.transportsgt.ticketservice.dto.response.ResultadoCompra;
 import org.transportsgt.ticketservice.exception.RespuestaError;
 import org.transportsgt.ticketservice.models.EstadoCompra;
-import org.transportsgt.ticketservice.services.CompraEnLineaService;
-import org.transportsgt.ticketservice.services.ConsultaComprasService;
+import org.transportsgt.ticketservice.services.compra.CompraEnLineaService;
+import org.transportsgt.ticketservice.services.consulta.ConsultaComprasService;
 
 import java.net.URI;
 import java.util.UUID;

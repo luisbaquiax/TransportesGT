@@ -52,7 +52,12 @@ public class CarteraPasarelaPago implements PasarelaPago {
 
     @Override
     public UUID cobrar(String jwtComprador, UUID idCompra, BigDecimal monto, LocalDate fechaPago, String descripcion) {
-        PagoCarteraRequest cuerpo = new PagoCarteraRequest(TipoReferencia.BOLETOS, idCompra, monto, fechaPago, descripcion);
+        PagoCarteraRequest cuerpo = new PagoCarteraRequest(
+                TipoReferencia.BOLETOS,
+                idCompra,
+                monto,
+                fechaPago,
+                descripcion);
         try {
             return ejecutar(() -> cliente.pagar("Bearer " + jwtComprador, idCompra.toString(), cuerpo)).idPago();
         } catch (HttpClientErrorException e) {
@@ -63,7 +68,8 @@ public class CarteraPasarelaPago implements PasarelaPago {
     @Override
     public Optional<UUID> consultarPago(UUID idCompra) {
         try {
-            return Optional.of(ejecutar(() -> cliente.consultar(claveInterna, TipoReferencia.BOLETOS, idCompra)).idPago());
+            return Optional.of(ejecutar(() -> cliente.consultar(
+                    claveInterna, TipoReferencia.BOLETOS, idCompra)).idPago());
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         } catch (HttpClientErrorException e) {

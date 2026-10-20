@@ -22,7 +22,7 @@ import org.transportsgt.ticketservice.dto.response.AsientoMaximoResponse;
 import org.transportsgt.ticketservice.dto.response.MapaAsientosResponse;
 import org.transportsgt.ticketservice.dto.response.ViajeDisponibleResponse;
 import org.transportsgt.ticketservice.exception.RespuestaError;
-import org.transportsgt.ticketservice.services.ConsultaViajesService;
+import org.transportsgt.ticketservice.services.consulta.ConsultaViajesService;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -81,7 +81,11 @@ class CarteraPasarelaPagoTest {
     }
 
     private UUID cobrar() {
-        return pasarela.cobrar("jwt", idCompra, new BigDecimal("170.00"), FECHA, "Compra de 2 boleto(s)");
+        return pasarela.cobrar(
+                "jwt", idCompra,
+                new BigDecimal("170.00"),
+                FECHA,
+                "Compra de 2 boleto(s)");
     }
 
     @Nested
@@ -110,7 +114,8 @@ class CarteraPasarelaPagoTest {
         @Test
         void cobrar_cuandoCarteraRechaza_propagaStatusYCodigo() {
             // Arrange
-            when(cliente.pagar(anyString(), anyString(), any())).thenThrow(errorCliente(HttpStatus.UNPROCESSABLE_CONTENT,
+            when(cliente.pagar(anyString(), anyString(), any()))
+                    .thenThrow(errorCliente(HttpStatus.UNPROCESSABLE_CONTENT,
                     "{\"codigo\":\"SALDO_INSUFICIENTE\",\"error\":\"Saldo insuficiente\"}"));
 
             // Act
@@ -128,7 +133,8 @@ class CarteraPasarelaPagoTest {
         @Test
         void cobrar_cuandoElRechazoNoTraeCuerpoLegible_usaCodigoGenerico() {
             // Arrange
-            when(cliente.pagar(anyString(), anyString(), any())).thenThrow(errorCliente(HttpStatus.FORBIDDEN, "<html>"));
+            when(cliente.pagar(anyString(), anyString(), any()))
+                    .thenThrow(errorCliente(HttpStatus.FORBIDDEN, "<html>"));
 
             // Act
             PagoRechazadoException ex = assertThrows(PagoRechazadoException.class, CarteraPasarelaPagoTest.this::cobrar);
@@ -144,7 +150,8 @@ class CarteraPasarelaPagoTest {
         void cobrar_cuandoCarteraFallaConError5xx_reintentaTresVecesYReportaNoDisponible() {
             // Arrange
             when(cliente.pagar(anyString(), anyString(), any()))
-                    .thenThrow(HttpServerErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway", HttpHeaders.EMPTY,
+                    .thenThrow(HttpServerErrorException
+                            .create(HttpStatus.BAD_GATEWAY, "Bad Gateway", HttpHeaders.EMPTY,
                             new byte[0], StandardCharsets.UTF_8));
 
             // Act & Assert
@@ -198,7 +205,8 @@ class CarteraPasarelaPagoTest {
         @Test
         void consultarPago_cuandoNoHayPago_devuelveVacio() {
             // Arrange
-            when(cliente.consultar(CLAVE, TipoReferencia.BOLETOS, idCompra)).thenThrow(errorCliente(HttpStatus.NOT_FOUND, ""));
+            when(cliente.consultar(CLAVE, TipoReferencia.BOLETOS, idCompra))
+                    .thenThrow(errorCliente(HttpStatus.NOT_FOUND, ""));
 
             // Act & Assert
             assertEquals(Optional.empty(), pasarela.consultarPago(idCompra));
@@ -217,7 +225,8 @@ class CarteraPasarelaPagoTest {
         @Test
         void consultarPago_cuandoCarteraNoResponde_reportaNoDisponible() {
             // Arrange
-            when(cliente.consultar(CLAVE, TipoReferencia.BOLETOS, idCompra)).thenThrow(new ResourceAccessException("x"));
+            when(cliente.consultar(CLAVE, TipoReferencia.BOLETOS, idCompra))
+                    .thenThrow(new ResourceAccessException("x"));
 
             // Act & Assert
             assertThrows(CarteraNoDisponibleException.class, () -> pasarela.consultarPago(idCompra));

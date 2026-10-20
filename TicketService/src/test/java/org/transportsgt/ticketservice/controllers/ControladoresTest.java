@@ -29,10 +29,10 @@ import org.transportsgt.ticketservice.fixture.CompraFixture;
 import org.transportsgt.ticketservice.fixture.ViajeRefFixture;
 import org.transportsgt.ticketservice.mappers.CompraMapperImpl;
 import org.transportsgt.ticketservice.models.EstadoCompra;
-import org.transportsgt.ticketservice.services.CompraEnLineaService;
-import org.transportsgt.ticketservice.services.ConsultaComprasService;
-import org.transportsgt.ticketservice.services.ConsultaViajesService;
-import org.transportsgt.ticketservice.services.VentaMostradorService;
+import org.transportsgt.ticketservice.services.compra.CompraEnLineaService;
+import org.transportsgt.ticketservice.services.consulta.ConsultaComprasService;
+import org.transportsgt.ticketservice.services.consulta.ConsultaViajesService;
+import org.transportsgt.ticketservice.services.compra.VentaMostradorService;
 import org.transportsgt.eventos.payload.Rol;
 
 import java.time.LocalDate;

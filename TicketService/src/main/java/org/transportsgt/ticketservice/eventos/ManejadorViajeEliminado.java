@@ -2,7 +2,7 @@ package org.transportsgt.ticketservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.ticketservice.services.AnulacionViajeService;
+import org.transportsgt.ticketservice.services.compra.AnulacionViajeService;
 import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;

@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/**
- * Montos en GTQ con 2 decimales ({@code NUMERIC(12,2)}), redondeo {@link RoundingMode#HALF_UP}.
- */
 @Component
 public class Dinero {
 

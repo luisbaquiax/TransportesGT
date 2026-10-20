@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Filtros del listado de compras de una sucursal ({@code GET /boletos/compras}). Un filtro nulo no restringe.
+ * Filtros del listado de compras de una sucursal.
  */
 @Component
 public class CompraSpecs {

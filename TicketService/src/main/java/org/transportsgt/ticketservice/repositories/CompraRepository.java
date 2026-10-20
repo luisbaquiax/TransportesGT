@@ -23,9 +23,6 @@ public interface CompraRepository extends JpaRepository<Compra, UUID>, JpaSpecif
     @EntityGraph(attributePaths = "boletos")
     Optional<Compra> findConBoletosById(UUID id);
 
-    /**
-     * {@code SELECT ... FOR UPDATE}: confirmar y anular la misma compra (saga, job y ViajeEliminado) se serializan.
-     */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM Compra c WHERE c.id = :id")
     Optional<Compra> findByIdParaActualizar(@Param("id") UUID id);
@@ -42,7 +39,7 @@ public interface CompraRepository extends JpaRepository<Compra, UUID>, JpaSpecif
     Page<Compra> findHistorial(@Param("idUsuario") UUID idUsuario, @Param("nit") String nit, Pageable pageable);
 
     /**
-     * Historial cuando el perfil aún no tiene NIT: solo las compras del usuario.
+     * Historial cuando el perfil aún no tiene NIT
      */
     Page<Compra> findAllByIdUsuarioCompradorOrderByCreadoEnDesc(UUID idUsuario, Pageable pageable);
 
@@ -53,8 +50,7 @@ public interface CompraRepository extends JpaRepository<Compra, UUID>, JpaSpecif
     List<UUID> findIdsPorViajeYEstado(@Param("idViaje") UUID idViaje, @Param("estados") Collection<EstadoCompra> estados);
 
     /**
-     * Job de recuperación: compras {@code RESERVADA} cuya reserva vence antes del límite. Se usa
-     * {@code reserva_expira_en} (calculada con el {@code Clock}) y no {@code creado_en} (reloj del sistema).
+     * Job de recuperación: compras {@code RESERVADA} cuya reserva vence antes del límite.
      */
     @Query("""
             SELECT c.id FROM Compra c
