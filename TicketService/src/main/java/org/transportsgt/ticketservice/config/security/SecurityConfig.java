@@ -42,13 +42,12 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Boletos ----
+                        // Reglas propias de Boletos
                         .requestMatchers("/boletos/ventas-mostrador").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
                         .requestMatchers(HttpMethod.GET, "/boletos/compras").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
-                        // JWT reenviado por Viajes o X-Clave-Interna (ROLE_INTERNO, ver FiltroClaveInterna)
+                        // JWT reenviado por Viajes o X-Clave-Interna
                         .requestMatchers(HttpMethod.GET, "/boletos/viajes/*/asiento-maximo").authenticated()
                         .requestMatchers("/boletos/**").authenticated()
-                        // ----------------------------------
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)

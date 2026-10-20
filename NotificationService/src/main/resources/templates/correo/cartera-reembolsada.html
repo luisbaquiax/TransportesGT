@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Reembolso acreditado en tu cartera</title>
+</head>
+<body>
+<main>
+    <p th:text="|Acreditamos en tu cartera digital un reembolso por ${referencia}.|">Reembolso</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Monto reembolsado</td><td th:text="${fmt.dinero(datos.monto())}">Q 170.00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Referencia</td><td th:text="${datos.idReferencia()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Saldo disponible</td><td><strong th:text="${fmt.dinero(datos.saldoPosterior())}">Q 520.00</strong></td></tr>
+    </table>
+</main>
+</body>
+</html>

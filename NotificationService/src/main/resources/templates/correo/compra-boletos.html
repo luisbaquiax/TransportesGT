@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Confirmación de compra de boletos</title>
+</head>
+<body>
+<main>
+    <p>Tu compra quedó confirmada. Estos son los detalles:</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Compra</td><td th:text="${datos.idCompra()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Viaje</td><td th:text="${datos.idViaje()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Asientos</td><td th:text="${#strings.listJoin(datos.asientos(), ', ')}">12, 13</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Precio por boleto</td><td th:text="${fmt.dinero(datos.precioUnitario())}">Q 85.00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Total pagado</td><td><strong th:text="${fmt.dinero(datos.montoTotal())}">Q 170.00</strong></td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Fecha de pago</td><td th:text="${fmt.fecha(datos.fechaPago())}">20/10/2026</td></tr>
+    </table>
+    <p>Presenta el código de tu compra al abordar. ¡Buen viaje!</p>
+</main>
+</body>
+</html>

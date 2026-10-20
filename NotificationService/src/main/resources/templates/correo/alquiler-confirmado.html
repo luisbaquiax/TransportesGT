@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="${paraAdmin} ? 'Alquiler confirmado: asigna bus y chofer' : 'Tu alquiler está confirmado'">Alquiler confirmado</title>
+</head>
+<body>
+<main>
+    <p th:if="${paraAdmin}">Se confirmó y pagó un alquiler de tu sucursal. Asígnale bus y chofer.</p>
+    <p th:unless="${paraAdmin}">Recibimos el pago y tu alquiler quedó confirmado.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Alquiler</td><td th:text="${datos.idAlquiler()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Cliente</td><td th:text="${datos.nombreCliente()}">Cliente</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Recorrido</td><td th:text="|${datos.origen()} → ${datos.destino()}${datos.idaYVuelta() ? ' (ida y vuelta)' : ''}|">Origen → Destino</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Salida</td><td th:text="${fmt.fechaHora(datos.fechaHoraSalida())}">10/11/2026 07:00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Llegada estimada</td><td th:text="${fmt.fechaHora(datos.fechaHoraLlegadaEstimada())}">12/11/2026 20:00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Pasajeros</td><td th:text="${datos.numeroPasajeros()}">30</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Total</td><td><strong th:text="${fmt.dinero(datos.precioTotal())}">Q 3,800.00</strong></td></tr>
+    </table>
+</main>
+</body>
+</html>
