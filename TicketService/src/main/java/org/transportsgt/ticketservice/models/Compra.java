@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
+import org.transportsgt.eventos.Nit;
 import org.transportsgt.eventos.payload.Canal;
 
 import java.math.BigDecimal;
@@ -60,7 +61,7 @@ public class Compra {
     /** Normalizado; {@code CF} en mostrador sin NIT. */
     @Builder.Default
     @Column(name = "nit_comprador", nullable = false, length = 20)
-    private String nitComprador = "CF";
+    private String nitComprador = Nit.CONSUMIDOR_FINAL;
 
     @Column(name = "nombre_comprador", nullable = false, length = 150)
     private String nombreComprador;

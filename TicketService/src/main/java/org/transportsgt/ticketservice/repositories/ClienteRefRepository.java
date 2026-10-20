@@ -6,9 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.transportsgt.ticketservice.models.ClienteRef;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ClienteRefRepository extends JpaRepository<ClienteRef, UUID> {
+
+    /**
+     * Venta de mostrador con NIT pero sin nombre: si el NIT tiene cuenta, se usa el nombre de su perfil.
+     */
+    Optional<ClienteRef> findFirstByNit(String nit);
 
     /** Aplica PerfilClienteActualizado. Ignora el evento si su versión no es mayor que la guardada. */
     @Modifying
