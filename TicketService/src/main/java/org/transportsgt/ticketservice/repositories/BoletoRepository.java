@@ -44,9 +44,6 @@ public interface BoletoRepository extends JpaRepository<Boleto, UUID> {
             """)
     List<ConteoAsientos> contarOcupados(@Param("idsViaje") Collection<UUID> idsViaje);
 
-    /**
-     * {@code GET /boletos/viajes/{idViaje}/asiento-maximo} (Viajes, al cambiar de bus): 0 si no hay boletos activos.
-     */
     @Query("""
             SELECT COALESCE(MAX(b.numeroAsiento), 0) FROM Boleto b
              WHERE b.idViaje = :idViaje
