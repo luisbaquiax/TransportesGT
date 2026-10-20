@@ -1,25 +1,17 @@
 package org.transportsgt.ticketservice.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.transportsgt.eventos.payload.EstadoViaje;
 import org.transportsgt.ticketservice.models.ViajeRef;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
-public interface ViajeRefRepository extends JpaRepository<ViajeRef, UUID> {
-
-    /** Viajes a la venta: programados, no eliminados y con salida futura. */
-    List<ViajeRef> findAllByEliminadoFalseAndEstadoAndFechaHoraSalidaAfterOrderByFechaHoraSalida(
-            EstadoViaje estado, OffsetDateTime desde);
-
-    List<ViajeRef> findAllByIdRutaAndEliminadoFalseAndEstadoAndFechaHoraSalidaAfterOrderByFechaHoraSalida(
-            UUID idRuta, EstadoViaje estado, OffsetDateTime desde);
+public interface ViajeRefRepository extends JpaRepository<ViajeRef, UUID>, JpaSpecificationExecutor<ViajeRef> {
 
     /**
      * Aplica ViajeProgramado/Actualizado (solo REGULAR). Ignora el evento si su versión no es mayor que la guardada.

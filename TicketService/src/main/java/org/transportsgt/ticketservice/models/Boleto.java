@@ -30,7 +30,9 @@ public class Boleto {
     @JoinColumn(name = "id_compra", nullable = false, updatable = false)
     private Compra compra;
 
-    /** viaje_ref(id). */
+    /**
+     * viaje_ref(id).
+     */
     @Column(name = "id_viaje", nullable = false, updatable = false)
     private UUID idViaje;
 

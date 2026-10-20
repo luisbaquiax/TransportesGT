@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
+import org.transportsgt.eventos.Nit;
 import org.transportsgt.eventos.payload.Canal;
 
 import java.math.BigDecimal;
@@ -31,7 +32,9 @@ public class Compra {
     @Id
     private UUID id;
 
-    /** viaje_ref(id). */
+    /**
+     * viaje_ref(id).
+     */
     @Column(name = "id_viaje", nullable = false, updatable = false)
     private UUID idViaje;
 
@@ -53,34 +56,46 @@ public class Compra {
     @Column(name = "monto_total", nullable = false, precision = 12, scale = 2)
     private BigDecimal montoTotal;
 
-    /** Obligatorio en EN_LINEA; null en venta de mostrador sin cuenta. */
+    /**
+     * Obligatorio en EN_LINEA; null en venta de mostrador sin cuenta.
+     */
     @Column(name = "id_usuario_comprador")
     private UUID idUsuarioComprador;
 
-    /** Normalizado; {@code CF} en mostrador sin NIT. */
+    /**
+     * Normalizado; {@code CF} en mostrador sin NIT.
+     */
     @Builder.Default
     @Column(name = "nit_comprador", nullable = false, length = 20)
-    private String nitComprador = "CF";
+    private String nitComprador = Nit.CONSUMIDOR_FINAL;
 
     @Column(name = "nombre_comprador", nullable = false, length = 150)
     private String nombreComprador;
 
-    /** Movimiento de cartera (solo EN_LINEA). */
+    /**
+     * Movimiento de cartera (solo EN_LINEA).
+     */
     @Column(name = "id_pago")
     private UUID idPago;
 
-    /** Elegida por el usuario; obligatoria al confirmar. */
+    /**
+     * Elegida por el usuario; obligatoria al confirmar.
+     */
     @Column(name = "fecha_pago")
     private LocalDate fechaPago;
 
     @Column(name = "id_sucursal_ingreso", nullable = false)
     private UUID idSucursalIngreso;
 
-    /** Cajero o administrador (MOSTRADOR). */
+    /**
+     * Cajero o administrador (MOSTRADOR).
+     */
     @Column(name = "id_usuario_vendedor")
     private UUID idUsuarioVendedor;
 
-    /** Las reservas sin pago vencidas las anula un job. */
+    /**
+     * Las reservas sin pago vencidas las anula un job.
+     */
     @Column(name = "reserva_expira_en")
     private OffsetDateTime reservaExpiraEn;
 

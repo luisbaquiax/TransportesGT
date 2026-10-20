@@ -34,7 +34,9 @@ public class RecordatorioLicencia {
     @Column(name = "fecha_vencimiento", nullable = false)
     private LocalDate fechaVencimiento;
 
-    /** 30, 15 o 3. */
+    /**
+     * 30, 15 o 3.
+     */
     @Column(name = "dias_anticipacion", nullable = false)
     private Short diasAnticipacion;
 

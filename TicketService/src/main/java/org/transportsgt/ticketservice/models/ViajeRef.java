@@ -21,7 +21,9 @@ import java.util.UUID;
 @Builder
 public class ViajeRef {
 
-    /** = idViaje del evento. */
+    /**
+     * = idViaje del evento.
+     */
     @Id
     private UUID id;
 
@@ -52,7 +54,6 @@ public class ViajeRef {
     @Column(name = "placa_bus", length = 15)
     private String placaBus;
 
-    /** El trigger {@code fn_validar_asiento} valida cada asiento contra este valor. */
     @Column(name = "capacidad_bus")
     private Short capacidadBus;
 
@@ -64,7 +65,9 @@ public class ViajeRef {
     @Column(name = "eliminado", nullable = false)
     private Boolean eliminado = false;
 
-    /** versionAgregado del último evento aplicado. */
+    /**
+     * versionAgregado del último evento aplicado.
+     */
     @Column(name = "version", nullable = false)
     private Long version;
 }

@@ -22,7 +22,9 @@ public class ClienteRef {
     @Column(name = "id_usuario")
     private UUID idUsuario;
 
-    /** Normalizado; null mientras el perfil no tenga NIT (la compra en línea responde 422 PERFIL_INCOMPLETO). */
+    /**
+     * Normalizado; null mientras el perfil no tenga NIT (la compra en línea responde 422 PERFIL_INCOMPLETO).
+     */
     @Column(name = "nit", length = 20)
     private String nit;
 
@@ -32,7 +34,9 @@ public class ClienteRef {
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
-    /** versionAgregado del último evento aplicado. */
+    /**
+     * versionAgregado del último evento aplicado.
+     */
     @Column(name = "version", nullable = false)
     private Long version;
 }
