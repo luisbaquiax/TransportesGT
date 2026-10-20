@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--/* Layout común: cada plantilla pasa su <title> (el asunto) y su <main> (el contenido). */-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(titulo, contenido)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:replace="${titulo}">Asunto</title>
+</head>
+<body style="margin:0;padding:0;background:#f2f4f7;font-family:Arial,Helvetica,sans-serif;color:#1f2933;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2f4f7;padding:24px 0;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="600" cellpadding="0" cellspacing="0"
+                   style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;">
+                <tr>
+                    <td style="background:#0b4f8a;color:#ffffff;padding:20px 24px;font-size:22px;font-weight:bold;">
+                        Transportes GT
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px;font-size:15px;line-height:1.5;">
+                        <p style="margin:0 0 16px;">Hola, <strong th:text="${destinatario.nombre()}">Nombre</strong>:</p>
+                        <main th:replace="${contenido}">Contenido</main>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background:#f7f9fb;color:#6b7785;padding:16px 24px;font-size:12px;">
+                        Este es un correo automático, por favor no lo respondas.<br>
+                        Transportes GT
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

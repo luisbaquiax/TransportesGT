@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Tu contraseña fue cambiada</title>
+</head>
+<body>
+<main>
+    <p th:switch="${datos.motivo().name()}">
+        <span th:case="'ACTIVACION'">Activaste tu cuenta y definiste tu contraseña</span>
+        <span th:case="'RESTABLECIMIENTO'">Restableciste tu contraseña</span>
+        <span th:case="*">Cambiaste tu contraseña</span>
+        el <strong th:text="${fmt.fechaHora(datos.cambiadaEn())}">06/10/2026 09:12</strong>.
+    </p>
+    <p><strong>Si no fuiste tú, restablece tu contraseña</strong> desde la pantalla de inicio de sesión y avisa al
+        administrador.</p>
+</main>
+</body>
+</html>

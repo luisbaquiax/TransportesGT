@@ -14,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Sin CORS (lo resuelve el gateway) y sin login (lo hace Identidad).
  *
- * <p>Rutas relativas al context-path {@code /v1/fleet}.
+ * <p>Rutas relativas al context-path {@code /v1/notifications}.
  * Lo único que cambia entre servicios es el bloque de reglas.
  */
 @Configuration
@@ -39,11 +39,10 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Flota (ajustar en cada servicio) ----
-                        .requestMatchers(HttpMethod.GET, "/buses/**", "/choferes/**")
+                        // Reglas propias de Notificaciones
+                        .requestMatchers(HttpMethod.GET, "/notificaciones/licencias")
                                 .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
-                        .requestMatchers("/buses/**", "/choferes/**").hasRole("ADMIN_SUCURSAL")
-                        // ------------------------------------------------------------
+                        .requestMatchers("/notificaciones/**").hasRole("ADMIN_SISTEMA")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)

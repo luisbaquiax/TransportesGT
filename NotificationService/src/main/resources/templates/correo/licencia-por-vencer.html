@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="|Licencia por vencer en ${dias} días|">Licencia por vencer</title>
+</head>
+<body>
+<main>
+    <p th:if="${paraAdmin}" th:text="|La licencia del chofer ${chofer.getNombreCompleto()} vence en ${dias} días.|">Aviso admin</p>
+    <p th:unless="${paraAdmin}" th:text="|Tu licencia de conducir vence en ${dias} días. Renuévala a tiempo para seguir asignado a viajes.|">Aviso chofer</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Chofer</td><td th:text="${chofer.getNombreCompleto()}">Chofer</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Vence el</td><td><strong th:text="${fmt.fecha(fechaVencimiento)}">15/03/2027</strong></td></tr>
+    </table>
+</main>
+</body>
+</html>

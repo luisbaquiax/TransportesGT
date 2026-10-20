@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Tu alquiler ya tiene cotización</title>
+</head>
+<body>
+<main>
+    <p>Revisamos tu solicitud de alquiler. <strong>Ya puedes pagarla</strong> para confirmarla.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Alquiler</td><td th:text="${datos.idAlquiler()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Precio final</td><td><strong th:text="${fmt.dinero(datos.precioFinal())}">Q 3,800.00</strong></td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Llegada estimada</td><td th:text="${fmt.fechaHora(datos.fechaHoraLlegadaEstimada())}">12/11/2026 20:00</td></tr>
+    </table>
+</main>
+</body>
+</html>

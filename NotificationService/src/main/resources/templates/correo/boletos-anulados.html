@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Tus boletos fueron anulados</title>
+</head>
+<body>
+<main>
+    <p>Tu compra <strong th:text="${datos.idCompra()}">id</strong> fue anulada porque el viaje fue eliminado.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Viaje</td><td th:text="${datos.idViaje()}">id</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Monto</td><td th:text="${fmt.dinero(datos.montoTotal())}">Q 170.00</td></tr>
+    </table>
+    <p th:if="${reembolso}">El monto se acreditará en tu cartera digital. Recibirás otro correo cuando se aplique el reembolso.</p>
+    <p th:unless="${reembolso}">Si pagaste en la taquilla, acércate a la sucursal para gestionar la devolución.</p>
+</main>
+</body>
+</html>

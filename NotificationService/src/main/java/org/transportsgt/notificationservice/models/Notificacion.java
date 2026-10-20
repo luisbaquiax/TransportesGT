@@ -26,9 +26,9 @@ public class Notificacion {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** COMPRA_BOLETOS, LICENCIA_POR_VENCER, ALQUILER_COTIZADO, ENLACE_CONTRASENA, CONTRASENA_CAMBIADA... */
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false, length = 40)
-    private String tipo;
+    private TipoNotificacion tipo;
 
     @Column(name = "correo_destino", nullable = false, length = 150)
     private String correoDestino;
@@ -39,6 +39,9 @@ public class Notificacion {
     @Column(name = "asunto", nullable = false, length = 200)
     private String asunto;
 
+    /**
+     * HTML ya renderizado. En ENLACE_CONTRASENA, el texto fijo {@code [contenido sensible no almacenado]}.
+     */
     @Column(name = "cuerpo", nullable = false, columnDefinition = "text")
     private String cuerpo;
 
@@ -54,11 +57,15 @@ public class Notificacion {
     @Column(name = "ultimo_error", columnDefinition = "text")
     private String ultimoError;
 
-    /** Espera exponencial entre reintentos. */
+    /**
+     * Espera exponencial entre reintentos.
+     */
     @Column(name = "proximo_intento_en")
     private OffsetDateTime proximoIntentoEn;
 
-    /** {@code evt:{idEvento}:{correo}} o {@code lic:{idRecordatorio}:{correo}}. */
+    /**
+     * {@code evt:{idEvento}:{correo}} o {@code lic:{idRecordatorio}:{correo}}.
+     */
     @Column(name = "clave_dedup", nullable = false, unique = true, length = 200)
     private String claveDedup;
 
