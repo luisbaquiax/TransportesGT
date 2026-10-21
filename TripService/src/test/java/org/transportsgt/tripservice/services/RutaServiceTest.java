@@ -51,6 +51,8 @@ class RutaServiceTest {
             UUID.randomUUID(), "a@t.gt", Rol.ADMIN_SUCURSAL, XELA, "Admin");
     private final UsuarioAutenticado adminCapital = new UsuarioAutenticado(
             UUID.randomUUID(), "c@t.gt", Rol.ADMIN_SUCURSAL, CAPITAL, "Cap");
+    private final UsuarioAutenticado sistema = new UsuarioAutenticado(
+            UUID.randomUUID(), "s@t.gt", Rol.ADMIN_SISTEMA, null, "Sistema");
 
     @BeforeEach
     void setUp() {
@@ -176,13 +178,42 @@ class RutaServiceTest {
     void listarPorOrigen() {
         Ruta r = ruta();
         when(rutaRepository.findAllByIdSucursalOrigen(XELA)).thenReturn(List.of(r));
-        assertEquals(1, servicio.listar(XELA, null).size());
+        assertEquals(1, servicio.listar(XELA, null, admin).size());
     }
 
     @Test
-    void listarTodos() {
+    void listarAdminSistemaVeTodas() {
         Ruta r = ruta();
         when(rutaRepository.findAll()).thenReturn(List.of(r));
-        assertEquals(1, servicio.listar(null, null).size());
+        assertEquals(1, servicio.listar(null, null, sistema).size());
+    }
+
+    @Test
+    void listarAdminSucursalSoloVeRutasDeSuOrigen() {
+        Ruta r = ruta();
+        when(rutaRepository.findAllByIdSucursalOrigen(CAPITAL)).thenReturn(List.of(r));
+        assertEquals(1, servicio.listar(null, null, adminCapital).size());
+        verify(rutaRepository, never()).findAll();
+    }
+
+    @Test
+    void listarRechazaOrigenAjeno() {
+        assertThrows(OperacionNoAutorizadaException.class,
+                () -> servicio.listar(XELA, null, adminCapital));
+    }
+
+    @Test
+    void detallePermiteRutaPropia() {
+        Ruta r = ruta();
+        when(rutaRepository.findById(r.getId())).thenReturn(Optional.of(r));
+        assertEquals(r.getId(), servicio.detalle(r.getId(), admin).id());
+    }
+
+    @Test
+    void detalleRechazaRutaDeOtraSucursal() {
+        Ruta r = ruta();
+        when(rutaRepository.findById(r.getId())).thenReturn(Optional.of(r));
+        assertThrows(OperacionNoAutorizadaException.class,
+                () -> servicio.detalle(r.getId(), adminCapital));
     }
 }

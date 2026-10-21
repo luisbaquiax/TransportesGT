@@ -32,15 +32,24 @@ public class RutaService {
     private final EventosViaje eventos;
 
     @Transactional(readOnly = true)
-    public List<Responses.RutaResponse> listar(UUID idSucursalOrigen, UUID idSucursalDestino) {
+    public List<Responses.RutaResponse> listar(UUID idSucursalOrigen, UUID idSucursalDestino,
+                                               UsuarioAutenticado usuario) {
+        UUID origen = idSucursalOrigen;
+        if (usuario.esAdminSucursal()) {
+            if (origen != null && !usuario.perteneceASucursal(origen)) {
+                throw new OperacionNoAutorizadaException("Solo puede consultar las rutas de su sucursal");
+            }
+            origen = usuario.idSucursal();
+        }
         List<Ruta> rutas;
-        if (idSucursalOrigen != null && idSucursalDestino != null) {
+        if (origen != null && idSucursalDestino != null) {
+            final UUID origenFiltro = origen;
             rutas = rutaRepository.findAll().stream()
-                    .filter(r -> r.getIdSucursalOrigen().equals(idSucursalOrigen)
+                    .filter(r -> r.getIdSucursalOrigen().equals(origenFiltro)
                             && r.getIdSucursalDestino().equals(idSucursalDestino))
                     .toList();
-        } else if (idSucursalOrigen != null) {
-            rutas = rutaRepository.findAllByIdSucursalOrigen(idSucursalOrigen);
+        } else if (origen != null) {
+            rutas = rutaRepository.findAllByIdSucursalOrigen(origen);
         } else {
             rutas = rutaRepository.findAll();
         }
@@ -48,8 +57,11 @@ public class RutaService {
     }
 
     @Transactional(readOnly = true)
-    public Responses.RutaResponse detalle(UUID id) {
+    public Responses.RutaResponse detalle(UUID id, UsuarioAutenticado usuario) {
         Ruta r = rutaRepository.findById(id).orElseThrow(() -> new RutaNoEncontradaException(id));
+        if (usuario.esAdminSucursal() && !usuario.perteneceASucursal(r.getIdSucursalOrigen())) {
+            throw new OperacionNoAutorizadaException("La ruta no pertenece a su sucursal");
+        }
         return toResponse(r);
     }
 

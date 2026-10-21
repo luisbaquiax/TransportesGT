@@ -51,8 +51,9 @@ public class RutaController {
             @Parameter(description = "Filtrar por sucursal de origen")
             @RequestParam(required = false) UUID idSucursalOrigen,
             @Parameter(description = "Filtrar por sucursal de destino")
-            @RequestParam(required = false) UUID idSucursalDestino) {
-        return rutaService.listar(idSucursalOrigen, idSucursalDestino);
+            @RequestParam(required = false) UUID idSucursalDestino,
+            @AuthenticationPrincipal Jwt jwt) {
+        return rutaService.listar(idSucursalOrigen, idSucursalDestino, UsuarioAutenticado.de(jwt));
     }
 
     @GetMapping("/{id}")
@@ -63,8 +64,8 @@ public class RutaController {
             @ApiResponse(responseCode = "404", description = "No existe",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
-    public Responses.RutaResponse detalle(@PathVariable UUID id) {
-        return rutaService.detalle(id);
+    public Responses.RutaResponse detalle(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+        return rutaService.detalle(id, UsuarioAutenticado.de(jwt));
     }
 
     @PostMapping
