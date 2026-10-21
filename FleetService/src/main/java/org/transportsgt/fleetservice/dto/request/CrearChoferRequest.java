@@ -2,6 +2,7 @@ package org.transportsgt.fleetservice.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -36,7 +37,8 @@ public record CrearChoferRequest(
         @NotNull TipoLicencia tipoLicencia,
 
         @Schema(example = "2027-03-15")
-        @NotNull LocalDate fechaVencimientoLicencia,
+        @NotNull @FutureOrPresent(message = "la fecha de vencimiento no puede estar en el pasado")
+        LocalDate fechaVencimientoLicencia,
 
         @Schema(example = "150.00")
         @NotNull @DecimalMin(value = "0") @Digits(integer = 8, fraction = 2) BigDecimal salarioBaseViaje,

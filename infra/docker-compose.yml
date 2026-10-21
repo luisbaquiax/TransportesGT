@@ -88,6 +88,9 @@ services:
       SPRING_DATASOURCE_USERNAME: svc_flota
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_flota
       SERVER_PORT: 8082
+      # Flota consulta Viajes antes de desactivar un bus (GET /viajes/activos)
+      VIAJES_URL: http://trip-service:8083/v1/trips
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
     ports:
       - "8082:8082"
     depends_on:
@@ -107,6 +110,7 @@ services:
       SPRING_DATASOURCE_USERNAME: svc_viajes
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_viajes
       SERVER_PORT: 8083
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
     ports:
       - "8083:8083"
     depends_on:
