@@ -12,7 +12,20 @@ import org.transportsgt.fleetservice.models.Chofer;
 @Mapper(componentModel = "spring")
 public interface ChoferMapper {
 
+    /** fotoUrl nunca expone la referencia interna: es la ruta privada GET /choferes/{id}/foto. */
+    @Mapping(target = "fotoUrl", expression = "java(rutaFoto(chofer))")
     ChoferResponse toResponse(Chofer chofer);
+
+    /**
+     * Ruta relativa al context-path del servicio (/v1/fleet). {@code v} cambia con cada versión del registro y
+     * con cada foto nueva, para que el navegador no use una copia vieja de su caché.
+     */
+    default String rutaFoto(Chofer chofer) {
+        if (chofer.getFotoUrl() == null || chofer.getFotoUrl().isBlank()) {
+            return null;
+        }
+        return "/choferes/" + chofer.getId() + "/foto?v=" + (chofer.getVersion() == null ? 0 : chofer.getVersion());
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fotoUrl", ignore = true)

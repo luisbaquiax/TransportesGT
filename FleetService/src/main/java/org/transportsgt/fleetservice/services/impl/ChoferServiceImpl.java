@@ -15,6 +15,7 @@ import org.transportsgt.fleetservice.dto.response.PaginaResponse;
 import org.transportsgt.fleetservice.eventos.EventosFlota;
 import org.transportsgt.fleetservice.exception.ChoferNoEncontradoException;
 import org.transportsgt.fleetservice.exception.LicenciaDuplicadaException;
+import org.transportsgt.fleetservice.exception.FotoNoEncontradaException;
 import org.transportsgt.fleetservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.fleetservice.exception.UsuarioYaEnlazadoException;
 import org.transportsgt.fleetservice.mappers.ChoferMapper;
@@ -25,6 +26,7 @@ import org.transportsgt.fleetservice.services.AutorizacionSucursal;
 import org.transportsgt.fleetservice.services.ChoferService;
 import org.transportsgt.fleetservice.services.FotoService;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -130,7 +132,18 @@ public class ChoferServiceImpl implements ChoferService {
         Chofer chofer = buscar(id);
         autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
         chofer.setFotoUrl(fotoService.guardar(FotoService.Tipo.CHOFERES, id, archivo));
+        // Fuerza una versión nueva aunque la clave no cambie (misma extensión): la fotoUrl que ve el
+        // frontend lleva ?v={version} y así el navegador no muestra la foto anterior desde su caché.
+        chofer.setActualizadoEn(OffsetDateTime.now());
         return choferMapper.toResponse(choferRepository.saveAndFlush(chofer));
+    }
+
+    @Override
+    public FotoService.FotoLeida leerFoto(UUID id, UsuarioAutenticado autenticado) {
+        Chofer chofer = buscar(id);
+        autorizacion.verificarGestion(autenticado, chofer.getIdSucursal(), "chofer");
+        return fotoService.leerGuardada(FotoService.Tipo.CHOFERES, chofer.getFotoUrl())
+                .orElseThrow(FotoNoEncontradaException::new);
     }
 
     private Chofer buscar(UUID id) {

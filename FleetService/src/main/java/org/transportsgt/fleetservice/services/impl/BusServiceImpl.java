@@ -19,6 +19,7 @@ import org.transportsgt.fleetservice.eventos.EventosFlota;
 import org.transportsgt.fleetservice.exception.BusConViajesException;
 import org.transportsgt.fleetservice.exception.BusNoEncontradoException;
 import org.transportsgt.fleetservice.exception.EstadoOperativoInvalidoException;
+import org.transportsgt.fleetservice.exception.FotoNoEncontradaException;
 import org.transportsgt.fleetservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.fleetservice.exception.PlacaDuplicadaException;
 import org.transportsgt.fleetservice.mappers.BusMapper;
@@ -30,6 +31,7 @@ import org.transportsgt.fleetservice.services.BusService;
 import org.transportsgt.fleetservice.services.FotoService;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -154,7 +156,18 @@ public class BusServiceImpl implements BusService {
         Bus bus = buscar(id);
         autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
         bus.setFotoUrl(fotoService.guardar(FotoService.Tipo.BUSES, id, archivo));
+        // Fuerza una versión nueva aunque la clave no cambie (misma extensión): la fotoUrl que ve el
+        // frontend lleva ?v={version} y así el navegador no muestra la foto anterior desde su caché.
+        bus.setActualizadoEn(OffsetDateTime.now());
         return busMapper.toResponse(busRepository.saveAndFlush(bus));
+    }
+
+    @Override
+    public FotoService.FotoLeida leerFoto(UUID id, UsuarioAutenticado autenticado) {
+        Bus bus = buscar(id);
+        autorizacion.verificarGestion(autenticado, bus.getIdSucursal(), "bus");
+        return fotoService.leerGuardada(FotoService.Tipo.BUSES, bus.getFotoUrl())
+                .orElseThrow(FotoNoEncontradaException::new);
     }
 
     private Bus buscar(UUID id) {

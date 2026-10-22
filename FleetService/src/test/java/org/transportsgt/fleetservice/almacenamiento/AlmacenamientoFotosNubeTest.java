@@ -52,7 +52,7 @@ class AlmacenamientoFotosNubeTest {
     }
 
     @Test
-    void guardarSubeConLecturaPublicaYDevuelveUrlGoogle() {
+    void guardarSubeElObjetoPrivadoSinAcl() {
         Storage storage = mock(Storage.class);
         Page<Blob> vacia = paginaVacia();
         when(vacia.iterateAll()).thenReturn(List.of());
@@ -62,25 +62,23 @@ class AlmacenamientoFotosNubeTest {
 
         String url = almacenamiento.guardar(CLAVE, new byte[]{1}, "image/jpeg");
 
+        // La referencia se guarda en foto_url pero nunca se expone: las fotos se sirven por el servicio
         assertEquals("https://storage.googleapis.com/" + BUCKET + "/" + CLAVE, url);
-        verify(storage).create(any(BlobInfo.class), eq(new byte[]{1}), any(Storage.BlobTargetOption.class));
+        verify(storage).create(any(BlobInfo.class), eq(new byte[]{1}));
     }
 
     @Test
-    void guardarSinAclParaBucketDeAccesoUniforme() {
+    void guardarNoPideLecturaPublica() {
         Storage storage = mock(Storage.class);
         Page<Blob> vacia = paginaVacia();
         when(vacia.iterateAll()).thenReturn(List.of());
         when(storage.list(anyString(), any(Storage.BlobListOption.class))).thenReturn(vacia);
-        when(storage.create(any(BlobInfo.class), any(byte[].class), any(Storage.BlobTargetOption.class)))
-                .thenThrow(prohibido());
         AlmacenamientoFotosNube almacenamiento =
                 new AlmacenamientoFotosNube(propiedades(), () -> storage);
 
-        String url = almacenamiento.guardar(CLAVE, new byte[]{2}, "image/jpeg");
+        almacenamiento.guardar(CLAVE, new byte[]{2}, "image/jpeg");
 
-        assertEquals("https://storage.googleapis.com/" + BUCKET + "/" + CLAVE, url);
-        verify(storage).create(any(BlobInfo.class), eq(new byte[]{2}));
+        verify(storage, never()).create(any(BlobInfo.class), any(byte[].class), any(Storage.BlobTargetOption.class));
     }
 
     @Test

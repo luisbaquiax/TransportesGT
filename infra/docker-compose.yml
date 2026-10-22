@@ -60,7 +60,6 @@ services:
       context: ../IdentityService
       dockerfile: Dockerfile
     container_name: transporte-identity
-    restart: unless-stopped
     environment: &service-environment
       SPRING_DATASOURCE_USERNAME: svc_identidad
       SPRING_DATASOURCE_PASSWORD: ${SVC_DB_PASSWORD}
@@ -82,7 +81,6 @@ services:
       context: ../FleetService
       dockerfile: Dockerfile
     container_name: transporte-fleet
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_flota
@@ -102,7 +100,6 @@ services:
       context: ../TripService
       dockerfile: Dockerfile
     container_name: transporte-trips
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_viajes
@@ -122,7 +119,6 @@ services:
       context: ../TicketService
       dockerfile: Dockerfile
     container_name: transporte-tickets
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_boletos
@@ -143,7 +139,6 @@ services:
       context: ../CustomerWalletService
       dockerfile: Dockerfile
     container_name: transporte-customers
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_clientes
@@ -163,7 +158,6 @@ services:
       context: ../PrivateRentalService
       dockerfile: Dockerfile
     container_name: transporte-rentals
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_alquileres
@@ -184,7 +178,6 @@ services:
       context: ../OperationalCostsService
       dockerfile: Dockerfile
     container_name: transporte-costs
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_costos
@@ -203,7 +196,6 @@ services:
       context: ../NotificationService
       dockerfile: Dockerfile
     container_name: transporte-notifications
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_notificaciones
@@ -229,7 +221,6 @@ services:
       context: ../ReportingService
       dockerfile: Dockerfile
     container_name: transporte-reports
-    restart: unless-stopped
     environment:
       <<: *service-environment
       SPRING_DATASOURCE_USERNAME: svc_reportes
@@ -250,7 +241,6 @@ services:
       context: ../ApiGateway
       dockerfile: Dockerfile
     container_name: transporte-gateway
-    restart: unless-stopped
     environment:
       JWT_SECRET: ${JWT_SECRET:-d766b3eb3a78dbbbda222d3341f38fa7e3674868102221b384598fbb596586b2}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}

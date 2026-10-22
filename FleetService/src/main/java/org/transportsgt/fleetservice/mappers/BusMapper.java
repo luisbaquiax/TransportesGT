@@ -12,7 +12,20 @@ import org.transportsgt.fleetservice.models.Bus;
 @Mapper(componentModel = "spring")
 public interface BusMapper {
 
+    /** fotoUrl nunca expone la referencia interna: es la ruta privada GET /buses/{id}/foto. */
+    @Mapping(target = "fotoUrl", expression = "java(rutaFoto(bus))")
     BusResponse toResponse(Bus bus);
+
+    /**
+     * Ruta relativa al context-path del servicio (/v1/fleet). {@code v} cambia con cada versión del registro y
+     * con cada foto nueva, para que el navegador no use una copia vieja de su caché.
+     */
+    default String rutaFoto(Bus bus) {
+        if (bus.getFotoUrl() == null || bus.getFotoUrl().isBlank()) {
+            return null;
+        }
+        return "/buses/" + bus.getId() + "/foto?v=" + (bus.getVersion() == null ? 0 : bus.getVersion());
+    }
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "estadoOperativo", ignore = true)

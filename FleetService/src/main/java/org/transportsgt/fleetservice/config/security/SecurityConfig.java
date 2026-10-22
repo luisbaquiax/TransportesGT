@@ -26,9 +26,7 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/actuator/health/**",
-            // Lectura de fotos: el frontend las pide en <img src> sin Authorization
-            "/fotos/**"
+            "/actuator/health/**"
     };
 
     @Bean
@@ -42,6 +40,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
                         // ---- Reglas propias de Flota (ajustar en cada servicio) ----
+                        // Fotos privadas: se leen por GET /buses/{id}/foto y /choferes/{id}/foto (reglas de abajo).
+                        // GET /fotos/** queda solo para administradores mientras se retira (sin control por sucursal).
+                        .requestMatchers(HttpMethod.GET, "/fotos/**")
+                                .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
                         .requestMatchers(HttpMethod.GET, "/buses/**", "/choferes/**")
                                 .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL")
                         .requestMatchers("/buses/**", "/choferes/**").hasRole("ADMIN_SUCURSAL")
