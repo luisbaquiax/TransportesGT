@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -165,14 +166,14 @@ class ControladoresTest {
             // Arrange
             PaginaResponse<CompraResponse> pagina = new PaginaResponse<>(List.of(compra), 0, 20, 1, 1);
             ArgumentCaptor<UsuarioAutenticado> usuario = ArgumentCaptor.forClass(UsuarioAutenticado.class);
-            when(consultaCompras.mias(usuario.capture(), eq(0), eq(20))).thenReturn(pagina);
+            when(consultaCompras.mias(usuario.capture(), isNull(), eq(0), eq(20))).thenReturn(pagina);
             when(consultaCompras.detalle(any(), eq(compra.idCompra()))).thenReturn(compra);
             when(consultaCompras.listado(any(), eq(compra.idViaje()), eq(EstadoCompra.CONFIRMADA), eq(0), eq(20)))
                     .thenReturn(pagina);
 
             // Act & Assert
             assertAll(
-                    () -> assertSame(pagina, controlador.mias(0, 20, jwt)),
+                    () -> assertSame(pagina, controlador.mias(null, 0, 20, jwt)),
                     () -> assertEquals(idUsuario, usuario.getValue().id()),
                     () -> assertSame(compra, controlador.detalle(compra.idCompra(), jwt)),
                     () -> assertSame(pagina, controlador.listado(compra.idViaje(), EstadoCompra.CONFIRMADA, 0, 20, jwt))

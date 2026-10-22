@@ -69,6 +69,26 @@ public class ViajeController {
                 UsuarioAutenticado.de(jwt));
     }
 
+    @GetMapping("/resumen")
+    @Operation(summary = "Resumen público de varios viajes",
+            description = "Para el historial de compras: origen, destino, horarios, precio y placa, sin datos del chofer "
+                    + "ni registros de salida o llegada. Cualquier usuario autenticado. Los ids inexistentes o de "
+                    + "viajes eliminados se omiten. Máximo " + ViajeService.MAX_IDS_RESUMEN + " ids, separados por coma.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Viajes encontrados, por hora de salida",
+                    content = @Content(schema = @Schema(implementation = Responses.ViajeResumenResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Sin ids, más del máximo o un id inválido",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class))),
+            @ApiResponse(responseCode = "401", description = "Sin token",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class)))
+    })
+    public List<Responses.ViajeResumenResponse> resumen(
+            @Parameter(description = "Ids de viaje separados por coma", required = true,
+                    example = "50000000-0000-4000-8000-000000000001")
+            @RequestParam List<UUID> ids) {
+        return viajeService.resumen(ids);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Detalle de un viaje", description = "Incluye los registros de salida y llegada si existen.")
     @ApiResponses({

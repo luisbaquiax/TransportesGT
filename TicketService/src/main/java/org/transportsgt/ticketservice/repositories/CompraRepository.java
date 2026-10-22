@@ -30,18 +30,28 @@ public interface CompraRepository extends JpaRepository<Compra, UUID>, JpaSpecif
     /**
      * Historial del usuario autenticado: sus compras en línea y las de mostrador hechas con su NIT (también las
      * anteriores a crear la cuenta). {@code nit} sale de cliente_ref, nunca de la petición.
+     * {@code estado} es opcional: {@code null} trae todas.
      */
     @Query("""
             SELECT c FROM Compra c
-             WHERE c.idUsuarioComprador = :idUsuario OR c.nitComprador = :nit
+             WHERE (c.idUsuarioComprador = :idUsuario OR c.nitComprador = :nit)
+               AND (:estado IS NULL OR c.estado = :estado)
              ORDER BY c.creadoEn DESC
             """)
-    Page<Compra> findHistorial(@Param("idUsuario") UUID idUsuario, @Param("nit") String nit, Pageable pageable);
+    Page<Compra> findHistorial(@Param("idUsuario") UUID idUsuario, @Param("nit") String nit,
+                               @Param("estado") EstadoCompra estado, Pageable pageable);
 
     /**
-     * Historial cuando el perfil aún no tiene NIT
+     * Historial cuando el perfil aún no tiene NIT. {@code estado} es opcional: {@code null} trae todas.
      */
-    Page<Compra> findAllByIdUsuarioCompradorOrderByCreadoEnDesc(UUID idUsuario, Pageable pageable);
+    @Query("""
+            SELECT c FROM Compra c
+             WHERE c.idUsuarioComprador = :idUsuario
+               AND (:estado IS NULL OR c.estado = :estado)
+             ORDER BY c.creadoEn DESC
+            """)
+    Page<Compra> findHistorialSinNit(@Param("idUsuario") UUID idUsuario, @Param("estado") EstadoCompra estado,
+                                     Pageable pageable);
 
     /**
      * ViajeEliminado: compras que hay que anular (cada una se anula con bloqueo).

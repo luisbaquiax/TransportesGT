@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,11 +72,11 @@ class ConsultaComprasServiceImplTest {
         void mias_cuandoElPerfilTieneNit_buscaPorUsuarioYPorNit() {
             // Arrange
             when(visibilidad.nitDe(usuario)).thenReturn(Optional.of(ClienteRefFixture.NIT));
-            when(compraRepository.findHistorial(eq(idUsuario), eq(ClienteRefFixture.NIT), any(Pageable.class)))
+            when(compraRepository.findHistorial(eq(idUsuario), eq(ClienteRefFixture.NIT), isNull(), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(compra), PageRequest.of(0, 20), 1));
 
             // Act
-            PaginaResponse<CompraResponse> pagina = servicio.mias(usuario, 0, 20);
+            PaginaResponse<CompraResponse> pagina = servicio.mias(usuario, null, 0, 20);
 
             // Assert
             assertAll(
@@ -88,11 +89,11 @@ class ConsultaComprasServiceImplTest {
         void mias_cuandoElPerfilNoTieneNit_buscaSoloPorUsuario() {
             // Arrange
             when(visibilidad.nitDe(usuario)).thenReturn(Optional.empty());
-            when(compraRepository.findAllByIdUsuarioCompradorOrderByCreadoEnDesc(eq(idUsuario), any(Pageable.class)))
+            when(compraRepository.findHistorialSinNit(eq(idUsuario), isNull(), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(), PageRequest.of(1, 5), 0));
 
             // Act
-            PaginaResponse<CompraResponse> pagina = servicio.mias(usuario, 1, 5);
+            PaginaResponse<CompraResponse> pagina = servicio.mias(usuario, null, 1, 5);
 
             // Assert
             assertEquals(1, pagina.pagina());

@@ -33,12 +33,12 @@ public class ConsultaComprasServiceImpl implements ConsultaComprasService {
     private final CompraMapper compraMapper;
 
     @Override
-    public PaginaResponse<CompraResponse> mias(UsuarioAutenticado usuario, int pagina, int tamano) {
+    public PaginaResponse<CompraResponse> mias(UsuarioAutenticado usuario, EstadoCompra estado, int pagina, int tamano) {
         PageRequest pedido = PageRequest.of(pagina, tamano);
         Optional<String> nit = visibilidad.nitDe(usuario);
         Page<Compra> compras = nit.isPresent()
-                ? compraRepository.findHistorial(usuario.id(), nit.get(), pedido)
-                : compraRepository.findAllByIdUsuarioCompradorOrderByCreadoEnDesc(usuario.id(), pedido);
+                ? compraRepository.findHistorial(usuario.id(), nit.get(), estado, pedido)
+                : compraRepository.findHistorialSinNit(usuario.id(), estado, pedido);
         return PaginaResponse.de(compras, compraMapper::toResponse);
     }
 

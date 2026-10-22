@@ -43,7 +43,10 @@ public class ThymeleafRenderizadorCorreo implements RenderizadorCorreo {
             throw new IllegalStateException("La plantilla " + plantilla(tipo) + " no tiene <title>");
         }
         return titulo.group(1).strip().replaceAll("\\s+", " ")
-                .replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&#39;", "'")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&quot;", "\"")
+                .replace("&#39;", "'")
                 .replace("&amp;", "&");
     }
 }

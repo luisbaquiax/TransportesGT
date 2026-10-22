@@ -95,12 +95,14 @@ public class CompraController {
     @GetMapping("/mias")
     @Operation(summary = "Mi historial de compras",
             description = "Compras en línea del usuario y ventas de mostrador hechas con su NIT (también las anteriores a "
-                    + "crear la cuenta). El NIT sale del perfil, nunca de un parámetro.")
+                    + "crear la cuenta). El NIT sale del perfil, nunca de un parámetro. Filtro opcional por estado.")
     @ApiResponse(responseCode = "200", description = "Página de compras")
-    public PaginaResponse<CompraResponse> mias(@RequestParam(defaultValue = "0") @Min(0) int pagina,
-                                               @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
-                                               @AuthenticationPrincipal Jwt jwt) {
-        return consultaCompras.mias(UsuarioAutenticado.de(jwt), pagina, tamano);
+    public PaginaResponse<CompraResponse> mias(
+            @Parameter(description = "RESERVADA, CONFIRMADA o ANULADA") @RequestParam(required = false) EstadoCompra estado,
+            @RequestParam(defaultValue = "0") @Min(0) int pagina,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
+            @AuthenticationPrincipal Jwt jwt) {
+        return consultaCompras.mias(UsuarioAutenticado.de(jwt), estado, pagina, tamano);
     }
 
     @GetMapping("/{idCompra}")

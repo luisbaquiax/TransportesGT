@@ -13,9 +13,9 @@ import java.util.UUID;
 public interface ConsultaComprasService {
 
     /**
-     * Historial: las compras del usuario y las de mostrador con su NIT
+     * Historial: las compras del usuario y las de mostrador con su NIT. {@code estado} es opcional.
      */
-    PaginaResponse<CompraResponse> mias(UsuarioAutenticado usuario, int pagina, int tamano);
+    PaginaResponse<CompraResponse> mias(UsuarioAutenticado usuario, EstadoCompra estado, int pagina, int tamano);
 
     /**
      * El comprador ve las suyas; SUC y CAJ, las de su sucursal; SIS, todas. Si no le corresponde, 404.

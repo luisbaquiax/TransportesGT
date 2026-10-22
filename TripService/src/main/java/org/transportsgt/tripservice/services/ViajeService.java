@@ -36,9 +36,14 @@ import org.transportsgt.tripservice.repositories.ViajeRepository;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.transportsgt.tripservice.models.SucursalRef;
 
 /**
@@ -49,6 +54,9 @@ import org.transportsgt.tripservice.models.SucursalRef;
 @Service
 @RequiredArgsConstructor
 public class ViajeService {
+
+    /** Máximo de ids por consulta de resumen: coincide con el tamaño máximo de página del historial de Boletos. */
+    public static final int MAX_IDS_RESUMEN = 100;
 
     private static final EnumSet<EstadoViaje> ESTADOS_ACTIVOS =
             EnumSet.of(EstadoViaje.PROGRAMADO, EstadoViaje.EN_TRANSITO);
@@ -92,6 +100,35 @@ public class ViajeService {
         Viaje v = cargar(id);
         autorizarLectura(v, usuario);
         return toResponse(v);
+    }
+
+    /**
+     * Resumen público de varios viajes (historial de compras de cualquier usuario). Los ids que no existen, o cuyo
+     * viaje se eliminó, se omiten. Sin restricción de sucursal: solo expone datos que ya son públicos al vender.
+     */
+    @Transactional(readOnly = true)
+    public List<Responses.ViajeResumenResponse> resumen(List<UUID> ids) {
+        Set<UUID> unicos = ids == null ? Set.of() : new LinkedHashSet<>(ids);
+        unicos.remove(null);
+        if (unicos.isEmpty()) {
+            throw new SolicitudInvalidaException("Indique al menos un id de viaje");
+        }
+        if (unicos.size() > MAX_IDS_RESUMEN) {
+            throw new SolicitudInvalidaException("Máximo " + MAX_IDS_RESUMEN + " ids por consulta");
+        }
+        List<Viaje> viajes = viajeRepository.findAllConRutaByIdInOrderByFechaHoraSalida(unicos);
+        Set<UUID> idsBuses = viajes.stream().map(Viaje::getIdBus).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> placas = busRefRepository.findAllById(idsBuses).stream()
+                .collect(Collectors.toMap(BusRef::getId, BusRef::getPlaca));
+        return viajes.stream()
+                .map(v -> new Responses.ViajeResumenResponse(
+                        v.getId(), v.getTipoViaje(), v.getEstado(),
+                        v.getRuta() == null ? null : v.getRuta().getId(),
+                        v.getIdSucursalOrigen(), v.getNombreOrigen(), v.getNombreDestino(),
+                        v.getFechaHoraSalida(), v.getFechaHoraLlegadaEstimada(), v.getPrecioBoleto(),
+                        v.getIdBus() == null ? null : placas.get(v.getIdBus())))
+                .toList();
     }
 
     @Transactional(readOnly = true)
