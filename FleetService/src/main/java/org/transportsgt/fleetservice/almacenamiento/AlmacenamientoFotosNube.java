@@ -7,6 +7,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Almacenamiento en Google Cloud Storage (producción, plan §5 decisión 1).
+ * Almacenamiento en Google Cloud Storage.
  *
  * <p>Se activa <b>solo</b> con variables de entorno, sin tocar código:
  * </p>
@@ -41,11 +42,14 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
     private final Supplier<Storage> proveedor;
     private volatile Storage storage;
 
+    @Autowired
     public AlmacenamientoFotosNube(FotosProperties propiedades) {
         this(propiedades, () -> StorageOptions.getDefaultInstance().getService());
     }
 
-    /** Constructor para pruebas: permite sustituir el cliente de Cloud Storage. */
+    /**
+     * Constructor para pruebas: permite sustituir el cliente de Cloud Storage.
+     */
     AlmacenamientoFotosNube(FotosProperties propiedades, Supplier<Storage> proveedor) {
         this.propiedades = propiedades;
         this.proveedor = proveedor;
@@ -124,7 +128,9 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
         return punto < 0 ? clave + "." : clave.substring(0, punto + 1);
     }
 
-    /** Cliente HTTP a Cloud Storage; se crea al primer uso para no frenar el arranque. */
+    /**
+     * Cliente HTTP a Cloud Storage; se crea al primer uso para no frenar el arranque.
+     */
     private Storage storage() {
         Storage actual = storage;
         if (actual == null) {

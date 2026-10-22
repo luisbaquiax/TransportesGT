@@ -16,7 +16,9 @@ public class Fechas {
 
     private final Clock clock;
 
-    /** Hoy en Guatemala: decide qué avisos de licencia ya pasaron y cuáles toca enviar. */
+    /**
+     * Hoy en Guatemala: decide qué avisos de licencia ya pasaron y cuáles toca enviar.
+     */
     public LocalDate hoy() {
         return LocalDate.now(clock.withZone(ZONA_GUATEMALA));
     }
@@ -25,7 +27,9 @@ public class Fechas {
         return OffsetDateTime.now(clock.withZone(ZONA_GUATEMALA));
     }
 
-    /** 00:00 del día en Guatemala: para filtrar la bitácora por fecha. */
+    /**
+     * 00:00 del día en Guatemala: para filtrar la bitácora por fecha.
+     */
     public OffsetDateTime inicioDelDia(LocalDate fecha) {
         return fecha.atStartOfDay(ZONA_GUATEMALA).toOffsetDateTime();
     }

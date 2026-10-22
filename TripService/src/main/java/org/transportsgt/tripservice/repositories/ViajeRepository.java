@@ -18,6 +18,10 @@ public interface ViajeRepository extends JpaRepository<Viaje, UUID>, JpaSpecific
     @EntityGraph(attributePaths = "ruta")
     Optional<Viaje> findConRutaById(UUID id);
 
+    /** GET /viajes/resumen?ids= (historial de compras): varios viajes con su ruta en una sola consulta. */
+    @EntityGraph(attributePaths = "ruta")
+    List<Viaje> findAllConRutaByIdInOrderByFechaHoraSalida(Collection<UUID> ids);
+
     /** Idempotencia al consumir AlquilerConfirmado. */
     Optional<Viaje> findByIdAlquiler(UUID idAlquiler);
 

@@ -53,6 +53,25 @@ public final class Responses {
     ) {
     }
 
+    /**
+     * Datos públicos de un viaje para el historial de compras. Sin chofer, kilometraje ni registros de salida o
+     * llegada: lo consulta cualquier usuario autenticado.
+     */
+    public record ViajeResumenResponse(
+            UUID id,
+            TipoViaje tipoViaje,
+            EstadoViaje estado,
+            UUID idRuta,
+            UUID idSucursalOrigen,
+            String nombreOrigen,
+            String nombreDestino,
+            OffsetDateTime fechaHoraSalida,
+            OffsetDateTime fechaHoraLlegadaEstimada,
+            BigDecimal precioBoleto,
+            String placaBus
+    ) {
+    }
+
     public record RegistroSalidaResponse(
             UUID id,
             OffsetDateTime fechaHoraSalidaReal,

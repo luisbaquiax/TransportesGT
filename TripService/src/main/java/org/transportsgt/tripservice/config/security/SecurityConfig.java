@@ -68,6 +68,9 @@ public class SecurityConfig {
                                 .hasRole("ADMIN_SUCURSAL")
                         .requestMatchers(HttpMethod.DELETE, "/rutas/*")
                                 .hasRole("ADMIN_SUCURSAL")
+                        // Resumen público para el historial de compras: antes de /viajes/*
+                        .requestMatchers(HttpMethod.GET, "/viajes/resumen")
+                                .authenticated()
                         .requestMatchers(HttpMethod.GET, "/viajes", "/viajes/*")
                                 .hasAnyRole("ADMIN_SISTEMA", "ADMIN_SUCURSAL", "CAJERO", "CHOFER")
                         .requestMatchers(HttpMethod.POST, "/viajes")
