@@ -29,7 +29,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/fotos")
 @RequiredArgsConstructor
-@Tag(name = "Fotos", description = "Lectura de fotos de buses y choferes (pública)")
+@Tag(name = "Fotos (obsoleto)", description = "Ruta anterior de lectura de fotos. Ya no es pública: solo "
+        + "administradores y sin control por sucursal. Use GET /buses/{id}/foto y GET /choferes/{id}/foto.")
+@Deprecated(forRemoval = true)
 public class FotosController {
 
     private static final Map<String, FotoService.Tipo> TIPOS = Map.of(
@@ -40,7 +42,7 @@ public class FotosController {
 
     @GetMapping("/{tipo}/{nombre}")
     @Operation(summary = "Obtener una foto",
-            description = "Sirve la imagen guardada en disco (JPEG, PNG o WebP). Lectura pública.")
+            description = "Obsoleto: sirve la imagen guardada (JPEG, PNG o WebP) a administradores.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Imagen",
                     content = @Content(mediaType = MediaType.IMAGE_JPEG_VALUE)),
@@ -59,7 +61,7 @@ public class FotosController {
         return fotoService.leer(tipoEnum, nombre)
                 .map(resource -> ResponseEntity.ok()
                         .contentType(tipado(nombre))
-                        .cacheControl(org.springframework.http.CacheControl.maxAge(java.time.Duration.ofDays(7)))
+                        .cacheControl(org.springframework.http.CacheControl.maxAge(java.time.Duration.ofDays(7)).cachePrivate())
                         .body(resource))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

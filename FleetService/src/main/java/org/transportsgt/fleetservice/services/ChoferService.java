@@ -38,7 +38,12 @@ public interface ChoferService {
     ChoferResponse cambiarActivo(UUID id, CambiarActivoRequest request, UsuarioAutenticado autenticado);
 
     /**
-     * Guarda la foto en disco y deja la URL en foto_url.
+     * Guarda la foto (disco o bucket privado) y deja su referencia interna en foto_url.
      */
     ChoferResponse guardarFoto(UUID id, MultipartFile archivo, UsuarioAutenticado autenticado);
+
+    /**
+     * Foto privada del chofer, con la misma autorización por sucursal que al consultarlo. 404 si no tiene foto.
+     */
+    FotoService.FotoLeida leerFoto(UUID id, UsuarioAutenticado autenticado);
 }

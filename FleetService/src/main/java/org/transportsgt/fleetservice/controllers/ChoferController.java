@@ -11,11 +11,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -38,7 +41,9 @@ import org.transportsgt.fleetservice.dto.response.ChoferResponse;
 import org.transportsgt.fleetservice.dto.response.PaginaResponse;
 import org.transportsgt.fleetservice.exception.RespuestaError;
 import org.transportsgt.fleetservice.services.ChoferService;
+import org.transportsgt.fleetservice.services.FotoService;
 
+import java.time.Duration;
 import java.util.UUID;
 
 @RestController
@@ -167,11 +172,31 @@ public class ChoferController {
         return choferService.cambiarActivo(id, request, UsuarioAutenticado.de(jwt));
     }
 
+    @GetMapping("/{id}/foto")
+    @Operation(summary = "Obtener la foto de un chofer",
+            description = "Foto privada: misma autorización que GET /{id} (SIS ve todas; SUC solo las de su sucursal). "
+                    + "La fotoUrl de la respuesta del chofer apunta aquí con ?v={version} para invalidar la caché.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Imagen (JPEG, PNG o WebP)"),
+            @ApiResponse(responseCode = "403", description = "El chofer es de otra sucursal",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class))),
+            @ApiResponse(responseCode = "404", description = "No existe o no tiene foto",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class)))
+    })
+    public ResponseEntity<Resource> leerFoto(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+        FotoService.FotoLeida foto = choferService.leerFoto(id, UsuarioAutenticado.de(jwt));
+        return ResponseEntity.ok()
+                .contentType(foto.tipo())
+                // private: solo la caché del navegador, nunca una compartida (proxy/CDN)
+                .cacheControl(CacheControl.maxAge(Duration.ofDays(1)).cachePrivate())
+                .body(foto.contenido());
+    }
+
     @PostMapping("/{id}/foto")
     @PreAuthorize(SOLO_ADMIN_SUCURSAL)
     @Operation(summary = "Subir la foto de un chofer",
             description = "multipart/form-data con el campo 'archivo' (JPEG, PNG o WebP, máximo 5 MB). "
-                    + "Guarda la imagen en disco y deja la URL en foto_url.",
+                    + "Guarda la imagen (privada: se lee con GET /{id}/foto) y deja su referencia en foto_url.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
                     mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                     examples = @ExampleObject(value = "archivo=@chofer.jpg"))))

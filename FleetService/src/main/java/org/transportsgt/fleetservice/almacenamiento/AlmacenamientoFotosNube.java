@@ -29,9 +29,8 @@ import java.util.function.Supplier;
  * </pre>
  *
  * <p>Credenciales: <i>Application Default Credentials</i> (variable anterior o cuenta de
- * servicio de la plataforma). El objeto se sube con lectura pública para que la
- * {@code foto_url} funcione en {@code <img src>}; si el bucket tiene acceso uniforme por
- * niveles, se avisa y conviene dar {@code roles/storage.objectViewer} a {@code allUsers}.
+ * servicio de la plataforma). Los objetos son privados: el bucket no debe dar lectura a
+ * {@code allUsers}; el servicio los lee con su cuenta y los sirve con la autorización del registro.
  */
 @Slf4j
 @Component
@@ -65,16 +64,9 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
         // Borra también las extensiones anteriores al reemplazar (png/webp → jpg)
         borrarPorPrefijo(baseSinExtension(clave));
         BlobInfo info = BlobInfo.newBuilder(bucket(), clave).setContentType(contentType).build();
-        try {
-            storage().create(info, contenido, Storage.BlobTargetOption.predefinedAcl(
-                    Storage.PredefinedAcl.PUBLIC_READ));
-        } catch (StorageException e) {
-            // Bucket con acceso uniforme por niveles: no acepta ACL por objeto; se sube
-            // igual y la lectura pública se habilita con roles/storage.objectViewer a allUsers.
-            log.warn("No se pudo poner {} público con ACL (¿acceso uniforme del bucket?): {}. "
-                    + "Se sube el objeto igual.", clave, e.getMessage());
-            storage().create(info, contenido);
-        }
+        // Objeto privado (sin ACL pública): solo lo lee la cuenta de servicio y se sirve por
+        // GET /buses/{id}/foto o /choferes/{id}/foto con la autorización del registro.
+        storage().create(info, contenido);
         log.debug("Foto subida al bucket {} como {}", bucket(), clave);
         return urlPublica(clave);
     }

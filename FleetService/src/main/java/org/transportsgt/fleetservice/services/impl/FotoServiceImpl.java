@@ -2,6 +2,7 @@ package org.transportsgt.fleetservice.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.transportsgt.fleetservice.almacenamiento.AlmacenamientoFotos;
@@ -78,8 +79,27 @@ public class FotoServiceImpl implements FotoService {
     }
 
     @Override
+    public Optional<FotoLeida> leerGuardada(Tipo tipo, String fotoGuardada) {
+        if (fotoGuardada == null || fotoGuardada.isBlank()) {
+            return Optional.empty();
+        }
+        // foto_url puede traer la URL completa (registros anteriores) o la clave: basta el nombre del archivo
+        String nombre = fotoGuardada.substring(fotoGuardada.lastIndexOf('/') + 1);
+        return leer(tipo, nombre).map(contenido -> new FotoLeida(contenido, tipoDe(nombre)));
+    }
+
+    @Override
     public void borrar(Tipo tipo, UUID id) {
         almacenamiento.borrarPorPrefijo(carpeta(tipo) + "/" + id + ".");
+    }
+
+    private static MediaType tipoDe(String nombre) {
+        String extension = nombre.substring(nombre.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
+        return switch (extension) {
+            case "png" -> MediaType.IMAGE_PNG;
+            case "webp" -> MediaType.parseMediaType("image/webp");
+            default -> MediaType.IMAGE_JPEG;
+        };
     }
 
     private static String carpeta(Tipo tipo) {

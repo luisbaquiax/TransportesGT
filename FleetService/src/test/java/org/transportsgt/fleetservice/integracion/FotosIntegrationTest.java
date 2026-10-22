@@ -3,6 +3,7 @@ package org.transportsgt.fleetservice.integracion;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.transportsgt.eventos.payload.Rol;
 
 import java.util.UUID;
 
@@ -10,12 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Fotos de buses/choferes: subida a almacenamiento local (directorio de prueba),
- * servida sin token (ruta pública), reemplazo de extensión y validación de formato.
+ * Fotos privadas de buses/choferes: subida a almacenamiento local (directorio de prueba), lectura con token por
+ * GET /buses/{id}/foto y /choferes/{id}/foto con autorización por sucursal, reemplazo y validación de formato.
+ * La ruta anterior GET /fotos/** ya no es pública (queda para administradores mientras se retira).
  */
 class FotosIntegrationTest extends IntegracionBase {
 
@@ -26,45 +29,87 @@ class FotosIntegrationTest extends IntegracionBase {
             (byte) 0x90, 0x77, 0x53, (byte) 0xDE, 0, 0, 0, 0, 0x49, 0x45, 0x4E, 0x44, (byte) 0xAE,
             0x42, 0x60, (byte) 0x82};
 
-    @Test
-    void subirFotoDeBusYServirlaSinToken() throws Exception {
-        String id = crearBus(unico("PFOT"));
-        MockMultipartFile archivo =
-                new MockMultipartFile("archivo", "bus-frontal.jpg", "image/jpeg", JPEG);
-
-        mockMvc.perform(conToken(multipart("/buses/" + id + "/foto").file(archivo), tokenAdminSucursal()))
+    private String subirFotoBus(String id, MockMultipartFile archivo) throws Exception {
+        return leer(mockMvc.perform(conToken(multipart("/buses/" + id + "/foto").file(archivo), tokenAdminSucursal()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.fotoUrl").isNotEmpty());
+                .andReturn()).get("fotoUrl").asString();
+    }
 
-        String nombre = nombreFotoDeBus(id);
-        // Pública: el frontend la pide en <img src> sin Authorization
-        mockMvc.perform(get("/fotos/buses/" + nombre))
+    @Test
+    void subirFotoDeBusYLeerlaConToken() throws Exception {
+        String id = crearBus(unico("PFOT"));
+        String fotoUrl = subirFotoBus(id, new MockMultipartFile("archivo", "bus-frontal.jpg", "image/jpeg", JPEG));
+
+        // La respuesta no expone la referencia interna ni la URL del almacenamiento
+        assertThat(fotoUrl).startsWith("/buses/" + id + "/foto?v=");
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_JPEG))
+                .andExpect(header().string("Cache-Control", org.hamcrest.Matchers.containsString("private")))
                 .andExpect(content().bytes(JPEG));
+        // ADMIN_SISTEMA consulta todas las sucursales
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSistema()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void fotoDeBusEsPrivada() throws Exception {
+        String id = crearBus(unico("PPRI"));
+        subirFotoBus(id, new MockMultipartFile("archivo", "privada.jpg", "image/jpeg", JPEG));
+
+        mockMvc.perform(get("/buses/" + id + "/foto"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), token(Rol.CLIENTE, null)))
+                .andExpect(status().isForbidden());
+        // Administrador de otra sucursal
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), token(Rol.ADMIN_SUCURSAL, CAPITAL)))
+                .andExpect(status().isForbidden());
+        // La ruta anterior ya no es pública
+        String nombre = nombreFoto("SELECT foto_url FROM bus WHERE id = ?", id);
+        mockMvc.perform(get("/fotos/buses/" + nombre))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(conToken(get("/fotos/buses/" + nombre), token(Rol.CLIENTE, null)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void busSinFotoDevuelve404() throws Exception {
+        String id = crearBus(unico("PSIN"));
+        mockMvc.perform(conToken(get("/buses/" + id), tokenAdminSucursal()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fotoUrl").isEmpty());
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("FOTO_NO_ENCONTRADA"));
     }
 
     @Test
     void reemplazarConOtraExtensionEliminaLaAnterior() throws Exception {
         String id = crearBus(unico("PREP"));
-        MockMultipartFile jpg =
-                new MockMultipartFile("archivo", "cambio.jpg", "image/jpeg", JPEG);
-        MockMultipartFile png =
-                new MockMultipartFile("archivo", "cambio.png", "image/png", PNG);
+        String urlJpg = subirFotoBus(id, new MockMultipartFile("archivo", "cambio.jpg", "image/jpeg", JPEG));
+        String nombreJpg = nombreFoto("SELECT foto_url FROM bus WHERE id = ?", id);
 
-        mockMvc.perform(conToken(multipart("/buses/" + id + "/foto").file(jpg), tokenAdminSucursal()))
-                .andExpect(status().isOk());
-        String nombreJpg = nombreFotoDeBus(id);
-
-        mockMvc.perform(conToken(multipart("/buses/" + id + "/foto").file(png), tokenAdminSucursal()))
-                .andExpect(status().isOk());
-        String nombrePng = nombreFotoDeBus(id);
+        String urlPng = subirFotoBus(id, new MockMultipartFile("archivo", "cambio.png", "image/png", PNG));
+        String nombrePng = nombreFoto("SELECT foto_url FROM bus WHERE id = ?", id);
 
         assertThat(nombrePng).endsWith(".png").isNotEqualTo(nombreJpg);
-        mockMvc.perform(get("/fotos/buses/" + nombrePng)).andExpect(status().isOk());
-        // La anterior ya no existe (en disco se borró y el registro se actualizó)
-        mockMvc.perform(get("/fotos/buses/" + nombreJpg)).andExpect(status().isNotFound());
+        assertThat(urlPng).isNotEqualTo(urlJpg);
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_PNG))
+                .andExpect(content().bytes(PNG));
+        // La anterior ya no existe (se borró del almacenamiento)
+        mockMvc.perform(conToken(get("/fotos/buses/" + nombreJpg), tokenAdminSucursal()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void reemplazarConLaMismaExtensionCambiaLaFotoUrl() throws Exception {
+        // Misma clave en el almacenamiento: la ?v= debe cambiar para que el navegador no use su caché
+        String id = crearBus(unico("PMIS"));
+        String primera = subirFotoBus(id, new MockMultipartFile("archivo", "a.jpg", "image/jpeg", JPEG));
+        String segunda = subirFotoBus(id, new MockMultipartFile("archivo", "b.jpg", "image/jpeg", JPEG));
+        assertThat(segunda).isNotEqualTo(primera);
     }
 
     @Test
@@ -78,24 +123,20 @@ class FotosIntegrationTest extends IntegracionBase {
     }
 
     @Test
-    void fotoDeChoferYRutaPublica() throws Exception {
+    void fotoDeChoferPrivada() throws Exception {
         String id = crearChofer(unico("LICF"));
         MockMultipartFile archivo =
                 new MockMultipartFile("archivo", "chofer.jpg", "image/jpeg", JPEG);
         mockMvc.perform(conToken(multipart("/choferes/" + id + "/foto").file(archivo), tokenAdminSucursal()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fotoUrl").isNotEmpty());
-        String nombre = nombreFoto("SELECT foto_url FROM chofer WHERE id = ?", id);
-        mockMvc.perform(get("/fotos/choferes/" + nombre)).andExpect(status().isOk());
-    }
-
-    private String nombreFotoDeBus(String idBus) {
-        return nombreFoto("SELECT foto_url FROM bus WHERE id = ?", idBus);
-    }
-
-    private String nombreFoto(String consulta, String id) {
-        String url = jdbc.queryForObject(consulta, String.class, java.util.UUID.fromString(id));
-        return url.substring(url.lastIndexOf('/') + 1);
+                .andExpect(jsonPath("$.fotoUrl").value(org.hamcrest.Matchers.startsWith("/choferes/" + id + "/foto?v=")));
+        mockMvc.perform(conToken(get("/choferes/" + id + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isOk())
+                .andExpect(content().bytes(JPEG));
+        mockMvc.perform(get("/choferes/" + id + "/foto"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(conToken(get("/choferes/" + id + "/foto"), token(Rol.ADMIN_SUCURSAL, CAPITAL)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -105,5 +146,12 @@ class FotosIntegrationTest extends IntegracionBase {
         mockMvc.perform(conToken(multipart("/buses/" + UUID.randomUUID() + "/foto").file(archivo),
                         tokenAdminSucursal()))
                 .andExpect(status().isNotFound());
+        mockMvc.perform(conToken(get("/buses/" + UUID.randomUUID() + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isNotFound());
+    }
+
+    private String nombreFoto(String consulta, String id) {
+        String url = jdbc.queryForObject(consulta, String.class, UUID.fromString(id));
+        return url.substring(url.lastIndexOf('/') + 1);
     }
 }
