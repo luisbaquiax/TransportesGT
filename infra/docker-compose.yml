@@ -209,6 +209,13 @@ services:
       SPRING_DATASOURCE_USERNAME: svc_notificaciones
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_notificaciones
       SERVER_PORT: 8088
+      MAIL_HOST: ${MAIL_HOST:-localhost}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-false}
+      MAIL_REMITENTE: ${MAIL_REMITENTE:-Transportes GT <no-responder@transportes.gt>}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
     ports:
       - "8088:8088"
     depends_on:
@@ -228,6 +235,8 @@ services:
       SPRING_DATASOURCE_USERNAME: svc_reportes
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_reportes
       SERVER_PORT: 8089
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-${MAIL_USERNAME:-}}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-${MAIL_PASSWORD:-}}
     ports:
       - "8089:8089"
     depends_on:
