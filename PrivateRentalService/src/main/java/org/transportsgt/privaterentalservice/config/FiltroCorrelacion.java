@@ -36,7 +36,7 @@ public class FiltroCorrelacion extends OncePerRequestFilter {
         }
     }
 
-    private static UUID leer(String valor) {
+    private UUID leer(String valor) {
         if (valor != null) {
             try {
                 return UUID.fromString(valor.trim());

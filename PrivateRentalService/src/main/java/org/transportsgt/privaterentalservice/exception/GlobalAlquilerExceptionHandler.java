@@ -2,6 +2,7 @@ package org.transportsgt.privaterentalservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,17 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
-/** Traduce toda excepción a {@link RespuestaError}: { timestamp, status, error, codigo, ruta }. */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalAlquilerExceptionHandler {
 
     private static final String PG_UNICO = "23505";
     private static final String PG_LLAVE_FORANEA = "23503";
     private static final String PG_CHECK = "23514";
     private static final String PG_RAISE = "P0001";
+
+    private final FabricaRespuestaError fabricaRespuestaError;
 
     @ExceptionHandler(AlquilerException.class)
     public ResponseEntity<RespuestaError> handleAlquiler(AlquilerException ex, HttpServletRequest request) {
@@ -151,6 +154,6 @@ public class GlobalAlquilerExceptionHandler {
     private ResponseEntity<RespuestaError> build(HttpStatus status, String mensaje, String codigo,
                                                  HttpServletRequest request) {
         return ResponseEntity.status(status)
-                .body(RespuestaError.de(status, mensaje, codigo, request.getRequestURI()));
+                .body(fabricaRespuestaError.crear(status, mensaje, codigo, request.getRequestURI()));
     }
 }

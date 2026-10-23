@@ -27,13 +27,13 @@ public record SolicitudAlquilerRequest(
         @Schema(example = "2026-11-12T18:00:00-06:00")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime fechaHoraRetorno,
         @Schema(example = "45") @NotNull @Min(1) @Max(300) Integer numeroPasajeros,
-        @Schema(example = "14.8347", type = "number") @DecimalMin(value = "-90") @Digits(integer = 2, fraction = 6)
+        @Schema(example = "14.8347", type = "number") @Digits(integer = 2, fraction = 6)
         BigDecimal latitudOrigen,
-        @Schema(example = "-91.5181", type = "number") @DecimalMin(value = "-180") @Digits(integer = 3, fraction = 6)
+        @Schema(example = "-91.5181", type = "number") @Digits(integer = 3, fraction = 6)
         BigDecimal longitudOrigen,
-        @Schema(example = "14.6427", type = "number") @DecimalMin(value = "-90") @Digits(integer = 2, fraction = 6)
+        @Schema(example = "14.6427", type = "number") @Digits(integer = 2, fraction = 6)
         BigDecimal latitudDestino,
-        @Schema(example = "-90.5133", type = "number") @DecimalMin(value = "-180") @Digits(integer = 3, fraction = 6)
+        @Schema(example = "-90.5133", type = "number") @Digits(integer = 3, fraction = 6)
         BigDecimal longitudDestino,
         @Schema(example = "205.50", type = "string")
         @DecimalMin(value = "0.01") @Digits(integer = 6, fraction = 2) BigDecimal distanciaEstimadaKm

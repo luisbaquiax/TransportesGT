@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.transportsgt.eventos.payload.Canal;
 import org.transportsgt.privaterentalservice.clients.CarteraClient;
-import org.transportsgt.privaterentalservice.eventos.EventosAlquiler;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.models.EstadoAlquiler;
 import org.transportsgt.privaterentalservice.repositories.AlquilerRepository;
+import org.transportsgt.privaterentalservice.services.comun.CalendarioGuatemala;
+import org.transportsgt.privaterentalservice.services.pago.ConfirmadorAlquiler;
+import org.transportsgt.privaterentalservice.dto.PagoRealizado;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -33,12 +35,13 @@ public class JobRecuperacionPagoAlquiler {
 
     private final AlquilerRepository alquilerRepository;
     private final CarteraClient carteraClient;
-    private final EventosAlquiler eventos;
+    private final ConfirmadorAlquiler confirmador;
+    private final CalendarioGuatemala calendario;
 
     @Scheduled(fixedDelayString = "${alquileres.recuperacion.intervalo-ms:60000}")
     @Transactional
     public void recuperarPagosEnDuda() {
-        OffsetDateTime limite = OffsetDateTime.now().minus(UMBRAL_EN_DUDA);
+        OffsetDateTime limite = calendario.ahora().minus(UMBRAL_EN_DUDA);
         List<Alquiler> candidatos = alquilerRepository.findPagosEnDuda(
                 EstadoAlquiler.COTIZADO, Canal.EN_LINEA, limite);
         if (candidatos.isEmpty()) {
@@ -47,20 +50,16 @@ public class JobRecuperacionPagoAlquiler {
         log.info("Job recuperación: {} alquiler(es) cotizado(s) en línea sin pago", candidatos.size());
         for (Alquiler a : candidatos) {
             try {
-                carteraClient.consultarPago(a.getId()).ifPresent(pago -> confirmar(a, pago.idPago(), pago.fechaPago()));
+                carteraClient.consultarPago(a.getId()).ifPresent(pago -> {
+                    LocalDate fecha = pago.fechaPago() != null ? pago.fechaPago() : calendario.hoy();
+                    confirmador.confirmar(a, new PagoRealizado(pago.idPago(), fecha));
+                    log.info("Job recuperación: alquiler {} confirmado con el pago {} ya existente en Cartera",
+                            a.getId(), pago.idPago());
+                });
             } catch (Exception e) {
                 // Cartera no responde: no hace nada; se reintenta en el siguiente ciclo.
                 log.warn("No se pudo consultar el pago del alquiler {}: {}", a.getId(), e.getMessage());
             }
         }
-    }
-
-    private void confirmar(Alquiler a, java.util.UUID idPago, LocalDate fechaPago) {
-        a.setIdPago(idPago);
-        a.setFechaPago(fechaPago != null ? fechaPago : LocalDate.now());
-        a.setEstado(EstadoAlquiler.CONFIRMADO);
-        alquilerRepository.save(a);
-        eventos.alquilerConfirmado(a);
-        log.info("Job recuperación: alquiler {} confirmado con pago {} (pago existente en Cartera)", a.getId(), idPago);
     }
 }

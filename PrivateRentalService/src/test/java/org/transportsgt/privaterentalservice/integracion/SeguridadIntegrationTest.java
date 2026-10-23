@@ -27,6 +27,8 @@ class SeguridadIntegrationTest extends IntegracionBase {
                 .andExpect(status().isUnauthorized());
         mockMvc.perform(post("/alquileres/admin/republicar-eventos"))
                 .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/alquileres/tarifas/vigente")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/alquileres/tarifas")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -54,13 +56,23 @@ class SeguridadIntegrationTest extends IntegracionBase {
     }
 
     @Test
-    void republicarSoloAdminSistema() throws Exception {
-        mockMvc.perform(post("/alquileres/admin/republicar-eventos")
-                        .header("Authorization", "Bearer " + tokenAdminSucursal()))
-                .andExpect(status().isForbidden());
-        mockMvc.perform(post("/alquileres/admin/republicar-eventos")
-                        .header("Authorization", "Bearer " + tokenCajero()))
-                .andExpect(status().isForbidden());
+    void tarifasSoloLasGestionaAdminSistema() throws Exception {
+        String cuerpo = json("""
+                {"precioPorKm":"12.00","precioPorDia":"600.00","vigenteDesde":"2030-01-01"}""");
+        for (String token : new String[]{tokenAdminSucursal(), tokenCajero(), tokenCliente()}) {
+            mockMvc.perform(get("/alquileres/tarifas").header("Authorization", "Bearer " + token))
+                    .andExpect(status().isForbidden());
+            mockMvc.perform(post("/alquileres/tarifas").header("Authorization", "Bearer " + token)
+                            .contentType(MediaType.APPLICATION_JSON).content(cuerpo))
+                    .andExpect(status().isForbidden());
+        }
+    }
+
+    @Test
+    void tarifaVigenteLaVeCualquierAutenticado() throws Exception {
+        mockMvc.perform(get("/alquileres/tarifas/vigente").header("Authorization", "Bearer " + tokenCliente()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.precioPorKm").exists());
     }
 
     @Test

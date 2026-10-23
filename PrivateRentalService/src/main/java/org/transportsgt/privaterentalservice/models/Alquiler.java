@@ -38,18 +38,24 @@ public class Alquiler {
     @Column(name = "estado", nullable = false, length = 15)
     private EstadoAlquiler estado = EstadoAlquiler.SOLICITADO;
 
-    /** Null si se solicitó en mostrador sin cuenta. */
+    /**
+     * Null si se solicitó en mostrador sin cuenta.
+     */
     @Column(name = "id_usuario_cliente")
     private UUID idUsuarioCliente;
 
     @Column(name = "nombre_cliente", nullable = false, length = 150)
     private String nombreCliente;
 
-    /** Normalizado; {@code CF} en mostrador sin NIT. */
+    /**
+     * Normalizado; {@code CF} en mostrador sin NIT.
+     */
     @Column(name = "nit_cliente", nullable = false, length = 20)
     private String nitCliente;
 
-    /** sucursal_ref(id). También es la sucursal del ingreso. */
+    /**
+     * sucursal_ref(id). También es la sucursal del ingreso.
+     */
     @Column(name = "id_sucursal_origen", nullable = false)
     private UUID idSucursalOrigen;
 
@@ -62,11 +68,15 @@ public class Alquiler {
     @Column(name = "fecha_hora_salida", nullable = false)
     private OffsetDateTime fechaHoraSalida;
 
-    /** Obligatoria si es ida y vuelta. */
+    /**
+     * Obligatoria si es ida y vuelta.
+     */
     @Column(name = "fecha_hora_retorno")
     private OffsetDateTime fechaHoraRetorno;
 
-    /** La fija el administrador al cotizar; en ida y vuelta, el regreso al origen. */
+    /**
+     * La fija el administrador al cotizar; en ida y vuelta, el regreso al origen.
+     */
     @Column(name = "fecha_hora_llegada_estimada")
     private OffsetDateTime fechaHoraLlegadaEstimada;
 
@@ -106,19 +116,27 @@ public class Alquiler {
     @Column(name = "precio_final", precision = 12, scale = 2)
     private BigDecimal precioFinal;
 
-    /** Movimiento de cartera; null si se pagó en efectivo en mostrador. */
+    /**
+     * Movimiento de cartera; null si se pagó en efectivo en mostrador.
+     */
     @Column(name = "id_pago")
     private UUID idPago;
 
-    /** Elegida por el usuario. */
+    /**
+     * Elegida por el usuario.
+     */
     @Column(name = "fecha_pago")
     private LocalDate fechaPago;
 
-    /** Se llena al consumir ViajeProgramado. */
+    /**
+     * Se llena al consumir ViajeProgramado.
+     */
     @Column(name = "id_viaje")
     private UUID idViaje;
 
-    /** Se llenan al consumir ViajeActualizado. */
+    /**
+     * Se llenan al consumir ViajeActualizado.
+     */
     @Column(name = "id_bus")
     private UUID idBus;
 
@@ -130,6 +148,12 @@ public class Alquiler {
 
     @Column(name = "nombre_chofer", length = 150)
     private String nombreChofer;
+
+    /**
+     * Versión del último evento de viaje aplicado (ViajeProgramado/Actualizado); ignora los que llegan tarde.
+     */
+    @Column(name = "version_viaje")
+    private Long versionViaje;
 
     @Column(name = "motivo_cancelacion", length = 30)
     private String motivoCancelacion;

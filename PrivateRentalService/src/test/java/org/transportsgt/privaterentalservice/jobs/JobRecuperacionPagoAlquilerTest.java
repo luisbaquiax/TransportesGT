@@ -11,6 +11,10 @@ import org.transportsgt.privaterentalservice.eventos.EventosAlquiler;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.models.EstadoAlquiler;
 import org.transportsgt.privaterentalservice.repositories.AlquilerRepository;
+import org.transportsgt.privaterentalservice.services.comun.GuardadoAlquiler;
+import org.transportsgt.privaterentalservice.services.comun.TransicionesAlquiler;
+import org.transportsgt.privaterentalservice.services.pago.ConfirmadorAlquiler;
+import org.transportsgt.privaterentalservice.soporte.DatosPrueba;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -21,6 +25,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,8 +40,14 @@ class JobRecuperacionPagoAlquilerTest {
     @Mock
     EventosAlquiler eventos;
 
+    private final DatosPrueba datos = new DatosPrueba();
+
     private JobRecuperacionPagoAlquiler job() {
-        return new JobRecuperacionPagoAlquiler(alquilerRepository, carteraClient, eventos);
+        // Solo se usa en los casos que confirman
+        lenient().when(alquilerRepository.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+        ConfirmadorAlquiler confirmador = new ConfirmadorAlquiler(new TransicionesAlquiler(),
+                new GuardadoAlquiler(alquilerRepository), eventos);
+        return new JobRecuperacionPagoAlquiler(alquilerRepository, carteraClient, confirmador, datos.calendario);
     }
 
     private Alquiler alquilerCotizado(UUID id) {
@@ -72,7 +83,7 @@ class JobRecuperacionPagoAlquilerTest {
         job().recuperarPagosEnDuda();
 
         ArgumentCaptor<Alquiler> captor = ArgumentCaptor.forClass(Alquiler.class);
-        verify(alquilerRepository).save(captor.capture());
+        verify(alquilerRepository).saveAndFlush(captor.capture());
         assertThat(captor.getValue().getEstado()).isEqualTo(EstadoAlquiler.CONFIRMADO);
         assertThat(captor.getValue().getIdPago()).isEqualTo(idPago);
         assertThat(captor.getValue().getFechaPago()).isEqualTo(LocalDate.of(2026, 10, 1));
@@ -89,7 +100,7 @@ class JobRecuperacionPagoAlquilerTest {
 
         job().recuperarPagosEnDuda();
 
-        verify(alquilerRepository, never()).save(any());
+        verify(alquilerRepository, never()).saveAndFlush(any());
         verify(eventos, never()).alquilerConfirmado(any());
         assertThat(a.getEstado()).isEqualTo(EstadoAlquiler.COTIZADO);
     }
@@ -102,7 +113,7 @@ class JobRecuperacionPagoAlquilerTest {
         job().recuperarPagosEnDuda();
 
         verify(carteraClient, never()).consultarPago(any());
-        verify(alquilerRepository, never()).save(any());
+        verify(alquilerRepository, never()).saveAndFlush(any());
     }
 
     @Test
@@ -121,7 +132,7 @@ class JobRecuperacionPagoAlquilerTest {
 
         job().recuperarPagosEnDuda();
 
-        verify(alquilerRepository).save(a2);
+        verify(alquilerRepository).saveAndFlush(a2);
         assertThat(a2.getEstado()).isEqualTo(EstadoAlquiler.CONFIRMADO);
         assertThat(a1.getEstado()).isEqualTo(EstadoAlquiler.COTIZADO);
     }
@@ -138,7 +149,8 @@ class JobRecuperacionPagoAlquilerTest {
 
         job().recuperarPagosEnDuda();
 
-        assertThat(a.getFechaPago()).isEqualTo(LocalDate.now());
+        // Hoy según el reloj fijo de las pruebas (Guatemala)
+        assertThat(a.getFechaPago()).isEqualTo(LocalDate.of(2026, 10, 23));
         assertThat(a.getEstado()).isEqualTo(EstadoAlquiler.CONFIRMADO);
     }
 }

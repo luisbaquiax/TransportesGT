@@ -1,21 +1,19 @@
 package org.transportsgt.privaterentalservice.eventos;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.DatosSucursal;
-import org.transportsgt.privaterentalservice.repositories.SucursalRefRepository;
+import org.transportsgt.privaterentalservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Misma proyección que SucursalCreada: actualiza nombre/activa si la versión es mayor. */
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ManejadorSucursalActualizada implements ManejadorEvento<DatosSucursal> {
 
-    private final SucursalRefRepository repository;
+    private final ProyeccionReferenciasService servicio;
 
     @Override
     public TipoEvento tipo() {
@@ -24,9 +22,6 @@ public class ManejadorSucursalActualizada implements ManejadorEvento<DatosSucurs
 
     @Override
     public void manejar(SobreEvento<DatosSucursal> evento) {
-        DatosSucursal d = evento.datos();
-        long version = evento.versionAgregado() == null ? 0L : evento.versionAgregado();
-        repository.upsert(d.idSucursal(), d.nombre(), d.activa(), version);
-        log.debug("SucursalActualizada {} aplicada", d.idSucursal());
+        servicio.aplicarSucursal(evento.datos(), evento.versionAgregado());
     }
 }
