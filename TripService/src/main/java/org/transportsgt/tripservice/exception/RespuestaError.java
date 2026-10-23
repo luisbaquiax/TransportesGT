@@ -1,6 +1,5 @@
 package org.transportsgt.tripservice.exception;
 
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -19,8 +18,4 @@ public record RespuestaError(
         String codigo,
         String ruta
 ) {
-
-    public static RespuestaError de(HttpStatus status, String error, String codigo, String ruta) {
-        return new RespuestaError(LocalDateTime.now(), status.value(), error, codigo, ruta);
-    }
 }

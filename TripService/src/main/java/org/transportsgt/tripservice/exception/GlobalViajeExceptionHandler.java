@@ -2,6 +2,7 @@ package org.transportsgt.tripservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 /** Traduce toda excepción a {@link RespuestaError}: { timestamp, status, error, codigo, ruta }. */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalViajeExceptionHandler {
 
     private static final String PG_UNICO = "23505";
@@ -30,6 +32,8 @@ public class GlobalViajeExceptionHandler {
     private static final String PG_CHECK = "23514";
     private static final String PG_EXCLUSION = "23P01";
     private static final String PG_RAISE = "P0001";
+
+    private final FabricaRespuestaError fabricaRespuestaError;
 
     @ExceptionHandler(ViajeException.class)
     public ResponseEntity<RespuestaError> handleViaje(ViajeException ex, HttpServletRequest request) {
@@ -152,7 +156,7 @@ public class GlobalViajeExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor", "ERROR_INTERNO", request);
     }
 
-    private static String mapCodigoPorMensaje(String msg) {
+    private String mapCodigoPorMensaje(String msg) {
         if (msg.contains("no ha iniciado ni finalizado") || msg.contains("Ya inició")
                 || msg.contains("ya inició") || msg.contains("iniciado o completado")) {
             return "VIAJE_NO_ELIMINABLE";
@@ -172,6 +176,6 @@ public class GlobalViajeExceptionHandler {
     private ResponseEntity<RespuestaError> build(HttpStatus status, String mensaje, String codigo,
                                                  HttpServletRequest request) {
         return ResponseEntity.status(status)
-                .body(RespuestaError.de(status, mensaje, codigo, request.getRequestURI()));
+                .body(fabricaRespuestaError.crear(status, mensaje, codigo, request.getRequestURI()));
     }
 }

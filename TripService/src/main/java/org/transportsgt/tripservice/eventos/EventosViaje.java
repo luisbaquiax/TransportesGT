@@ -7,10 +7,8 @@ import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.BusAsignado;
 import org.transportsgt.eventos.payload.ChoferAsignado;
 import org.transportsgt.eventos.payload.DatosLlegada;
-import org.transportsgt.eventos.payload.DatosRuta;
 import org.transportsgt.eventos.payload.DatosRutaEliminada;
 import org.transportsgt.eventos.payload.DatosSalida;
-import org.transportsgt.eventos.payload.DatosViaje;
 import org.transportsgt.eventos.payload.DatosViajeEliminado;
 import org.transportsgt.tripservice.models.Ruta;
 import org.transportsgt.tripservice.models.Viaje;
@@ -22,20 +20,21 @@ import java.util.UUID;
 
 /**
  * Guarda los eventos de rutas y viajes en el outbox (misma transacción que el cambio).
- * Los payloads de viaje se construyen aquí con bus/chofer resueltos para incluir placa, capacidad y nombre.
+ * Los payloads los arma {@link MapeadorEventosViaje}; el bus y el chofer resueltos los aporta {@link RecursosEvento}.
  */
 @Component
 @RequiredArgsConstructor
 public class EventosViaje {
 
     private final RegistroOutbox outbox;
+    private final MapeadorEventosViaje mapeador;
 
     public void rutaCreada(Ruta r) {
-        outbox.registrar(TipoEvento.RUTA_CREADA, r.getId(), r.getVersion(), toDatosRuta(r));
+        outbox.registrar(TipoEvento.RUTA_CREADA, r.getId(), r.getVersion(), mapeador.datosRuta(r));
     }
 
     public void rutaActualizada(Ruta r) {
-        outbox.registrar(TipoEvento.RUTA_ACTUALIZADA, r.getId(), r.getVersion(), toDatosRuta(r));
+        outbox.registrar(TipoEvento.RUTA_ACTUALIZADA, r.getId(), r.getVersion(), mapeador.datosRuta(r));
     }
 
     public void rutaEliminada(UUID idRuta) {
@@ -44,11 +43,11 @@ public class EventosViaje {
     }
 
     public void viajeProgramado(Viaje v, BusAsignado bus, ChoferAsignado chofer) {
-        outbox.registrar(TipoEvento.VIAJE_PROGRAMADO, v.getId(), v.getVersion(), toDatosViaje(v, bus, chofer));
+        outbox.registrar(TipoEvento.VIAJE_PROGRAMADO, v.getId(), v.getVersion(), mapeador.datosViaje(v, bus, chofer));
     }
 
     public void viajeActualizado(Viaje v, BusAsignado bus, ChoferAsignado chofer) {
-        outbox.registrar(TipoEvento.VIAJE_ACTUALIZADO, v.getId(), v.getVersion(), toDatosViaje(v, bus, chofer));
+        outbox.registrar(TipoEvento.VIAJE_ACTUALIZADO, v.getId(), v.getVersion(), mapeador.datosViaje(v, bus, chofer));
     }
 
     public void viajeEliminado(Viaje v, UUID idUsuarioEliminador) {
@@ -76,27 +75,5 @@ public class EventosViaje {
                         salarioBaseChofer, fechaHoraSalidaReal, fechaHoraLlegadaReal,
                         kilometrajeInicial, kilometrajeFinal, distanciaRecorridaKm,
                         gastoCombustibleTotal, idUsuarioRegistro));
-    }
-
-    public static DatosRuta toDatosRuta(Ruta r) {
-        return new DatosRuta(r.getId(), r.getIdSucursalOrigen(), r.getIdSucursalDestino(),
-                r.getDistanciaKm(), r.getPrecioBoleto());
-    }
-
-    public static DatosViaje toDatosViaje(Viaje v, BusAsignado bus, ChoferAsignado chofer) {
-        return new DatosViaje(
-                v.getId(),
-                v.getTipoViaje(),
-                v.getEstado(),
-                v.getRuta() == null ? null : v.getRuta().getId(),
-                v.getIdSucursalOrigen(),
-                v.getNombreOrigen(),
-                v.getNombreDestino(),
-                v.getIdAlquiler(),
-                v.getFechaHoraSalida(),
-                v.getFechaHoraLlegadaEstimada(),
-                v.getPrecioBoleto(),
-                bus,
-                chofer);
     }
 }

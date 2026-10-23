@@ -57,7 +57,9 @@ public class SecurityConfig {
                         org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
-                        // ---- Reglas propias de Viajes ----
+                        // Reglas propias de Viajes
+                        .requestMatchers("/admin/**")
+                                .hasRole("ADMIN_SISTEMA")
                         .requestMatchers(HttpMethod.GET, "/viajes/activos")
                                 .hasRole("INTERNO")
                         .requestMatchers(HttpMethod.GET, "/rutas", "/rutas/*")
@@ -83,7 +85,7 @@ public class SecurityConfig {
                                 .hasRole("ADMIN_SUCURSAL")
                         .requestMatchers(HttpMethod.POST, "/viajes/*/salida", "/viajes/*/llegada")
                                 .hasAnyRole("ADMIN_SUCURSAL", "CHOFER")
-                        // ---------------------------------------
+
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(entryPoint)

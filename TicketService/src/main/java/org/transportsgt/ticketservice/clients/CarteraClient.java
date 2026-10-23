@@ -19,7 +19,7 @@ public interface CarteraClient {
 
     /**
      * @param autorizacion {@code Bearer <jwt del usuario>}
-     * @param clave        {@code Clave-Idempotencia} = idCompra
+     * @param clave {@code Clave-Idempotencia} = idCompra
      */
     @PostExchange
     PagoCarteraResponse pagar(@RequestHeader(HttpHeaders.AUTHORIZATION) String autorizacion,

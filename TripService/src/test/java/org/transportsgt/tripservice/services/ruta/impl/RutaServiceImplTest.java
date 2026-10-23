@@ -1,4 +1,4 @@
-package org.transportsgt.tripservice.services;
+package org.transportsgt.tripservice.services.ruta.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,7 @@ import org.transportsgt.tripservice.eventos.EventosViaje;
 import org.transportsgt.tripservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.tripservice.exception.ReglaNegocioException;
 import org.transportsgt.tripservice.exception.RutaNoEncontradaException;
+import org.transportsgt.tripservice.mappers.RutaMapperImpl;
 import org.transportsgt.tripservice.models.Ruta;
 import org.transportsgt.tripservice.repositories.RutaRepository;
 import org.transportsgt.tripservice.repositories.SucursalRefRepository;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RutaServiceTest {
+class RutaServiceImplTest {
 
     @Mock
     private RutaRepository rutaRepository;
@@ -43,7 +44,7 @@ class RutaServiceTest {
     @Mock
     private EventosViaje eventos;
 
-    private RutaService servicio;
+    private RutaServiceImpl servicio;
 
     private final UUID XELA = UUID.fromString("10000000-0000-4000-8000-000000000001");
     private final UUID CAPITAL = UUID.fromString("10000000-0000-4000-8000-000000000002");
@@ -54,7 +55,8 @@ class RutaServiceTest {
 
     @BeforeEach
     void setUp() {
-        servicio = new RutaService(rutaRepository, viajeRepository, sucursalRefRepository, eventos);
+        servicio = new RutaServiceImpl(rutaRepository, viajeRepository,
+                new ValidadorRuta(rutaRepository, sucursalRefRepository), new RutaMapperImpl(), eventos);
     }
 
     private Ruta ruta() {
@@ -74,7 +76,7 @@ class RutaServiceTest {
         when(sucursalRefRepository.existsByIdAndActivaTrue(XELA)).thenReturn(true);
         when(sucursalRefRepository.existsByIdAndActivaTrue(CAPITAL)).thenReturn(true);
         when(rutaRepository.existsByIdSucursalOrigenAndIdSucursalDestino(XELA, CAPITAL)).thenReturn(false);
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(r);
+        when(rutaRepository.saveAndFlush(any(Ruta.class))).thenReturn(r);
 
         var resp = servicio.crear(request(), admin);
 
@@ -114,7 +116,7 @@ class RutaServiceTest {
         when(rutaRepository.findById(r.getId())).thenReturn(Optional.of(r));
         when(rutaRepository.existsByIdSucursalOrigenAndIdSucursalDestinoAndIdNot(XELA, CAPITAL, r.getId()))
                 .thenReturn(false);
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(r);
+        when(rutaRepository.saveAndFlush(any(Ruta.class))).thenReturn(r);
 
         var resp = servicio.actualizar(r.getId(), request(), admin);
 
@@ -174,15 +176,13 @@ class RutaServiceTest {
 
     @Test
     void listarPorOrigen() {
-        Ruta r = ruta();
-        when(rutaRepository.findAllByIdSucursalOrigen(XELA)).thenReturn(List.of(r));
+        when(rutaRepository.findAllByIdSucursalOrigen(XELA)).thenReturn(List.of(ruta()));
         assertEquals(1, servicio.listar(XELA, null).size());
     }
 
     @Test
     void listarTodos() {
-        Ruta r = ruta();
-        when(rutaRepository.findAll()).thenReturn(List.of(r));
+        when(rutaRepository.findAll()).thenReturn(List.of(ruta()));
         assertEquals(1, servicio.listar(null, null).size());
     }
 }

@@ -131,7 +131,7 @@ class ViajeIntegrationTest extends IntegracionBase {
         mockMvc.perform(get("/viajes").param("estado", "PROGRAMADO")
                         .header("Authorization", "Bearer " + tokenAdminSistema()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
+                .andExpect(jsonPath("$.contenido").isArray());
 
         // Cajero de XELA sí puede listar
         mockMvc.perform(get("/viajes")

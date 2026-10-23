@@ -7,7 +7,7 @@ import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.DatosChofer;
-import org.transportsgt.tripservice.repositories.ChoferRefRepository;
+import org.transportsgt.tripservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Proyección de choferes de Flota. Idempotente por versión. */
 @Slf4j
@@ -15,7 +15,7 @@ import org.transportsgt.tripservice.repositories.ChoferRefRepository;
 @RequiredArgsConstructor
 public class ManejadorChoferActualizado implements ManejadorEvento<DatosChofer> {
 
-    private final ChoferRefRepository repository;
+    private final ProyeccionReferenciasService proyeccion;
 
     @Override
     public TipoEvento tipo() {
@@ -25,9 +25,7 @@ public class ManejadorChoferActualizado implements ManejadorEvento<DatosChofer> 
     @Override
     public void manejar(SobreEvento<DatosChofer> evento) {
         DatosChofer d = evento.datos();
-        long version = evento.versionAgregado() == null ? 0L : evento.versionAgregado();
-        repository.upsert(d.idChofer(), d.idUsuario(), d.idSucursal(), d.nombreCompleto(),
-                d.salarioBaseViaje(), d.fechaVencimientoLicencia(), d.activo(), version);
+        proyeccion.aplicarChofer(d, evento.versionAgregado());
         log.debug("ChoferActualizado {} aplicado", d.idChofer());
     }
 }
