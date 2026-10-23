@@ -2,6 +2,7 @@ package org.transportsgt.identityservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalIdentityServiceExceptionHandler {
+
+    private final FabricaRespuestaError fabricaRespuestaError;
+    private final TraductorErroresBd traductor;
 
     static final String MENSAJE_CONCURRENCIA = "El registro fue modificado por otro usuario, recárguelo";
     static final String MENSAJE_INTERNO = "Ocurrió un error inesperado. Intente de nuevo más tarde";
@@ -118,20 +123,20 @@ public class GlobalIdentityServiceExceptionHandler {
      */
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<RespuestaError> handleDataAccess(DataAccessException ex, HttpServletRequest request) {
-        SQLException sql = buscarSqlException(ex);
+        SQLException sql = traductor.buscarSqlException(ex);
         String estado = sql == null ? null : sql.getSQLState();
         if (PG_UNICO.equals(estado)) {
-            return build(HttpStatus.CONFLICT, mensajeUnico(sql.getMessage()), "REGISTRO_DUPLICADO", request);
+            return build(HttpStatus.CONFLICT, traductor.mensajeUnico(sql.getMessage()), "REGISTRO_DUPLICADO", request);
         }
         if (PG_LLAVE_FORANEA.equals(estado)) {
             return build(HttpStatus.CONFLICT, "El registro hace referencia a datos que no existen",
                     "REFERENCIA_INVALIDA", request);
         }
         if (PG_CHECK.equals(estado)) {
-            return build(HttpStatus.UNPROCESSABLE_CONTENT, mensajeCheck(sql.getMessage()), "DATOS_INCONSISTENTES", request);
+            return build(HttpStatus.UNPROCESSABLE_CONTENT, traductor.mensajeCheck(sql.getMessage()), "DATOS_INCONSISTENTES", request);
         }
         if (PG_RAISE.equals(estado) || PG_INTEGRIDAD.equals(estado)) {
-            return build(HttpStatus.UNPROCESSABLE_CONTENT, mensajeTrigger(sql.getMessage()), "REGLA_BASE_DATOS", request);
+            return build(HttpStatus.UNPROCESSABLE_CONTENT, traductor.mensajeTrigger(sql.getMessage()), "REGLA_BASE_DATOS", request);
         }
         log.error("Error de acceso a datos en {}", request.getRequestURI(), ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, MENSAJE_INTERNO, "ERROR_INTERNO", request);
@@ -158,49 +163,6 @@ public class GlobalIdentityServiceExceptionHandler {
 
     private ResponseEntity<RespuestaError> build(HttpStatus status, String message, String codigo,
                                                  HttpServletRequest request) {
-        return ResponseEntity.status(status).body(RespuestaError.de(status, message, codigo, request.getRequestURI()));
-    }
-
-    private static SQLException buscarSqlException(Throwable ex) {
-        SQLException encontrada = null;
-        for (Throwable t = ex; t != null && t.getCause() != t; t = t.getCause()) {
-            if (t instanceof SQLException sql && sql.getSQLState() != null) {
-                encontrada = sql;
-            }
-        }
-        return encontrada;
-    }
-
-    private static String mensajeUnico(String detalle) {
-        String texto = detalle == null ? "" : detalle;
-        if (texto.contains("uq_usuario_correo")) {
-            return "Ya existe un usuario con ese correo";
-        }
-        if (texto.contains("sucursal_nombre_key")) {
-            return "Ya existe una sucursal con ese nombre";
-        }
-        if (texto.contains("uq_token_activo")) {
-            return "Ya hay un enlace vigente para este usuario; intente de nuevo";
-        }
-        return "Ya existe un registro con esos datos";
-    }
-
-    private static String mensajeCheck(String detalle) {
-        String texto = detalle == null ? "" : detalle;
-        if (texto.contains("ck_usuario_sucursal")) {
-            return "Los usuarios ADMIN_SUCURSAL, CAJERO y CHOFER deben tener sucursal; ADMIN_SISTEMA y CLIENTE no";
-        }
-        return "Los datos no cumplen las reglas de validación";
-    }
-
-    /**
-     * "ERROR: Debe existir al menos ...\n  Where: PL/pgSQL ..." → "Debe existir al menos ...".
-     */
-    static String mensajeTrigger(String detalle) {
-        if (detalle == null || detalle.isBlank()) {
-            return "La operación viola una regla de datos";
-        }
-        String linea = detalle.lines().findFirst().orElse(detalle).trim();
-        return linea.startsWith("ERROR:") ? linea.substring("ERROR:".length()).trim() : linea;
+        return ResponseEntity.status(status).body(fabricaRespuestaError.crear(status, message, codigo, request.getRequestURI()));
     }
 }

@@ -1,5 +1,8 @@
 package org.transportsgt.identityservice.jobs;
 
+import org.transportsgt.identityservice.eventos.EventosIdentidad;
+import org.transportsgt.identityservice.services.contrasena.impl.EnlacesContrasenaServiceImpl;
+import org.transportsgt.identityservice.utils.GeneradorTokenSeguro;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +28,10 @@ class LimpiezaTokensJobTest {
 
     @Mock
     private TokenContrasenaRepository tokenRepository;
+    @Mock
+    private GeneradorTokenSeguro generadorToken;
+    @Mock
+    private EventosIdentidad eventos;
 
     private LimpiezaTokensJob job;
 
@@ -32,7 +39,9 @@ class LimpiezaTokensJobTest {
     void setUp() {
         IdentidadProperties propiedades = new IdentidadProperties(Duration.ofMinutes(30), Duration.ofHours(48), 3,
                 Duration.ofDays(7));
-        job = new LimpiezaTokensJob(tokenRepository, propiedades, Clock.fixed(AHORA, ZoneOffset.UTC));
+        EnlacesContrasenaServiceImpl enlaces = new EnlacesContrasenaServiceImpl(tokenRepository, generadorToken,
+                eventos, propiedades, Clock.fixed(AHORA, ZoneOffset.UTC));
+        job = new LimpiezaTokensJob(enlaces);
     }
 
     @Test

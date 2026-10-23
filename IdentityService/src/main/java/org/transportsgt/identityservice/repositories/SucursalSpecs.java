@@ -2,6 +2,7 @@ package org.transportsgt.identityservice.repositories;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.transportsgt.identityservice.models.Sucursal;
 
 import java.util.ArrayList;
@@ -11,12 +12,10 @@ import java.util.Locale;
 /**
  * Filtros opcionales del listado de sucursales.
  */
-public final class SucursalSpecs {
+@Component
+public class SucursalSpecs {
 
-    private SucursalSpecs() {
-    }
-
-    public static Specification<Sucursal> filtrar(Boolean activa, String nombre) {
+    public Specification<Sucursal> filtrar(Boolean activa, String nombre) {
         return (root, query, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
             if (activa != null) {

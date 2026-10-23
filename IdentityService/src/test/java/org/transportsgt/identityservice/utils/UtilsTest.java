@@ -14,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilsTest {
 
+    private final NormalizadorCorreo correos = new NormalizadorCorreo();
+    private final ResolvedorIpCliente ipCliente = new ResolvedorIpCliente();
+
     private final GeneradorTokenSeguro generador = new GeneradorTokenSeguro();
 
     @Test
@@ -53,18 +56,18 @@ class UtilsTest {
     @Test
     void normalizar_quitaEspaciosYPasaAMinusculas() {
         assertAll(
-                () -> assertEquals("ana@transportes.gt", Correos.normalizar("  Ana@Transportes.GT ")),
-                () -> assertNull(Correos.normalizar(null))
+                () -> assertEquals("ana@transportes.gt", correos.normalizar("  Ana@Transportes.GT ")),
+                () -> assertNull(correos.normalizar(null))
         );
     }
 
     @Test
     void enmascarar_ocultaLaParteLocal() {
         assertAll(
-                () -> assertEquals("a***z@transportes.gt", Correos.enmascarar("ana.lopez@transportes.gt")),
-                () -> assertEquals("a***@x.gt", Correos.enmascarar("ab@x.gt")),
-                () -> assertEquals("***", Correos.enmascarar("sinarroba")),
-                () -> assertNull(Correos.enmascarar(null))
+                () -> assertEquals("a***z@transportes.gt", correos.enmascarar("ana.lopez@transportes.gt")),
+                () -> assertEquals("a***@x.gt", correos.enmascarar("ab@x.gt")),
+                () -> assertEquals("***", correos.enmascarar("sinarroba")),
+                () -> assertNull(correos.enmascarar(null))
         );
     }
 
@@ -76,7 +79,7 @@ class UtilsTest {
         request.setRemoteAddr("10.0.0.1");
 
         // Assert
-        assertEquals("200.1.2.3", IpCliente.de(request));
+        assertEquals("200.1.2.3", ipCliente.de(request));
     }
 
     @Test
@@ -86,7 +89,7 @@ class UtilsTest {
         request.setRemoteAddr("192.168.1.10");
 
         // Assert
-        assertEquals("192.168.1.10", IpCliente.de(request));
+        assertEquals("192.168.1.10", ipCliente.de(request));
     }
 
     @Test
@@ -96,7 +99,7 @@ class UtilsTest {
         request.addHeader("X-Forwarded-For", "x".repeat(60));
 
         // Assert
-        assertEquals(45, IpCliente.de(request).length());
+        assertEquals(45, ipCliente.de(request).length());
     }
 
     @Test
@@ -106,6 +109,6 @@ class UtilsTest {
         request.setRemoteAddr(null);
 
         // Assert
-        assertNull(IpCliente.de(request));
+        assertNull(ipCliente.de(request));
     }
 }

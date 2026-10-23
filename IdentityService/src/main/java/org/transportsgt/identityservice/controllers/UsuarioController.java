@@ -30,15 +30,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.identityservice.dto.request.ActualizarUsuarioRequest;
 import org.transportsgt.identityservice.dto.request.CrearUsuarioRequest;
 import org.transportsgt.identityservice.dto.response.PaginaResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;
 import org.transportsgt.identityservice.exception.RespuestaError;
-import org.transportsgt.identityservice.services.UsuarioService;
-import org.transportsgt.identityservice.utils.IpCliente;
+import org.transportsgt.identityservice.services.consulta.ConsultaIdentidadService;
+import org.transportsgt.identityservice.services.usuario.GestionUsuariosService;
+import org.transportsgt.identityservice.utils.ResolvedorIpCliente;
 
 import java.util.UUID;
 
@@ -55,7 +56,10 @@ public class UsuarioController {
 
     private static final String ADMINISTRADORES = "hasAnyRole('ADMIN_SISTEMA','ADMIN_SUCURSAL')";
 
-    private final UsuarioService usuarioService;
+    private final GestionUsuariosService gestionService;
+    private final ConsultaIdentidadService consultaService;
+    private final ConvertidorUsuarioAutenticado convertidor;
+    private final ResolvedorIpCliente ipCliente;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -88,7 +92,7 @@ public class UsuarioController {
     })
     public UsuarioResponse crear(@Valid @RequestBody CrearUsuarioRequest request,
                                  @AuthenticationPrincipal Jwt jwt, HttpServletRequest http) {
-        return usuarioService.crear(request, UsuarioAutenticado.de(jwt), IpCliente.de(http));
+        return gestionService.crear(request, convertidor.desde(jwt), ipCliente.de(http));
     }
 
     @GetMapping
@@ -110,7 +114,7 @@ public class UsuarioController {
             @ParameterObject @PageableDefault(size = 20, sort = "nombreCompleto", direction = Sort.Direction.ASC)
             Pageable pageable,
             @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.listar(rol, idSucursal, activo, texto, pageable, UsuarioAutenticado.de(jwt));
+        return consultaService.listarUsuarios(rol, idSucursal, activo, texto, pageable, convertidor.desde(jwt));
     }
 
     @PutMapping("/yo")
@@ -120,7 +124,7 @@ public class UsuarioController {
                     examples = @ExampleObject(value = EjemplosApi.USUARIO)))
     public UsuarioResponse actualizarPerfil(@Valid @RequestBody ActualizarPerfilRequest request,
                                             @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.actualizarPerfil(request, UsuarioAutenticado.de(jwt));
+        return gestionService.actualizarPerfil(request, convertidor.desde(jwt));
     }
 
     @GetMapping("/{id}")
@@ -138,7 +142,7 @@ public class UsuarioController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_USUARIO)))
     })
     public UsuarioResponse obtener(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.obtener(id, UsuarioAutenticado.de(jwt));
+        return consultaService.obtenerUsuario(id, convertidor.desde(jwt));
     }
 
     @PutMapping("/{id}")
@@ -161,7 +165,7 @@ public class UsuarioController {
     })
     public UsuarioResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ActualizarUsuarioRequest request,
                                       @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.actualizar(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.actualizar(id, request, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/activar")
@@ -177,7 +181,7 @@ public class UsuarioController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_USUARIO)))
     })
     public UsuarioResponse activar(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.cambiarEstado(id, true, UsuarioAutenticado.de(jwt));
+        return gestionService.cambiarEstado(id, true, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/desactivar")
@@ -197,7 +201,7 @@ public class UsuarioController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_422_ULTIMO_ADMIN)))
     })
     public UsuarioResponse desactivar(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return usuarioService.cambiarEstado(id, false, UsuarioAutenticado.de(jwt));
+        return gestionService.cambiarEstado(id, false, convertidor.desde(jwt));
     }
 
     @PostMapping("/{id}/reenviar-activacion")
@@ -218,6 +222,6 @@ public class UsuarioController {
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
     public void reenviarActivacion(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt, HttpServletRequest http) {
-        usuarioService.reenviarActivacion(id, UsuarioAutenticado.de(jwt), IpCliente.de(http));
+        gestionService.reenviarActivacion(id, convertidor.desde(jwt), ipCliente.de(http));
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.identityservice.dto.response.RepublicacionResponse;
 import org.transportsgt.identityservice.exception.RespuestaError;
-import org.transportsgt.identityservice.services.RepublicacionEventosService;
+import org.transportsgt.identityservice.services.admin.RepublicacionEventosService;
 
 @RestController
 @RequestMapping("/admin")

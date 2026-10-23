@@ -2,6 +2,7 @@ package org.transportsgt.identityservice.repositories;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.transportsgt.eventos.payload.Rol;
 import org.transportsgt.identityservice.models.Usuario;
 
@@ -13,12 +14,10 @@ import java.util.UUID;
 /**
  * Filtros opcionales del listado de usuarios. {@code texto} busca en nombre y correo.
  */
-public final class UsuarioSpecs {
+@Component
+public class UsuarioSpecs {
 
-    private UsuarioSpecs() {
-    }
-
-    public static Specification<Usuario> filtrar(Rol rol, UUID idSucursal, Boolean activo, String texto) {
+    public Specification<Usuario> filtrar(Rol rol, UUID idSucursal, Boolean activo, String texto) {
         return (root, query, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
             if (rol != null) {

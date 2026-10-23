@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.CambiarContrasenaRequest;
 import org.transportsgt.identityservice.dto.request.LoginRequest;
 import org.transportsgt.identityservice.dto.request.OlvideContrasenaRequest;
@@ -34,8 +34,10 @@ import org.transportsgt.identityservice.dto.response.LoginResponse;
 import org.transportsgt.identityservice.dto.response.MensajeResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;
 import org.transportsgt.identityservice.exception.RespuestaError;
-import org.transportsgt.identityservice.services.AuthService;
-import org.transportsgt.identityservice.utils.IpCliente;
+import org.transportsgt.identityservice.services.contrasena.ContrasenaService;
+import org.transportsgt.identityservice.services.registro.RegistroClienteService;
+import org.transportsgt.identityservice.services.sesion.SesionService;
+import org.transportsgt.identityservice.utils.ResolvedorIpCliente;
 
 @RestController
 @RequestMapping("/auth")
@@ -46,7 +48,11 @@ public class AuthController {
     static final String MENSAJE_OLVIDE =
             "Si el correo está registrado, recibirá un enlace para restablecer su contraseña";
 
-    private final AuthService authService;
+    private final SesionService sesionService;
+    private final RegistroClienteService registroService;
+    private final ContrasenaService contrasenaService;
+    private final ConvertidorUsuarioAutenticado convertidor;
+    private final ResolvedorIpCliente ipCliente;
 
     @PostMapping("/login")
     @SecurityRequirements
@@ -68,10 +74,10 @@ public class AuthController {
             @ApiResponse(responseCode = "403", description = "Usuario desactivado",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class),
                             examples = @ExampleObject(value = """
-                                    {"timestamp":"2026-10-07T10:15:30","status":403,"error":"El usuario está desactivado","codigo":"USUARIO_INACTIVO","ruta":"/v1/identity/auth/login"}""")))
+                                    {"timestamp":"2026-10-07T10:15:30","status":403,"error":"El usuario está desactivado","codigo":"CUENTA_INACTIVA","ruta":"/v1/identity/auth/login"}""")))
     })
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+        return sesionService.login(request);
     }
 
     @PostMapping("/registro")
@@ -91,7 +97,7 @@ public class AuthController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_409_CORREO)))
     })
     public UsuarioResponse registrar(@Valid @RequestBody RegistroRequest request) {
-        return authService.registrar(request);
+        return registroService.registrar(request);
     }
 
     @GetMapping("/yo")
@@ -105,7 +111,7 @@ public class AuthController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_401)))
     })
     public UsuarioResponse yo(@AuthenticationPrincipal Jwt jwt) {
-        return authService.miPerfil(UsuarioAutenticado.de(jwt));
+        return sesionService.miPerfil(convertidor.desde(jwt));
     }
 
     @PostMapping("/cambiar-contrasena")
@@ -125,7 +131,7 @@ public class AuthController {
     })
     public MensajeResponse cambiarContrasena(@Valid @RequestBody CambiarContrasenaRequest request,
                                              @AuthenticationPrincipal Jwt jwt) {
-        authService.cambiarContrasena(request, UsuarioAutenticado.de(jwt));
+        contrasenaService.cambiarContrasena(request, convertidor.desde(jwt));
         return new MensajeResponse("Contraseña actualizada");
     }
 
@@ -144,7 +150,7 @@ public class AuthController {
     })
     public MensajeResponse olvideContrasena(@Valid @RequestBody OlvideContrasenaRequest request,
                                             HttpServletRequest http) {
-        authService.olvideContrasena(request, IpCliente.de(http));
+        contrasenaService.olvideContrasena(request, ipCliente.de(http));
         return new MensajeResponse(MENSAJE_OLVIDE);
     }
 
@@ -162,7 +168,7 @@ public class AuthController {
     })
     public EnlaceContrasenaResponse validarEnlace(
             @Parameter(description = "Token recibido en el correo") @RequestParam @NotBlank String token) {
-        return authService.validarEnlace(token);
+        return contrasenaService.validarEnlace(token);
     }
 
     @PostMapping("/restablecer-contrasena")
@@ -182,7 +188,7 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
     public MensajeResponse restablecerContrasena(@Valid @RequestBody RestablecerContrasenaRequest request) {
-        authService.restablecerContrasena(request);
+        contrasenaService.restablecerContrasena(request);
         return new MensajeResponse("Contraseña definida. Ya puede iniciar sesión");
     }
 }

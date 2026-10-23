@@ -44,7 +44,7 @@ class GlobalIdentityServiceExceptionHandlerTest {
 
     private static final String RUTA = "/v1/identity/usuarios";
 
-    private final GlobalIdentityServiceExceptionHandler handler = new GlobalIdentityServiceExceptionHandler();
+    private final GlobalIdentityServiceExceptionHandler handler = new GlobalIdentityServiceExceptionHandler(new FabricaRespuestaError(), new TraductorErroresBd());
     private MockHttpServletRequest request;
 
     @BeforeEach
@@ -76,9 +76,9 @@ class GlobalIdentityServiceExceptionHandlerTest {
                 () -> assertRespuesta(handler.handleIdentityService(new CredencialesInvalidasException(), request),
                         HttpStatus.UNAUTHORIZED, "CREDENCIALES_INVALIDAS"),
                 () -> assertRespuesta(handler.handleIdentityService(new UsuarioInactivoException(), request),
-                        HttpStatus.FORBIDDEN, "USUARIO_INACTIVO"),
+                        HttpStatus.FORBIDDEN, "CUENTA_INACTIVA"),
                 () -> assertRespuesta(handler.handleIdentityService(new TokenContrasenaInvalidoException(), request),
-                        HttpStatus.GONE, "TOKEN_CONTRASENA_INVALIDO")
+                        HttpStatus.GONE, "ENLACE_INVALIDO")
         );
     }
 
@@ -271,9 +271,9 @@ class GlobalIdentityServiceExceptionHandlerTest {
     @Test
     void mensajeTrigger_casosLimite() {
         assertAll(
-                () -> assertEquals("La operación viola una regla de datos", GlobalIdentityServiceExceptionHandler.mensajeTrigger(null)),
-                () -> assertEquals("La operación viola una regla de datos", GlobalIdentityServiceExceptionHandler.mensajeTrigger(" ")),
-                () -> assertEquals("Sin prefijo", GlobalIdentityServiceExceptionHandler.mensajeTrigger("Sin prefijo"))
+                () -> assertEquals("La operación viola una regla de datos", new TraductorErroresBd().mensajeTrigger(null)),
+                () -> assertEquals("La operación viola una regla de datos", new TraductorErroresBd().mensajeTrigger(" ")),
+                () -> assertEquals("Sin prefijo", new TraductorErroresBd().mensajeTrigger("Sin prefijo"))
         );
     }
 

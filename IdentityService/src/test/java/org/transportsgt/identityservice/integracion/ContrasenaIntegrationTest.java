@@ -92,7 +92,7 @@ class ContrasenaIntegrationTest extends IntegracionBase {
         // El enlace ya no sirve, la contraseña vieja tampoco y la nueva sí
         mockMvc.perform(get("/auth/enlace-contrasena/validar").param("token", token))
                 .andExpect(status().isGone())
-                .andExpect(jsonPath("$.codigo").value("TOKEN_CONTRASENA_INVALIDO"));
+                .andExpect(jsonPath("$.codigo").value("ENLACE_INVALIDO"));
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new Credenciales(correo, "Inicial123"))))
@@ -157,7 +157,7 @@ class ContrasenaIntegrationTest extends IntegracionBase {
     void validar_tokenInexistente_responde410() throws Exception {
         mockMvc.perform(get("/auth/enlace-contrasena/validar").param("token", "no-existe"))
                 .andExpect(status().isGone())
-                .andExpect(jsonPath("$.codigo").value("TOKEN_CONTRASENA_INVALIDO"));
+                .andExpect(jsonPath("$.codigo").value("ENLACE_INVALIDO"));
         mockMvc.perform(get("/auth/enlace-contrasena/validar"))
                 .andExpect(status().isBadRequest());
     }
@@ -204,7 +204,7 @@ class ContrasenaIntegrationTest extends IntegracionBase {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new Credenciales(correo, "Inicial123"))))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.codigo").value("USUARIO_INACTIVO"));
+                .andExpect(jsonPath("$.codigo").value("CUENTA_INACTIVA"));
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new Credenciales(correo, "Incorrecta1"))))
