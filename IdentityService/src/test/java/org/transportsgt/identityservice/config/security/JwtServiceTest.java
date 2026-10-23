@@ -43,14 +43,14 @@ class JwtServiceTest {
     @Test
     void generarYValidar_incluyeLosClaimsDelUsuario() {
         // Arrange
-        UsuarioPrincipal cajero = UsuarioPrincipal.from(UsuarioFixture.cajero(ID_USUARIO, SucursalFixture.activa(ID_SUCURSAL)));
+        UsuarioPrincipal cajero = UsuarioFixture.principal(UsuarioFixture.cajero(ID_USUARIO, SucursalFixture.activa(ID_SUCURSAL)));
 
         // Act
         JwtService.TokenEmitido emitido = jwtService.generarToken(cajero);
         Jwt jwt = jwtService.validar(emitido.token());
 
         // Assert
-        UsuarioAutenticado autenticado = UsuarioAutenticado.de(jwt);
+        UsuarioAutenticado autenticado = new ConvertidorUsuarioAutenticado().desde(jwt);
         assertAll(
                 () -> assertEquals(ID_USUARIO.toString(), jwt.getSubject()),
                 () -> assertEquals("servicio-identidad", jwt.getClaimAsString("iss")),
@@ -66,7 +66,7 @@ class JwtServiceTest {
     @Test
     void generar_adminSistemaSinSucursal() {
         // Arrange
-        UsuarioPrincipal admin = UsuarioPrincipal.from(UsuarioFixture.adminSistema(ID_USUARIO));
+        UsuarioPrincipal admin = UsuarioFixture.principal(UsuarioFixture.adminSistema(ID_USUARIO));
 
         // Act
         Jwt jwt = jwtService.validar(jwtService.generarToken(admin).token());
@@ -74,7 +74,7 @@ class JwtServiceTest {
         // Assert
         assertAll(
                 () -> assertNull(jwt.getClaimAsString("idSucursal")),
-                () -> assertNull(UsuarioAutenticado.de(jwt).idSucursal())
+                () -> assertNull(new ConvertidorUsuarioAutenticado().desde(jwt).idSucursal())
         );
     }
 
@@ -82,7 +82,7 @@ class JwtServiceTest {
     void validar_cuandoFirmaDeOtroSecreto_lanzaTokenInvalido() {
         // Arrange
         String ajeno = crear(new JwtProperties(OTRO_SECRETO, Duration.ofMinutes(60), "x"), Clock.systemUTC())
-                .generarToken(UsuarioPrincipal.from(UsuarioFixture.adminSistema(ID_USUARIO))).token();
+                .generarToken(UsuarioFixture.principal(UsuarioFixture.adminSistema(ID_USUARIO))).token();
 
         // Assert
         assertThrows(TokenJwtInvalidoException.class, () -> jwtService.validar(ajeno));
@@ -93,7 +93,7 @@ class JwtServiceTest {
         // Arrange
         Clock haceDosHoras = Clock.fixed(Instant.now().minus(Duration.ofHours(2)), ZoneOffset.UTC);
         String vencido = crear(PROPIEDADES, haceDosHoras)
-                .generarToken(UsuarioPrincipal.from(UsuarioFixture.adminSistema(ID_USUARIO))).token();
+                .generarToken(UsuarioFixture.principal(UsuarioFixture.adminSistema(ID_USUARIO))).token();
 
         // Assert
         assertThrows(TokenJwtInvalidoException.class, () -> jwtService.validar(vencido));

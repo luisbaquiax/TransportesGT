@@ -2,6 +2,8 @@ package org.transportsgt.identityservice.fixtures;
 
 import org.transportsgt.eventos.payload.Rol;
 import org.transportsgt.identityservice.models.Sucursal;
+import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.UsuarioPrincipal;
 import org.transportsgt.identityservice.models.Usuario;
 
 import java.time.OffsetDateTime;
@@ -42,5 +44,19 @@ public final class UsuarioFixture {
 
     public static Usuario cliente(UUID id) {
         return de(id, Rol.CLIENTE, null);
+    }
+
+    /** Usuario del token equivalente a la entidad (antes UsuarioAutenticado.de(Usuario)). */
+    public static UsuarioAutenticado autenticado(Usuario usuario) {
+        return new UsuarioAutenticado(usuario.getId(), usuario.getCorreo(), usuario.getRol(),
+                usuario.getSucursal() != null ? usuario.getSucursal().getId() : null, usuario.getNombreCompleto());
+    }
+
+    /** Principal del login equivalente a la entidad (antes UsuarioPrincipal.from(Usuario)). */
+    public static UsuarioPrincipal principal(Usuario usuario) {
+        return new UsuarioPrincipal(usuario.getId(), usuario.getCorreo(), usuario.getHashContrasena(),
+                usuario.getNombreCompleto(), usuario.getRol(),
+                usuario.getSucursal() != null ? usuario.getSucursal().getId() : null,
+                Boolean.TRUE.equals(usuario.getActivo()));
     }
 }

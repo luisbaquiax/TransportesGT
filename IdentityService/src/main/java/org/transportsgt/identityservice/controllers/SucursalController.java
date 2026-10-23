@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarSucursalRequest;
 import org.transportsgt.identityservice.dto.request.CrearSucursalRequest;
 import org.transportsgt.identityservice.dto.response.PaginaResponse;
@@ -37,8 +37,9 @@ import org.transportsgt.identityservice.dto.response.SucursalCreadaResponse;
 import org.transportsgt.identityservice.dto.response.SucursalResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;
 import org.transportsgt.identityservice.exception.RespuestaError;
-import org.transportsgt.identityservice.services.SucursalService;
-import org.transportsgt.identityservice.utils.IpCliente;
+import org.transportsgt.identityservice.services.consulta.ConsultaIdentidadService;
+import org.transportsgt.identityservice.services.sucursal.GestionSucursalesService;
+import org.transportsgt.identityservice.utils.ResolvedorIpCliente;
 
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +57,10 @@ public class SucursalController {
 
     private static final String SOLO_ADMIN_SISTEMA = "hasRole('ADMIN_SISTEMA')";
 
-    private final SucursalService sucursalService;
+    private final GestionSucursalesService gestionService;
+    private final ConsultaIdentidadService consultaService;
+    private final ConvertidorUsuarioAutenticado convertidor;
+    private final ResolvedorIpCliente ipCliente;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -83,7 +87,7 @@ public class SucursalController {
     })
     public SucursalCreadaResponse crear(@Valid @RequestBody CrearSucursalRequest request,
                                         @AuthenticationPrincipal Jwt jwt, HttpServletRequest http) {
-        return sucursalService.crear(request, UsuarioAutenticado.de(jwt), IpCliente.de(http));
+        return gestionService.crear(request, convertidor.desde(jwt), ipCliente.de(http));
     }
 
     @GetMapping
@@ -93,7 +97,7 @@ public class SucursalController {
             @Parameter(description = "true = solo activas, false = solo inactivas") @RequestParam(required = false) Boolean activa,
             @Parameter(description = "Parte del nombre", example = "Xela") @RequestParam(required = false) String nombre,
             @ParameterObject @PageableDefault(size = 20, sort = "nombre", direction = Sort.Direction.ASC) Pageable pageable) {
-        return sucursalService.listar(activa, nombre, pageable);
+        return consultaService.listarSucursales(activa, nombre, pageable);
     }
 
     @GetMapping("/{id}")
@@ -107,7 +111,7 @@ public class SucursalController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_SUCURSAL)))
     })
     public SucursalResponse obtener(@PathVariable UUID id) {
-        return sucursalService.obtener(id);
+        return consultaService.obtenerSucursal(id);
     }
 
     @PutMapping("/{id}")
@@ -129,7 +133,7 @@ public class SucursalController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_409_SUCURSAL)))
     })
     public SucursalResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ActualizarSucursalRequest request) {
-        return sucursalService.actualizar(id, request);
+        return gestionService.actualizar(id, request);
     }
 
     @PatchMapping("/{id}/activar")
@@ -145,7 +149,7 @@ public class SucursalController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_SUCURSAL)))
     })
     public SucursalResponse activar(@PathVariable UUID id) {
-        return sucursalService.cambiarEstado(id, true);
+        return gestionService.cambiarEstado(id, true);
     }
 
     @PatchMapping("/{id}/desactivar")
@@ -162,7 +166,7 @@ public class SucursalController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_SUCURSAL)))
     })
     public SucursalResponse desactivar(@PathVariable UUID id) {
-        return sucursalService.cambiarEstado(id, false);
+        return gestionService.cambiarEstado(id, false);
     }
 
     @GetMapping("/{id}/administradores")
@@ -178,6 +182,6 @@ public class SucursalController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_SUCURSAL)))
     })
     public List<UsuarioResponse> administradores(@PathVariable UUID id) {
-        return sucursalService.listarAdministradores(id);
+        return consultaService.listarAdministradores(id);
     }
 }

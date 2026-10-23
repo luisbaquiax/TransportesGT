@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.identityservice.models.Usuario;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,19 +22,6 @@ public record UsuarioPrincipal(
         UUID idSucursal,
         boolean activo
 ) implements UserDetails {
-
-    public static UsuarioPrincipal from(Usuario usuario) {
-        return new UsuarioPrincipal(
-                usuario.getId(),
-                usuario.getCorreo(),
-                usuario.getHashContrasena(),
-                usuario.getNombreCompleto(),
-                usuario.getRol(),
-                // getId() sobre el proxy LAZY no dispara otra consulta
-                usuario.getSucursal() != null ? usuario.getSucursal().getId() : null,
-                Boolean.TRUE.equals(usuario.getActivo())
-        );
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
