@@ -10,8 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,33 +27,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.privaterentalservice.config.OpenApiConfig;
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.CotizacionRequest;
+import org.transportsgt.privaterentalservice.dto.request.FiltroAlquileres;
 import org.transportsgt.privaterentalservice.dto.request.PagoAlquilerRequest;
 import org.transportsgt.privaterentalservice.dto.request.SolicitudAlquilerRequest;
 import org.transportsgt.privaterentalservice.dto.request.SolicitudMostradorRequest;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;
 import org.transportsgt.privaterentalservice.dto.response.PaginaResponse;
-import org.transportsgt.privaterentalservice.dto.response.RepublicacionResponse;
 import org.transportsgt.privaterentalservice.exception.RespuestaError;
 import org.transportsgt.privaterentalservice.models.EstadoAlquiler;
-import org.transportsgt.privaterentalservice.services.AlquilerService;
-import org.transportsgt.privaterentalservice.services.RepublicacionEventosService;
+import org.transportsgt.privaterentalservice.services.consulta.ConsultaAlquileresService;
+import org.transportsgt.privaterentalservice.services.cotizacion.CotizacionAlquilerService;
+import org.transportsgt.privaterentalservice.services.pago.PagoAlquilerService;
+import org.transportsgt.privaterentalservice.services.solicitud.SolicitudAlquilerService;
 
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/alquileres")
 @RequiredArgsConstructor
 @Tag(name = "Alquileres", description = "Alquileres de buses privados: solicitud, cotización y pago")
 public class AlquilerController {
 
-    private final AlquilerService alquilerService;
-    private final RepublicacionEventosService republicacionService;
+    private final SolicitudAlquilerService solicitudService;
+    private final CotizacionAlquilerService cotizacionService;
+    private final PagoAlquilerService pagoService;
+    private final ConsultaAlquileresService consultaService;
+    private final ConvertidorUsuarioAutenticado convertidor;
 
     @PostMapping("/solicitudes")
     @Operation(summary = "Solicitud en línea",
@@ -73,7 +81,7 @@ public class AlquilerController {
     public ResponseEntity<AlquilerResponse> solicitarEnLinea(
             @Valid @RequestBody SolicitudAlquilerRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        AlquilerResponse resp = alquilerService.solicitarEnLinea(request, UsuarioAutenticado.de(jwt));
+        AlquilerResponse resp = solicitudService.solicitarEnLinea(request, convertidor.desde(jwt));
         return ResponseEntity.created(URI.create("/alquileres/" + resp.id())).body(resp);
     }
 
@@ -91,7 +99,7 @@ public class AlquilerController {
     public ResponseEntity<AlquilerResponse> solicitarMostrador(
             @Valid @RequestBody SolicitudMostradorRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        AlquilerResponse resp = alquilerService.solicitarMostrador(request, UsuarioAutenticado.de(jwt));
+        AlquilerResponse resp = solicitudService.solicitarMostrador(request, convertidor.desde(jwt));
         return ResponseEntity.created(URI.create("/alquileres/" + resp.id())).body(resp);
     }
 
@@ -110,7 +118,7 @@ public class AlquilerController {
             @PathVariable UUID id,
             @Valid @RequestBody CotizacionRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return alquilerService.cotizar(id, request, UsuarioAutenticado.de(jwt));
+        return cotizacionService.cotizar(id, request, convertidor.desde(jwt));
     }
 
     @PostMapping("/{id}/pago")
@@ -126,6 +134,9 @@ public class AlquilerController {
             @ApiResponse(responseCode = "409", description = "No está COTIZADO",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class),
                             examples = @ExampleObject(value = "{\"codigo\":\"TRANSICION_INVALIDA\"}"))),
+            @ApiResponse(responseCode = "422", description = "Cartera rechazó el cobro (status y código de Cartera)",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class),
+                            examples = @ExampleObject(value = "{\"codigo\":\"SALDO_INSUFICIENTE\"}"))),
             @ApiResponse(responseCode = "503", description = "Cartera no disponible",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class),
                             examples = @ExampleObject(value = "{\"codigo\":\"SERVICIO_NO_DISPONIBLE\"}")))
@@ -135,7 +146,7 @@ public class AlquilerController {
             @Valid @RequestBody PagoAlquilerRequest request,
             @RequestHeader("Authorization") String authorization,
             @AuthenticationPrincipal Jwt jwt) {
-        return alquilerService.pagarEnLinea(id, request, UsuarioAutenticado.de(jwt), authorization);
+        return pagoService.pagarEnLinea(id, request, convertidor.desde(jwt), authorization);
     }
 
     @PostMapping("/{id}/pago-mostrador")
@@ -146,55 +157,41 @@ public class AlquilerController {
             @PathVariable UUID id,
             @Valid @RequestBody PagoAlquilerRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return alquilerService.pagarMostrador(id, request, UsuarioAutenticado.de(jwt));
+        return pagoService.pagarMostrador(id, request, convertidor.desde(jwt));
     }
 
     @GetMapping("/mios")
     @Operation(summary = "Mi historial",
             description = "Alquileres del usuario autenticado (en línea) y los hechos con su NIT en mostrador.")
     public PaginaResponse<AlquilerResponse> mios(
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "20") int tamano,
+            @RequestParam(defaultValue = "0") @Min(0) int pagina,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        Page<AlquilerResponse> page = alquilerService.mios(UsuarioAutenticado.de(jwt),
-                PageRequest.of(pagina, Math.min(tamano, 100), Sort.by(Sort.Direction.DESC, "creadoEn")));
-        return paginar(page);
+        return consultaService.mios(convertidor.desde(jwt), PageRequest.of(pagina, tamano));
     }
 
     @GetMapping
     @Operation(summary = "Listar alquileres",
-            description = "SUC y CAJ ven los de su sucursal; SIS ve todos. sinAsignar=true lista confirmados sin viaje.")
+            description = "SUC y CAJ ven los de su sucursal; SIS ve todos. desde/hasta son días de Guatemala (incluidos). "
+                    + "sinAsignar=true lista los confirmados que aún no tienen bus.")
     public PaginaResponse<AlquilerResponse> listar(
             @RequestParam(required = false) EstadoAlquiler estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
             @RequestParam(required = false) Boolean sinAsignar,
-            @RequestParam(defaultValue = "0") int pagina,
-            @RequestParam(defaultValue = "20") int tamano,
+            @RequestParam(defaultValue = "0") @Min(0) int pagina,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        Page<AlquilerResponse> page = alquilerService.listar(estado, desde, hasta, sinAsignar,
-                UsuarioAutenticado.de(jwt),
-                PageRequest.of(pagina, Math.min(tamano, 100), Sort.by(Sort.Direction.DESC, "fechaHoraSalida")));
-        return paginar(page);
+        return consultaService.listar(new FiltroAlquileres(estado, desde, hasta, sinAsignar), convertidor.desde(jwt),
+                PageRequest.of(pagina, tamano, Sort.by(Sort.Direction.DESC, "fechaHoraSalida").and(Sort.by("id"))));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Detalle con historial de cotizaciones",
-            description = "El cliente solo ve los suyos; SUC ve los de su sucursal; SIS ve todos.",
+            description = "El cliente ve los suyos (en línea o de mostrador con el NIT de su perfil); "
+                    + "SUC y CAJ, los de su sucursal; SIS ve todos.",
             security = {@SecurityRequirement(name = OpenApiConfig.ESQUEMA_JWT)})
     public AlquilerResponse detalle(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return alquilerService.detalle(id, UsuarioAutenticado.de(jwt));
-    }
-
-    @PostMapping("/admin/republicar-eventos")
-    @Operation(summary = "Republicar eventos (SIS)",
-            description = "Encola AlquilerSolicitado de todo lo existente para poblar proyecciones. Idempotente.")
-    public RepublicacionResponse republicar(@AuthenticationPrincipal Jwt jwt) {
-        return republicacionService.republicar();
-    }
-
-    private static <T> PaginaResponse<T> paginar(Page<T> page) {
-        return new PaginaResponse<>(page.getContent(), page.getNumber(), page.getSize(),
-                page.getTotalElements(), page.getTotalPages());
+        return consultaService.detalle(id, convertidor.desde(jwt));
     }
 }

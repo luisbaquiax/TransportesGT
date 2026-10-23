@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GlobalAlquilerExceptionHandlerTest {
 
-    private final GlobalAlquilerExceptionHandler handler = new GlobalAlquilerExceptionHandler();
+    private final GlobalAlquilerExceptionHandler handler = new GlobalAlquilerExceptionHandler(new FabricaRespuestaError());
 
     @Mock
     HttpServletRequest request;

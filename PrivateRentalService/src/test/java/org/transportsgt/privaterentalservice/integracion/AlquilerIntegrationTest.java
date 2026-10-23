@@ -175,9 +175,9 @@ class AlquilerIntegrationTest extends IntegracionBase {
     }
 
     @Test
-    void republicarEventosSoloAdminSistema() throws Exception {
+    void republicarEventosYaNoExiste() throws Exception {
+        // Se eliminó: los datos semilla de cada servicio ya están alineados por ID
         mockMvc.perform(conToken(post("/alquileres/admin/republicar-eventos"), tokenAdminSistema()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.alquileres").isNumber());
+                .andExpect(status().isNotFound());
     }
 }

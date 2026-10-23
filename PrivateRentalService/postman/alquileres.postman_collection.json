@@ -180,10 +180,10 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nit\": \"1234567-8\",\n  \"nombreCliente\": \"Cliente Mostrador\",\n  \"idSucursalOrigen\": \"10000000-0000-4000-8000-000000000001\",\n  \"nombreOrigen\": \"Quetzaltenango\",\n  \"nombreDestino\": \"Huehuetenango\",\n  \"fechaHoraSalida\": \"2026-11-02T09:00:00-06:00\",\n  \"idaYVuelta\": true,\n  \"fechaHoraRetorno\": \"2026-11-02T18:00:00-06:00\",\n  \"numeroPasajeros\": 20,\n  \"latitudOrigen\": 14.8333,\n  \"longitudOrigen\": -91.5167,\n  \"latitudDestino\": 15.3199,\n  \"longitudDestino\": -91.4700\n}",
+              "raw": "{\n  \"solicitud\": {\n    \"idSucursalOrigen\": \"10000000-0000-4000-8000-000000000001\",\n    \"origen\": \"Quetzaltenango\",\n    \"destino\": \"Huehuetenango\",\n    \"fechaHoraSalida\": \"2026-11-02T09:00:00-06:00\",\n    \"idaYVuelta\": true,\n    \"fechaHoraRetorno\": \"2026-11-02T18:00:00-06:00\",\n    \"numeroPasajeros\": 20,\n    \"latitudOrigen\": 14.8333,\n    \"longitudOrigen\": -91.5167,\n    \"latitudDestino\": 15.3199,\n    \"longitudDestino\": -91.47\n  },\n  \"nitCliente\": \"1234567-8\",\n  \"nombreCliente\": \"Cliente Mostrador\"\n}",
               "options": { "raw": { "language": "json" } }
             },
-            "description": "Canal MOSTRADOR. NIT y nombre del cuerpo (no del perfil)."
+            "description": "Canal MOSTRADOR. Cuerpo anidado: solicitud (mismos campos que en línea) + nitCliente (vacío o CF = consumidor final; se normaliza) + nombreCliente (obligatorio)."
           }
         }
       ]
@@ -271,16 +271,16 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/alquileres?size=20",
+              "raw": "{{baseUrl}}/alquileres?pagina=0&tamano=20",
               "host": ["{{baseUrl}}"],
               "path": ["alquileres"],
               "query": [
                 { "key": "estado", "value": "", "disabled": true, "description": "SOLICITADO, COTIZADO, CONFIRMADO, FINALIZADO, CANCELADO" },
-                { "key": "desde", "value": "", "disabled": true, "description": "YYYY-MM-DD" },
+                { "key": "desde", "value": "", "disabled": true, "description": "YYYY-MM-DD, día de Guatemala (incluido)" },
                 { "key": "hasta", "value": "", "disabled": true },
-                { "key": "sinAsignar", "value": "", "disabled": true, "description": "true = confirmados sin viaje asignado" },
-                { "key": "size", "value": "20" },
-                { "key": "page", "value": "0" }
+                { "key": "sinAsignar", "value": "", "disabled": true, "description": "true = confirmados sin bus asignado" },
+                { "key": "pagina", "value": "0" },
+                { "key": "tamano", "value": "20", "description": "1 a 100" }
               ]
             },
             "description": "SUC y CAJ ven los de su sucursal; SIS ve todos."
@@ -296,25 +296,59 @@
               "host": ["{{baseUrl}}"],
               "path": ["alquileres", "{{idAlquiler}}"]
             },
-            "description": "Cliente solo ve los suyos; SUC ve los de su sucursal; SIS ve todos. Incluye historial de cotizaciones."
+            "description": "Cliente ve los suyos (en línea o de mostrador con el NIT de su perfil); SUC/CAJ los de su sucursal; SIS todos. Incluye historial de cotizaciones."
           }
         }
       ]
     },
     {
-      "name": "Administración",
+      "name": "Tarifas",
       "item": [
         {
-          "name": "Republicar eventos (ADMIN_SISTEMA)",
+          "name": "Tarifa vigente (autenticado)",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/alquileres/admin/republicar-eventos",
+              "raw": "{{baseUrl}}/alquileres/tarifas/vigente",
               "host": ["{{baseUrl}}"],
-              "path": ["alquileres", "admin", "republicar-eventos"]
+              "path": ["alquileres", "tarifas", "vigente"],
+              "query": [
+                { "key": "fecha", "value": "", "disabled": true, "description": "YYYY-MM-DD; hoy en Guatemala si se omite" }
+              ]
             },
-            "description": "Encola AlquilerSolicitado de todo lo existente para poblar proyecciones de Costos. Idempotente."
+            "description": "La más reciente con vigenteDesde <= fecha. 404 SIN_TARIFA si no hay."
+          }
+        },
+        {
+          "name": "Historial de tarifas (ADMIN_SISTEMA)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/alquileres/tarifas",
+              "host": ["{{baseUrl}}"],
+              "path": ["alquileres", "tarifas"]
+            },
+            "description": "De la más reciente a la más antigua."
+          }
+        },
+        {
+          "name": "Registrar tarifa (ADMIN_SISTEMA)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/alquileres/tarifas",
+              "host": ["{{baseUrl}}"],
+              "path": ["alquileres", "tarifas"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioPorKm\": \"10.50\",\n  \"precioPorDia\": \"550.00\",\n  \"vigenteDesde\": \"2026-12-01\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "vigenteDesde hoy o después. Si ya hay una tarifa con esa fecha, la reemplaza. 201."
           },
           "event": [
             {
@@ -322,7 +356,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('200 OK', () => pm.response.to.have.status(200));"
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));"
                 ]
               }
             }

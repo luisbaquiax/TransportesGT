@@ -9,6 +9,6 @@ import java.time.LocalDate;
 /** Pago de un alquiler cotizado (en línea con cartera o en efectivo en mostrador). */
 public record PagoAlquilerRequest(
         @Schema(example = "2026-10-20") @NotNull
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate fechaPago
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaPago
 ) {
 }

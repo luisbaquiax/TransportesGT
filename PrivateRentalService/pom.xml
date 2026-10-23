@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.github.luisbaquiax</groupId>
             <artifactId>EventosComunesTrasnportesGt</artifactId>
-            <version>v2.0.1</version>
+            <version>v2.1.1</version>
         </dependency>
 
         <!--  Web, persistencia y mensajería (iguales en los 9 servicios) -->

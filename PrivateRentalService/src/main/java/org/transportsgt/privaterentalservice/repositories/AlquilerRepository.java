@@ -31,7 +31,7 @@ public interface AlquilerRepository extends JpaRepository<Alquiler, UUID>, JpaSp
     @Query("""
             SELECT a FROM Alquiler a
              WHERE a.idUsuarioCliente = :idUsuario OR (:nit IS NOT NULL AND a.nitCliente = :nit)
-             ORDER BY a.creadoEn DESC
+             ORDER BY a.creadoEn DESC, a.id
             """)
     Page<Alquiler> findHistorial(@Param("idUsuario") UUID idUsuario, @Param("nit") String nit, Pageable pageable);
 

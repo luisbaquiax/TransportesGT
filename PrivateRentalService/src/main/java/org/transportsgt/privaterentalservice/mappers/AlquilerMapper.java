@@ -12,9 +12,6 @@ import org.transportsgt.privaterentalservice.dto.response.CotizacionAlquilerResp
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.models.CotizacionAlquiler;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -22,6 +19,12 @@ public interface AlquilerMapper {
 
     @Mapping(target = "cotizaciones", ignore = true)
     AlquilerResponse toResponse(Alquiler alquiler);
+
+    /**
+     * Detalle: el alquiler con su historial de cotizaciones.
+     */
+    @Mapping(target = "cotizaciones", source = "cotizaciones")
+    AlquilerResponse toDetalle(Alquiler alquiler, List<CotizacionAlquiler> cotizaciones);
 
     List<AlquilerResponse> toResponseList(List<Alquiler> alquileres);
 
@@ -36,8 +39,8 @@ public interface AlquilerMapper {
     @Mapping(target = "idSucursalOrigen", source = "a.idSucursalOrigen")
     @Mapping(target = "origen", source = "a.origen")
     @Mapping(target = "destino", source = "a.destino")
-    @Mapping(target = "fechaSalida", expression = "java(a.getFechaHoraSalida().toLocalDate())")
-    @Mapping(target = "fechaRetorno", expression = "java(a.getFechaHoraRetorno() == null ? null : a.getFechaHoraRetorno().toLocalDate())")
+    @Mapping(target = "fechaHoraSalida", source = "a.fechaHoraSalida")
+    @Mapping(target = "fechaHoraRetorno", source = "a.fechaHoraRetorno")
     @Mapping(target = "numeroPasajeros", expression = "java(a.getNumeroPasajeros().intValue())")
     @Mapping(target = "precioEstimado", source = "a.precioEstimado")
     DatosAlquilerSolicitado toDatosSolicitado(Alquiler a);
@@ -68,12 +71,4 @@ public interface AlquilerMapper {
     @Mapping(target = "idPago", source = "a.idPago")
     @Mapping(target = "canceladoEn", expression = "java(a.getCanceladoEn() == null ? null : a.getCanceladoEn().toInstant())")
     DatosAlquilerCancelado toDatosCancelado(Alquiler a, String motivo);
-
-    static Instant instante(java.time.OffsetDateTime odt) {
-        return odt == null ? null : odt.toInstant();
-    }
-
-    static LocalDate fecha(java.time.OffsetDateTime odt) {
-        return odt == null ? null : odt.toLocalDate();
-    }
 }

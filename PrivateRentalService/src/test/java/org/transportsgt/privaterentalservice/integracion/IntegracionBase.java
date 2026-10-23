@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
@@ -47,8 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "logging.level.org.transportsgt=INFO",
         "eventos.outbox.intervalo-ms=200",
         "eventos.outbox.lote=50",
-        // Cartera no existe en las pruebas: el pago en línea debe fallar cerrado (503)
-        "cartera.url=http://127.0.0.1:9/v1/customers",
         "alquileres.factor-carretera=1.3"
 })
 @AutoConfigureMockMvc
@@ -60,6 +60,14 @@ public abstract class IntegracionBase {
     protected static final UUID XELA = UUID.fromString("10000000-0000-4000-8000-000000000001");
     protected static final UUID CAPITAL = UUID.fromString("10000000-0000-4000-8000-000000000002");
     protected static final UUID HUEHUE = UUID.fromString("10000000-0000-4000-8000-000000000003");
+
+    /** Cartera simulada (ver {@link CarteraSimulada}); una por JVM, como el contexto de Spring. */
+    protected static final CarteraSimulada CARTERA = new CarteraSimulada();
+
+    @DynamicPropertySource
+    static void carteraSimulada(DynamicPropertyRegistry registro) {
+        registro.add("cartera.url", CARTERA::url);
+    }
 
     @Autowired
     protected MockMvc mockMvc;
