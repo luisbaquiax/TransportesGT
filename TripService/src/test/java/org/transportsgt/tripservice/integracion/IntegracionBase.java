@@ -1,6 +1,7 @@
 package org.transportsgt.tripservice.integracion;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -81,6 +82,30 @@ public abstract class IntegracionBase {
     protected RabbitAdmin rabbitAdmin;
     @Autowired
     protected org.springframework.context.ApplicationContext contexto;
+
+    /**
+     * Buses y choferes propios de las pruebas, independientes de la semilla V2 (que usa los ids reales de Flota y
+     * puede cambiar): licencias largas y choferes enlazados a usuarios (e0000000-...) para probar el rol CHOFER.
+     */
+    @BeforeEach
+    void fixturesDeFlota() {
+        jdbc.update("""
+                INSERT INTO bus_ref (id, id_sucursal, placa, capacidad_pasajeros, estado_operativo, activo, version) VALUES
+                 ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'P123ABC', 45, 'DISPONIBLE', TRUE, 1),
+                 ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', 'P456DEF', 30, 'DISPONIBLE', TRUE, 1),
+                 ('20000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002', 'P789GHI', 45, 'DISPONIBLE', TRUE, 1)
+                ON CONFLICT (id) DO NOTHING""");
+        jdbc.update("""
+                INSERT INTO chofer_ref (id, id_usuario, id_sucursal, nombre_completo, salario_base_viaje,
+                                        fecha_vencimiento_licencia, activo, version) VALUES
+                 ('30000000-0000-4000-8000-000000000001', 'e0000000-0000-4000-8000-000000000001',
+                  '10000000-0000-4000-8000-000000000001', 'Juan Pérez', 150.00, '2030-12-31', TRUE, 1),
+                 ('30000000-0000-4000-8000-000000000002', 'e0000000-0000-4000-8000-000000000002',
+                  '10000000-0000-4000-8000-000000000001', 'María López', 140.00, '2030-06-30', TRUE, 1),
+                 ('30000000-0000-4000-8000-000000000003', 'e0000000-0000-4000-8000-000000000003',
+                  '10000000-0000-4000-8000-000000000002', 'Carlos Gómez', 160.00, '2030-03-15', TRUE, 1)
+                ON CONFLICT (id) DO NOTHING""");
+    }
 
     protected String token(org.transportsgt.eventos.payload.Rol rol, UUID idSucursal, UUID idUsuario) {
         SecretKey clave = new SecretKeySpec(Base64.getDecoder().decode(SECRETO_PRUEBAS), "HmacSHA256");

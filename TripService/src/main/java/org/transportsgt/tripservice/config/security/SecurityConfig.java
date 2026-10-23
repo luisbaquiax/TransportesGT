@@ -58,6 +58,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
                         // ---- Reglas propias de Viajes ----
+                        .requestMatchers("/admin/**")
+                                .hasRole("ADMIN_SISTEMA")
                         .requestMatchers(HttpMethod.GET, "/viajes/activos")
                                 .hasRole("INTERNO")
                         .requestMatchers(HttpMethod.GET, "/rutas", "/rutas/*")

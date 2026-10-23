@@ -40,7 +40,8 @@ class ViajeResumenIntegrationTest extends IntegracionBase {
                 .andExpect(jsonPath("$[0].nombreOrigen").value("Quetzaltenango"))
                 .andExpect(jsonPath("$[0].nombreDestino").value("Ciudad de Guatemala"))
                 .andExpect(jsonPath("$[0].fechaHoraSalida").exists())
-                .andExpect(jsonPath("$[0].placaBus").value("P123ABC"))
+                // Bus del viaje semilla (V2): b0000000-...-0001
+                .andExpect(jsonPath("$[0].placaBus").value("P900ABC"))
                 .andExpect(jsonPath("$[0].chofer").doesNotExist())
                 .andExpect(jsonPath("$[0].bus").doesNotExist())
                 .andExpect(jsonPath("$[0].registroSalida").doesNotExist())

@@ -74,7 +74,7 @@ class RutaServiceTest {
         when(sucursalRefRepository.existsByIdAndActivaTrue(XELA)).thenReturn(true);
         when(sucursalRefRepository.existsByIdAndActivaTrue(CAPITAL)).thenReturn(true);
         when(rutaRepository.existsByIdSucursalOrigenAndIdSucursalDestino(XELA, CAPITAL)).thenReturn(false);
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(r);
+        when(rutaRepository.saveAndFlush(any(Ruta.class))).thenReturn(r);
 
         var resp = servicio.crear(request(), admin);
 
@@ -114,7 +114,7 @@ class RutaServiceTest {
         when(rutaRepository.findById(r.getId())).thenReturn(Optional.of(r));
         when(rutaRepository.existsByIdSucursalOrigenAndIdSucursalDestinoAndIdNot(XELA, CAPITAL, r.getId()))
                 .thenReturn(false);
-        when(rutaRepository.save(any(Ruta.class))).thenReturn(r);
+        when(rutaRepository.saveAndFlush(any(Ruta.class))).thenReturn(r);
 
         var resp = servicio.actualizar(r.getId(), request(), admin);
 

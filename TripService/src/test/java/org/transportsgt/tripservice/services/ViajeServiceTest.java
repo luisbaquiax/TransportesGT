@@ -137,7 +137,7 @@ class ViajeServiceTest {
     // ------------------------------------------------------------------
 
     @Test
-    void crearRegularValidaRecursosYPublicaViajeActualizado() {
+    void crearRegularValidaRecursosYPublicaViajeProgramado() {
         Viaje guardado = viajeProgramado();
         Requests.ViajeRegularRequest req = new Requests.ViajeRegularRequest(
                 RUTA_ID, BUS_1, CHOFER_1, guardado.getFechaHoraSalida(), guardado.getFechaHoraLlegadaEstimada());
@@ -145,14 +145,16 @@ class ViajeServiceTest {
         when(busRefRepository.findById(BUS_1)).thenReturn(Optional.of(busActivo()));
         when(choferRefRepository.findById(CHOFER_1)).thenReturn(Optional.of(choferRef()));
         when(sucursalRefRepository.findById(XELA)).thenReturn(Optional.empty());
-        when(viajeRepository.save(any(Viaje.class))).thenReturn(guardado);
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(guardado);
         when(viajeRepository.findConRutaById(guardado.getId())).thenReturn(Optional.of(guardado));
 
         var resp = servicio.crearRegular(req, adminSucursal);
 
         assertEquals(guardado.getId(), resp.id());
         assertEquals(EstadoViaje.PROGRAMADO, resp.estado());
-        verify(eventos).viajeActualizado(any(), any(), any());
+        // Catálogo §2.3: un viaje nuevo se publica como ViajeProgramado, no como ViajeActualizado
+        verify(eventos).viajeProgramado(any(), any(), any());
+        verify(eventos, org.mockito.Mockito.never()).viajeActualizado(any(), any(), any());
     }
 
     @Test
@@ -210,7 +212,7 @@ class ViajeServiceTest {
                 .estadoOperativo(EstadoOperativo.DISPONIBLE).activo(true).version(1L).build()));
         when(choferRefRepository.findById(CHOFER_1)).thenReturn(Optional.of(choferRef()));
         when(boletosClient.asientoMaximo(v.getId())).thenReturn(40);
-        when(viajeRepository.save(any(Viaje.class))).thenReturn(otro);
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(otro);
         when(viajeRepository.findConRutaById(otro.getId())).thenReturn(Optional.of(otro));
 
         var resp = servicio.actualizar(v.getId(), req, adminSucursal);
@@ -268,7 +270,7 @@ class ViajeServiceTest {
         when(viajeRepository.findConRutaById(v.getId())).thenReturn(Optional.of(v));
         when(busRefRepository.findById(BUS_1)).thenReturn(Optional.of(busActivo()));
         when(choferRefRepository.findById(CHOFER_1)).thenReturn(Optional.of(choferRef()));
-        when(viajeRepository.save(any(Viaje.class))).thenReturn(asignado);
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(asignado);
         when(viajeRepository.findConRutaById(asignado.getId())).thenReturn(Optional.of(asignado));
 
         var resp = servicio.asignar(v.getId(), req, adminSucursal);
@@ -356,7 +358,7 @@ class ViajeServiceTest {
         when(viajeRepository.findConRutaById(v.getId())).thenReturn(Optional.of(v), Optional.of(enTransito));
         when(registroSalidaRepository.existsByViajeId(v.getId())).thenReturn(false);
         when(registroSalidaRepository.save(any())).thenReturn(null);
-        when(viajeRepository.save(any(Viaje.class))).thenReturn(enTransito);
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(enTransito);
 
         var resp = servicio.registrarSalida(v.getId(), req, adminSucursal);
 
@@ -396,7 +398,7 @@ class ViajeServiceTest {
         when(choferRefRepository.findById(CHOFER_1)).thenReturn(Optional.of(choferRef()));
         when(busRefRepository.findById(BUS_1)).thenReturn(Optional.of(busActivo()));
         when(registroLlegadaRepository.save(any())).thenReturn(null);
-        when(viajeRepository.save(any(Viaje.class))).thenReturn(finalizado);
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(finalizado);
         var llegadaGuardada = org.transportsgt.tripservice.models.RegistroLlegada.builder()
                 .viaje(finalizado)
                 .fechaHoraLlegadaReal(req.fechaHoraLlegadaReal())

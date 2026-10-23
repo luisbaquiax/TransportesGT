@@ -8,6 +8,7 @@ import org.transportsgt.eventos.payload.BusAsignado;
 import org.transportsgt.eventos.payload.ChoferAsignado;
 import org.transportsgt.eventos.payload.EstadoOperativo;
 import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.Rol;
 import org.transportsgt.eventos.payload.TipoViaje;
 import org.transportsgt.tripservice.clients.BoletosClient;
 import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
@@ -171,7 +172,8 @@ public class ViajeService {
                 .creadoPor(usuario.id())
                 .build();
         viaje = guardarConTraduccionTraslape(viaje);
-        eventos.viajeActualizado(viaje, busAsignado(viaje.getIdBus()), choferAsignado(viaje.getIdChofer()));
+        // Catálogo §2.3: un viaje nuevo se anuncia con ViajeProgramado (los cambios posteriores, con ViajeActualizado)
+        eventos.viajeProgramado(viaje, busAsignado(viaje.getIdBus()), choferAsignado(viaje.getIdChofer()));
         return toResponse(viaje);
     }
 
@@ -290,8 +292,11 @@ public class ViajeService {
                 .build();
         registroSalidaRepository.save(registro);
         v.setEstado(EstadoViaje.EN_TRANSITO);
-        v = viajeRepository.save(v);
+        // flush: los eventos deben llevar la versión ya incrementada (los consumidores descartan versiones repetidas)
+        v = viajeRepository.saveAndFlush(v);
         eventos.salidaRegistrada(v, request.fechaHoraSalidaReal(), request.kilometrajeInicial(), usuario.id());
+        // Catálogo §2.3: el cambio de estado (EN_TRANSITO) también se publica para Boletos, Alquileres y Reportes
+        eventos.viajeActualizado(v, busAsignado(v.getIdBus()), choferAsignado(v.getIdChofer()));
         log.info("Salida del viaje {} registrada por {}", id, usuario.id());
         return toResponse(v);
     }
@@ -335,11 +340,14 @@ public class ViajeService {
                 .build();
         registroLlegadaRepository.save(llegada);
         v.setEstado(EstadoViaje.FINALIZADO);
-        v = viajeRepository.save(v);
+        // flush: los eventos deben llevar la versión ya incrementada (los consumidores descartan versiones repetidas)
+        v = viajeRepository.saveAndFlush(v);
         eventos.llegadaRegistrada(v, idSucursalBus, salarioBase,
                 salida.getFechaHoraSalidaReal(), request.fechaHoraLlegadaReal(),
                 salida.getKilometrajeInicial(), request.kilometrajeFinal(),
                 distancia, request.gastoCombustibleTotal(), usuario.id());
+        // Catálogo §2.3: el cambio de estado (FINALIZADO) también se publica
+        eventos.viajeActualizado(v, busAsignado(v.getIdBus()), choferAsignado(v.getIdChofer()));
         log.info("Llegada del viaje {} registrada; viaje FINALIZADO", id);
         return toResponse(v);
     }
@@ -356,7 +364,8 @@ public class ViajeService {
         if (usuario.esAdminSistema()) {
             return;
         }
-        if (usuario.esAdminSucursal()) {
+        // Plan §3.3: SUC y CAJ ven los viajes de su sucursal (el cajero solo consulta)
+        if (usuario.esAdminSucursal() || usuario.rol() == Rol.CAJERO) {
             if (!usuario.perteneceASucursal(v.getIdSucursalOrigen())) {
                 throw new OperacionNoAutorizadaException("El viaje no pertenece a su sucursal");
             }
@@ -390,7 +399,7 @@ public class ViajeService {
         if (usuario.esAdminSistema()) {
             return true;
         }
-        if (usuario.esAdminSucursal()) {
+        if (usuario.esAdminSucursal() || usuario.rol() == Rol.CAJERO) {
             return usuario.perteneceASucursal(v.getIdSucursalOrigen());
         }
         return v.getIdChofer() != null && esSuChofer(v.getIdChofer(), usuario);
@@ -443,9 +452,14 @@ public class ViajeService {
         }
     }
 
+    /**
+     * Guarda con flush inmediato por dos motivos: los eventos se registran después con la versión ya incrementada
+     * (sin flush saldrían con la anterior y Boletos, Alquileres y Reportes los descartarían) y el EXCLUDE de
+     * traslape salta aquí, donde se traduce a CONFLICTO_HORARIO, y no al confirmar la transacción.
+     */
     private Viaje guardarConTraduccionTraslape(Viaje v) {
         try {
-            return viajeRepository.save(v);
+            return viajeRepository.saveAndFlush(v);
         } catch (org.springframework.dao.DataAccessException e) {
             if (esTraslape(e)) {
                 throw new ReglaNegocioException("CONFLICTO_HORARIO",

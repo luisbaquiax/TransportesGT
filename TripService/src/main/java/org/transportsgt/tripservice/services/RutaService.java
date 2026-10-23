@@ -79,7 +79,7 @@ public class RutaService {
                 .precioBoleto(request.precioBoleto())
                 .creadoPor(usuario.id())
                 .build();
-        r = rutaRepository.save(r);
+        r = rutaRepository.saveAndFlush(r);
         eventos.rutaCreada(r);
         return toResponse(r);
     }
@@ -105,7 +105,8 @@ public class RutaService {
         r.setIdSucursalDestino(request.idSucursalDestino());
         r.setDistanciaKm(request.distanciaKm());
         r.setPrecioBoleto(request.precioBoleto());
-        r = rutaRepository.save(r);
+        // flush: RutaActualizada debe llevar la versión ya incrementada
+        r = rutaRepository.saveAndFlush(r);
         eventos.rutaActualizada(r);
         return toResponse(r);
     }
