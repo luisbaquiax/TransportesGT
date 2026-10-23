@@ -10,9 +10,6 @@ import java.util.UUID;
 
 public interface SucursalRefRepository extends JpaRepository<SucursalRef, UUID> {
 
-    boolean existsByIdAndActivaTrue(UUID id);
-
-
     /**
      * Aplica SucursalCreada/Actualizada. Ignora el evento si su versión no es mayor que la guardada.
      *

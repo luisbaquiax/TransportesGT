@@ -1,7 +1,5 @@
 package org.transportsgt.operationalcostsservice.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,8 +13,4 @@ public interface GastoTallerRepository extends JpaRepository<GastoTaller, UUID>,
     /** Detalle con sus líneas y categorías (también para armar GastoTallerRegistrado). */
     @EntityGraph(attributePaths = {"lineas", "lineas.categoria"})
     Optional<GastoTaller> findConLineasById(UUID id);
-
-    Page<GastoTaller> findAllByIdSucursalOrderByFechaServicioDesc(UUID idSucursal, Pageable pageable);
-
-    Page<GastoTaller> findAllByIdBusOrderByFechaServicioDesc(UUID idBus, Pageable pageable);
 }

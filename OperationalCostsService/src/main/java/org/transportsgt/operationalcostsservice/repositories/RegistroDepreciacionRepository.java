@@ -8,8 +8,5 @@ import java.util.UUID;
 
 public interface RegistroDepreciacionRepository extends JpaRepository<RegistroDepreciacion, UUID> {
 
-    /** Idempotencia al consumir LlegadaRegistrada ({@code UNIQUE(id_viaje)}). */
-    boolean existsByIdViaje(UUID idViaje);
-
     Optional<RegistroDepreciacion> findByIdViaje(UUID idViaje);
 }

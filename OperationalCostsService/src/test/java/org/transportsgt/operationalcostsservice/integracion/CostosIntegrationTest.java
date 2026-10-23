@@ -132,6 +132,31 @@ class CostosIntegrationTest extends IntegracionBase {
     }
 
     @Test
+    void listarTallerConFiltrosTopeDePaginaYSucursal() throws Exception {
+        solicitarGastoTaller();
+
+        MvcResult filtrado = mockMvc.perform(conToken(get("/costos/taller")
+                        .param("idBus", BUS_XELA.toString())
+                        .param("desde", "2026-10-01")
+                        .param("hasta", "2026-10-31")
+                        .param("tamano", "500"), tokenAdminSistema()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tamano").value(100))
+                .andReturn();
+        assertThat(leer(filtrado).get("totalElementos").asInt()).isGreaterThanOrEqualTo(1);
+
+        MvcResult propia = mockMvc.perform(conToken(get("/costos/taller"), tokenAdminSucursal()))
+                .andExpect(status().isOk())
+                .andReturn();
+        assertThat(leer(propia).get("totalElementos").asInt()).isGreaterThanOrEqualTo(1);
+
+        mockMvc.perform(conToken(get("/costos/taller"),
+                        token(org.transportsgt.eventos.payload.Rol.ADMIN_SUCURSAL, CAPITAL)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElementos").value(0));
+    }
+
+    @Test
     void viajeSinCostosEs404() throws Exception {
         mockMvc.perform(conToken(get("/costos/viajes/" + UUID.randomUUID()), tokenAdminSistema()))
                 .andExpect(status().isNotFound())

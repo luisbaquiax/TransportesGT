@@ -179,12 +179,15 @@ sequenceDiagram
 
 ## Notas de implementación
 
+- **Subdominios**: la superficie de servicio se divide en `TarifaDepreciacionService`, `CategoriaGastoService`, `GastoTallerService` y `ResumenViajeService` (SRP/ISP); el controlador inyecta cada uno.
+- **Dominio de costos**: `CalculadoraCostosViaje` concentra las fórmulas (combustible, depreciación, chofer) y `PoliticaPagoChofer` los multiplicadores 1.00/1.15; `ManejadorLlegadaRegistrada` solo orquesta persistencia y outbox.
+- **Autorización**: las reglas por rol/sucursal viven en `PoliticaAccesoSucursal` y las delegan los servicios.
 - **Idempotencia**: `ManejadorLlegadaRegistrada` verifica `existsByIdViaje` antes de generar costos.
 - **Inmutabilidad**: gastos de taller y costos de viaje no se actualizan; solo se insertan.
 - **Seguridad**: `ADMIN_SUCURSAL` solo ve/edita recursos de su propia sucursal (`idSucursal` del JWT).
 - **Tarifas**: `guardarTarifa` usa upsert por `vigenteDesde`; el historial se conserva completo.
 - **Swagger**: documentado con OpenAPI 3 (springdoc); ejemplos de error en `RespuestaError`.
-- **Cobertura**: LINE 91.2%, INSTRUCTION 85.2%, BRANCH 71.2% (jacoco 0.8.13).
+- **Cobertura**: LINE 94.8%, INSTRUCTION 89.5%, BRANCH 80.9% (jacoco 0.8.15).
 
 ## Probar con Postman
 

@@ -6,13 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.transportsgt.operationalcostsservice.models.BusRef;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface BusRefRepository extends JpaRepository<BusRef, UUID> {
-
-    /** Buses de la sucursal del administrador (para registrar gastos de taller). */
-    List<BusRef> findAllByIdSucursalOrderByPlaca(UUID idSucursal);
 
     /**
      * Aplica BusRegistrado/Actualizado. Ignora el evento si su versión no es mayor que la guardada.

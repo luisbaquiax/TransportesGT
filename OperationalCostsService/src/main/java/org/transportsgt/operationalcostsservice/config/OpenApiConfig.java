@@ -18,10 +18,10 @@ public class OpenApiConfig {
     public static final String ESQUEMA_JWT = "bearerAuth";
 
     @Bean
-    public OpenAPI identidadOpenApi(@Value("${server.servlet.context-path:}") String contextPath) {
+    public OpenAPI apiCostosOpenApi(@Value("${server.servlet.context-path:}") String contextPath) {
         return new OpenAPI()
                 .info(new Info()
-.title("Servicio de costos operativos")
+                        .title("Servicio de costos operativos")
                         .version("1.0")
                         .description("Costos operativos de TransportesGT: taller, combustible, depreciación y salario del chofer"))
                 .servers(List.of(new Server().url(contextPath.isBlank() ? "/" : contextPath)))

@@ -22,7 +22,7 @@
         <springdoc.version>3.0.3</springdoc.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <jacoco.version>0.8.13</jacoco.version>
+        <jacoco.version>0.8.15</jacoco.version>
         <!-- Cobertura mínima de líneas que exige "mvn verify". -->
         <jacoco.minimum>0.85</jacoco.minimum>
     </properties>
@@ -177,17 +177,7 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -231,29 +221,6 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <target>
-                                <echo>Copiando las carpetas de configuración Docker</echo>
-                                <!-- erroronmissingdir="false": no falla si el servicio aún no tiene esa carpeta -->
-                                <copy todir="${basedir}/target/config-dev-docker" failonerror="false">
-                                    <fileset dir="${basedir}/src/main/resources/config-dev-docker"
-                                             erroronmissingdir="false"/>
-                                </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>

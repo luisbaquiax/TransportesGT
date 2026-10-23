@@ -39,12 +39,11 @@ public interface CostosMapper {
 
     GastoTallerResponse toResponse(GastoTaller g);
 
-    List<GastoTallerResponse> toGastoTallerList(List<GastoTaller> lista);
-
     CategoriaResponse toResponse(CategoriaGasto c);
 
     List<CategoriaResponse> toCategoriaList(List<CategoriaGasto> lista);
 
+    @Mapping(target = "idGasto", source = "g.id")
     DatosGastoCombustible toDatosCombustible(GastoCombustible g);
 
     @Mapping(target = "idDepreciacion", source = "r.id")
@@ -61,6 +60,9 @@ public interface CostosMapper {
     @Mapping(target = "lineas", source = "lineas")
     DatosGastoTaller toDatosGastoTaller(GastoTaller g, List<LineaTaller> lineas);
 
+    @Mapping(target = "idLinea", source = "l.id")
+    @Mapping(target = "idCategoria", source = "l.categoria.id")
+    @Mapping(target = "nombreCategoria", source = "l.categoria.nombre")
     LineaTaller toLineaTaller(GastoTallerLinea l);
 
     List<LineaTaller> toLineaTallerList(List<GastoTallerLinea> lineas);

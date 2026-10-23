@@ -8,8 +8,5 @@ import java.util.UUID;
 
 public interface PagoChoferRepository extends JpaRepository<PagoChofer, UUID> {
 
-    /** Idempotencia al consumir LlegadaRegistrada ({@code UNIQUE(id_viaje)}). */
-    boolean existsByIdViaje(UUID idViaje);
-
     Optional<PagoChofer> findByIdViaje(UUID idViaje);
 }
