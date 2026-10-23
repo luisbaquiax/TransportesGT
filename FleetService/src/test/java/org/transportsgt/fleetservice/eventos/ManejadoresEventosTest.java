@@ -11,6 +11,8 @@ import org.transportsgt.eventos.payload.DatosLlegada;
 import org.transportsgt.eventos.payload.DatosSalida;
 import org.transportsgt.eventos.payload.DatosSucursal;
 import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.fleetservice.services.proyeccion.impl.KilometrajeBusServiceImpl;
+import org.transportsgt.fleetservice.services.proyeccion.impl.ProyeccionReferenciasServiceImpl;
 import org.transportsgt.fleetservice.repositories.BusRepository;
 import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
 
@@ -53,7 +55,7 @@ class ManejadoresEventosTest {
                 OffsetDateTime.now(ZoneOffset.UTC), new BigDecimal("120000.0"), UUID.randomUUID());
         when(busRepository.registrarSalida(ID_BUS, new BigDecimal("120000.0"))).thenReturn(1);
 
-        new ManejadorSalidaRegistrada(busRepository).manejar(sobre(datos, 1L));
+        new ManejadorSalidaRegistrada(new KilometrajeBusServiceImpl(busRepository)).manejar(sobre(datos, 1L));
 
         verify(busRepository).registrarSalida(ID_BUS, new BigDecimal("120000.0"));
     }
@@ -64,7 +66,7 @@ class ManejadoresEventosTest {
                 OffsetDateTime.now(ZoneOffset.UTC), BigDecimal.TEN, null);
         when(busRepository.registrarSalida(eq(ID_BUS), any(BigDecimal.class))).thenReturn(0);
 
-        new ManejadorSalidaRegistrada(busRepository).manejar(sobre(datos, 1L));
+        new ManejadorSalidaRegistrada(new KilometrajeBusServiceImpl(busRepository)).manejar(sobre(datos, 1L));
 
         verify(busRepository).registrarSalida(ID_BUS, BigDecimal.TEN);
     }
@@ -78,7 +80,7 @@ class ManejadoresEventosTest {
                 new BigDecimal("50.0"), null);
         when(busRepository.registrarLlegada(ID_BUS, new BigDecimal("121000.0"))).thenReturn(1);
 
-        new ManejadorLlegadaRegistrada(busRepository).manejar(sobre(datos, 1L));
+        new ManejadorLlegadaRegistrada(new KilometrajeBusServiceImpl(busRepository)).manejar(sobre(datos, 1L));
 
         verify(busRepository).registrarLlegada(ID_BUS, new BigDecimal("121000.0"));
     }
@@ -91,7 +93,7 @@ class ManejadoresEventosTest {
                 BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, null);
         when(busRepository.registrarLlegada(eq(ID_BUS), any(BigDecimal.class))).thenReturn(0);
 
-        new ManejadorLlegadaRegistrada(busRepository).manejar(sobre(datos, 1L));
+        new ManejadorLlegadaRegistrada(new KilometrajeBusServiceImpl(busRepository)).manejar(sobre(datos, 1L));
     }
 
     @Test
@@ -100,7 +102,7 @@ class ManejadoresEventosTest {
         DatosSucursal datos = sucursal(idSucursal, "Xela", true);
         when(sucursalRefRepository.upsert(idSucursal, "Xela", true, 3L)).thenReturn(1);
 
-        new ManejadorSucursalCreada(sucursalRefRepository).manejar(sobre(datos, 3L));
+        new ManejadorSucursalCreada(new ProyeccionReferenciasServiceImpl(sucursalRefRepository)).manejar(sobre(datos, 3L));
 
         verify(sucursalRefRepository).upsert(idSucursal, "Xela", true, 3L);
     }
@@ -113,7 +115,7 @@ class ManejadoresEventosTest {
                 java.time.Instant.now(), "servicio-identidad", null, null, null, datos);
         when(sucursalRefRepository.upsert(idSucursal, "Xela", true, 0L)).thenReturn(0);
 
-        new ManejadorSucursalCreada(sucursalRefRepository).manejar(evento);
+        new ManejadorSucursalCreada(new ProyeccionReferenciasServiceImpl(sucursalRefRepository)).manejar(evento);
 
         verify(sucursalRefRepository).upsert(idSucursal, "Xela", true, 0L);
     }
@@ -124,7 +126,7 @@ class ManejadoresEventosTest {
         DatosSucursal datos = sucursal(idSucursal, "Xela Centro", false);
         when(sucursalRefRepository.upsert(idSucursal, "Xela Centro", false, 4L)).thenReturn(1);
 
-        new ManejadorSucursalActualizada(sucursalRefRepository).manejar(sobre(datos, 4L));
+        new ManejadorSucursalActualizada(new ProyeccionReferenciasServiceImpl(sucursalRefRepository)).manejar(sobre(datos, 4L));
 
         verify(sucursalRefRepository).upsert(idSucursal, "Xela Centro", false, 4L);
     }
@@ -135,7 +137,7 @@ class ManejadoresEventosTest {
         DatosSucursal datos = sucursal(idSucursal, "Xela", true);
         when(sucursalRefRepository.upsert(idSucursal, "Xela", true, 1L)).thenReturn(0);
 
-        new ManejadorSucursalCreada(sucursalRefRepository).manejar(sobre(datos, 1L));
+        new ManejadorSucursalCreada(new ProyeccionReferenciasServiceImpl(sucursalRefRepository)).manejar(sobre(datos, 1L));
 
         verify(sucursalRefRepository).upsert(idSucursal, "Xela", true, 1L);
         verify(busRepository, never()).registrarSalida(any(), any());
@@ -147,7 +149,7 @@ class ManejadoresEventosTest {
                 OffsetDateTime.now(ZoneOffset.UTC), BigDecimal.ONE, null);
         when(busRepository.registrarSalida(eq(ID_BUS), any(BigDecimal.class))).thenReturn(1);
 
-        new ManejadorSalidaRegistrada(busRepository).manejar(sobre(datos, 9L));
+        new ManejadorSalidaRegistrada(new KilometrajeBusServiceImpl(busRepository)).manejar(sobre(datos, 9L));
 
         ArgumentCaptor<BigDecimal> kilometraje = ArgumentCaptor.forClass(BigDecimal.class);
         verify(busRepository).registrarSalida(eq(ID_BUS), kilometraje.capture());

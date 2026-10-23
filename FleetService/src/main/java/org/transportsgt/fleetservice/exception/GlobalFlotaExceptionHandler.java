@@ -2,6 +2,7 @@ package org.transportsgt.fleetservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,11 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalFlotaExceptionHandler {
+
+    private final FabricaRespuestaError fabricaRespuestaError;
+    private final TraductorErroresBd traductor;
 
     static final String MENSAJE_INTERNO = "Ocurrió un error inesperado. Intente de nuevo más tarde";
 
@@ -118,10 +123,10 @@ public class GlobalFlotaExceptionHandler {
      */
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<RespuestaError> handleDataAccess(DataAccessException ex, HttpServletRequest request) {
-        SQLException sql = buscarSqlException(ex);
+        SQLException sql = traductor.buscarSqlException(ex);
         String estado = sql == null ? null : sql.getSQLState();
         if (PG_UNICO.equals(estado)) {
-            return build(HttpStatus.CONFLICT, mensajeUnico(sql.getMessage()), "REGISTRO_DUPLICADO", request);
+            return build(HttpStatus.CONFLICT, traductor.mensajeUnico(sql.getMessage()), "REGISTRO_DUPLICADO", request);
         }
         if (PG_LLAVE_FORANEA.equals(estado)) {
             return build(HttpStatus.CONFLICT, "El registro hace referencia a datos que no existen",
@@ -132,7 +137,7 @@ public class GlobalFlotaExceptionHandler {
                     "DATOS_INCONSISTENTES", request);
         }
         if (PG_RAISE.equals(estado) || PG_INTEGRIDAD.equals(estado)) {
-            return build(HttpStatus.UNPROCESSABLE_CONTENT, mensajeTrigger(sql.getMessage()), "REGLA_BASE_DATOS", request);
+            return build(HttpStatus.UNPROCESSABLE_CONTENT, traductor.mensajeTrigger(sql.getMessage()), "REGLA_BASE_DATOS", request);
         }
         log.error("Error de acceso a datos en {}", request.getRequestURI(), ex);
         return build(HttpStatus.INTERNAL_SERVER_ERROR, MENSAJE_INTERNO, "ERROR_INTERNO", request);
@@ -159,41 +164,6 @@ public class GlobalFlotaExceptionHandler {
 
     private ResponseEntity<RespuestaError> build(HttpStatus status, String message, String codigo,
                                                  HttpServletRequest request) {
-        return ResponseEntity.status(status).body(RespuestaError.de(status, message, codigo, request.getRequestURI()));
-    }
-
-    private static SQLException buscarSqlException(Throwable ex) {
-        SQLException encontrada = null;
-        for (Throwable t = ex; t != null && t.getCause() != t; t = t.getCause()) {
-            if (t instanceof SQLException sql && sql.getSQLState() != null) {
-                encontrada = sql;
-            }
-        }
-        return encontrada;
-    }
-
-    private static String mensajeUnico(String detalle) {
-        String texto = detalle == null ? "" : detalle;
-        if (texto.contains("uq_bus_placa")) {
-            return "Ya existe un bus con esa placa";
-        }
-        if (texto.contains("chofer_numero_licencia_key")) {
-            return "Ya existe un chofer con ese número de licencia";
-        }
-        if (texto.contains("chofer_id_usuario_key")) {
-            return "Ese usuario ya está enlazado a otro chofer";
-        }
-        return "Ya existe un registro con esos datos";
-    }
-
-    /**
-     * "ERROR: Los registros de ... \n  Where: PL/pgSQL ..." → "Los registros de ...".
-     */
-    static String mensajeTrigger(String detalle) {
-        if (detalle == null || detalle.isBlank()) {
-            return "La operación viola una regla de datos";
-        }
-        String linea = detalle.lines().findFirst().orElse(detalle).trim();
-        return linea.startsWith("ERROR:") ? linea.substring("ERROR:".length()).trim() : linea;
+        return ResponseEntity.status(status).body(fabricaRespuestaError.crear(status, message, codigo, request.getRequestURI()));
     }
 }

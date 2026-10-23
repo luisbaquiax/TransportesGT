@@ -101,12 +101,12 @@ public class AlmacenamientoFotosLocal implements AlmacenamientoFotos {
     }
 
     /** {@code buses/1-2-3.jpg} → {@code buses/1-2-3.} (prefijo que cubre todas las extensiones). */
-    private static String baseSinExtension(String clave) {
+    private String baseSinExtension(String clave) {
         int punto = clave.lastIndexOf('.');
         return punto < 0 ? clave + "." : clave.substring(0, punto + 1);
     }
 
-    private static String nombreBaseDe(String prefijo) {
+    private String nombreBaseDe(String prefijo) {
         int barra = prefijo.lastIndexOf('/');
         return prefijo.substring(barra + 1);
     }

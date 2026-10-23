@@ -1,4 +1,4 @@
-package org.transportsgt.fleetservice.services;
+package org.transportsgt.fleetservice.services.autorizacion;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

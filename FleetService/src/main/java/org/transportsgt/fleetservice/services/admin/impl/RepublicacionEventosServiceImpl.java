@@ -1,4 +1,4 @@
-package org.transportsgt.fleetservice.services.impl;
+package org.transportsgt.fleetservice.services.admin.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,7 @@ import org.transportsgt.fleetservice.dto.response.RepublicacionResponse;
 import org.transportsgt.fleetservice.eventos.EventosFlota;
 import org.transportsgt.fleetservice.repositories.BusRepository;
 import org.transportsgt.fleetservice.repositories.ChoferRepository;
-import org.transportsgt.fleetservice.services.RepublicacionEventosService;
+import org.transportsgt.fleetservice.services.admin.RepublicacionEventosService;
 
 @Slf4j
 @Service

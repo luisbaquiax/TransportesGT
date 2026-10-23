@@ -115,7 +115,7 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
         return propiedades.nubeBucket();
     }
 
-    private static String baseSinExtension(String clave) {
+    private String baseSinExtension(String clave) {
         int punto = clave.lastIndexOf('.');
         return punto < 0 ? clave + "." : clave.substring(0, punto + 1);
     }

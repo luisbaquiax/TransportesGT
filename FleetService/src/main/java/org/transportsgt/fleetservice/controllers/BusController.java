@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.transportsgt.eventos.payload.EstadoOperativo;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.request.ActualizarBusRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarActivoRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarEstadoOperativoRequest;
@@ -41,8 +41,10 @@ import org.transportsgt.fleetservice.dto.request.CrearBusRequest;
 import org.transportsgt.fleetservice.dto.response.BusResponse;
 import org.transportsgt.fleetservice.dto.response.PaginaResponse;
 import org.transportsgt.fleetservice.exception.RespuestaError;
-import org.transportsgt.fleetservice.services.BusService;
-import org.transportsgt.fleetservice.services.FotoService;
+import org.transportsgt.fleetservice.services.bus.GestionBusesService;
+import org.transportsgt.fleetservice.services.consulta.ConsultaFlotaService;
+import org.transportsgt.fleetservice.services.foto.FotoLeida;
+import org.transportsgt.fleetservice.services.foto.FotosFlotaService;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -63,7 +65,10 @@ public class BusController {
 
     private static final String SOLO_ADMIN_SUCURSAL = "hasRole('ADMIN_SUCURSAL')";
 
-    private final BusService busService;
+    private final GestionBusesService gestionService;
+    private final ConsultaFlotaService consultaService;
+    private final FotosFlotaService fotosService;
+    private final ConvertidorUsuarioAutenticado convertidor;
 
     @GetMapping
     @Operation(summary = "Listar buses",
@@ -84,7 +89,7 @@ public class BusController {
             @ParameterObject @PageableDefault(size = 20, sort = "creadoEn", direction = Sort.Direction.DESC)
             Pageable pageable,
             @AuthenticationPrincipal Jwt jwt) {
-        return busService.listar(idSucursal, estadoOperativo, activo, texto, pageable, UsuarioAutenticado.de(jwt));
+        return consultaService.listarBuses(idSucursal, estadoOperativo, activo, texto, pageable, convertidor.desde(jwt));
     }
 
     @GetMapping("/{id}")
@@ -98,7 +103,7 @@ public class BusController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_BUS)))
     })
     public BusResponse obtener(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return busService.obtener(id, UsuarioAutenticado.de(jwt));
+        return consultaService.obtenerBus(id, convertidor.desde(jwt));
     }
 
     @PostMapping
@@ -123,7 +128,7 @@ public class BusController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_409_PLACA)))
     })
     public BusResponse crear(@Valid @RequestBody CrearBusRequest request, @AuthenticationPrincipal Jwt jwt) {
-        return busService.crear(request, UsuarioAutenticado.de(jwt));
+        return gestionService.crear(request, convertidor.desde(jwt));
     }
 
     @PutMapping("/{id}")
@@ -147,7 +152,7 @@ public class BusController {
     })
     public BusResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ActualizarBusRequest request,
                                   @AuthenticationPrincipal Jwt jwt) {
-        return busService.actualizar(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.actualizar(id, request, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/activo")
@@ -172,7 +177,7 @@ public class BusController {
     })
     public BusResponse cambiarActivo(@PathVariable UUID id, @Valid @RequestBody CambiarActivoRequest request,
                                      @AuthenticationPrincipal Jwt jwt) {
-        return busService.cambiarActivo(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.cambiarActivo(id, request, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/estado-operativo")
@@ -195,7 +200,7 @@ public class BusController {
     public BusResponse cambiarEstadoOperativo(@PathVariable UUID id,
                                               @Valid @RequestBody CambiarEstadoOperativoRequest request,
                                               @AuthenticationPrincipal Jwt jwt) {
-        return busService.cambiarEstadoOperativo(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.cambiarEstadoOperativo(id, request, convertidor.desde(jwt));
     }
 
     @GetMapping("/{id}/foto")
@@ -210,7 +215,7 @@ public class BusController {
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
     public ResponseEntity<Resource> leerFoto(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        FotoService.FotoLeida foto = busService.leerFoto(id, UsuarioAutenticado.de(jwt));
+        FotoLeida foto = fotosService.leerFotoBus(id, convertidor.desde(jwt));
         return ResponseEntity.ok()
                 .contentType(foto.tipo())
                 // private: solo la caché del navegador, nunca una compartida (proxy/CDN)
@@ -240,6 +245,6 @@ public class BusController {
     public BusResponse guardarFoto(@PathVariable UUID id,
                                    @RequestParam("archivo") MultipartFile archivo,
                                    @AuthenticationPrincipal Jwt jwt) {
-        return busService.guardarFoto(id, archivo, UsuarioAutenticado.de(jwt));
+        return fotosService.guardarFotoBus(id, archivo, convertidor.desde(jwt));
     }
 }

@@ -1,4 +1,4 @@
-package org.transportsgt.fleetservice.services;
+package org.transportsgt.fleetservice.services.admin;
 
 import org.transportsgt.fleetservice.dto.response.RepublicacionResponse;
 

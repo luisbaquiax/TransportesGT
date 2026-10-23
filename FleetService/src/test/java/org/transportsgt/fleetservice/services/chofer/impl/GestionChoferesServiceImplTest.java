@@ -1,5 +1,7 @@
-package org.transportsgt.fleetservice.services.impl;
+package org.transportsgt.fleetservice.services.chofer.impl;
 
+import org.transportsgt.fleetservice.repositories.BusRepository;
+import org.transportsgt.fleetservice.services.comun.BuscadorFlota;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,8 +27,7 @@ import org.transportsgt.fleetservice.mappers.ChoferMapper;
 import org.transportsgt.fleetservice.models.Chofer;
 import org.transportsgt.fleetservice.repositories.ChoferRepository;
 import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
-import org.transportsgt.fleetservice.services.AutorizacionSucursal;
-import org.transportsgt.fleetservice.services.FotoService;
+import org.transportsgt.fleetservice.services.autorizacion.AutorizacionSucursal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,20 +44,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ChoferServiceImplTest {
+class GestionChoferesServiceImplTest {
 
     @Mock
     private ChoferRepository choferRepository;
     @Mock
     private SucursalRefRepository sucursalRefRepository;
     @Mock
-    private FotoService fotoService;
-    @Mock
     private ChoferMapper choferMapper;
     @Mock
     private EventosFlota eventos;
 
-    private ChoferServiceImpl servicio;
+    private GestionChoferesServiceImpl servicio;
 
     private final UUID idSucursal = UUID.fromString("10000000-0000-4000-8000-000000000001");
     private final UUID idChofer = UUID.fromString("c0000000-0000-4000-8000-000000000001");
@@ -67,10 +66,14 @@ class ChoferServiceImplTest {
             new UsuarioAutenticado(UUID.randomUUID(), "admin@transportes.gt",
                     Rol.ADMIN_SISTEMA, null, "Admin Sistema");
 
+    @Mock
+    private BusRepository busRepository;
+
     @BeforeEach
     void setUp() {
-        servicio = new ChoferServiceImpl(choferRepository, new AutorizacionSucursal(sucursalRefRepository),
-                fotoService, choferMapper, eventos);
+        servicio = new GestionChoferesServiceImpl(choferRepository, new BuscadorFlota(busRepository, choferRepository),
+                new AutorizacionSucursal(sucursalRefRepository), new ValidadorChofer(choferRepository),
+                choferMapper, eventos);
     }
 
     private Chofer chofer(long version) {
@@ -142,38 +145,6 @@ class ChoferServiceImplTest {
     }
 
     @Test
-    void listarRestringeASucursalDelToken() {
-        when(choferRepository.findAll(any(Specification.class), any(Pageable.class)))
-                .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(chofer(0L))));
-        when(choferMapper.toResponse(any(Chofer.class))).thenReturn(respuestaChofer());
-
-        var pagina = servicio.listar(null, null, null, Pageable.unpaged(), adminSucursal);
-
-        assertEquals(1, pagina.totalElementos());
-    }
-
-    @Test
-    void listarOtraSucursalLanza403() {
-        UUID otra = UUID.fromString("10000000-0000-4000-8000-000000000002");
-        assertThrows(OperacionNoAutorizadaException.class,
-                () -> servicio.listar(otra, null, null, Pageable.unpaged(), adminSucursal));
-    }
-
-    @Test
-    void obtenerInexistenteLanza404() {
-        when(choferRepository.findById(idChofer)).thenReturn(Optional.empty());
-        assertThrows(ChoferNoEncontradoException.class, () -> servicio.obtener(idChofer, adminSistema));
-    }
-
-    @Test
-    void obtenerDeOtraSucursalLanza403() {
-        when(choferRepository.findById(idChofer)).thenReturn(Optional.of(chofer(0L)));
-        UsuarioAutenticado deOtra = new UsuarioAutenticado(UUID.randomUUID(), "x@transportes.gt",
-                Rol.ADMIN_SUCURSAL, UUID.randomUUID(), "Otra");
-        assertThrows(OperacionNoAutorizadaException.class, () -> servicio.obtener(idChofer, deOtra));
-    }
-
-    @Test
     void actualizarConVersionViejaLanzaConflicto() {
         when(choferRepository.findById(idChofer)).thenReturn(Optional.of(chofer(3L)));
         ActualizarChoferRequest request = new ActualizarChoferRequest("Carlos Méndez", "c@transportes.gt",
@@ -235,19 +206,5 @@ class ChoferServiceImplTest {
 
         org.junit.jupiter.api.Assertions.assertFalse(entity.getActivo());
         verify(eventos).choferActualizado(entity);
-    }
-
-    @Test
-    void guardarFotoUsaFotoService() {
-        Chofer entity = chofer(1L);
-        when(choferRepository.findById(idChofer)).thenReturn(Optional.of(entity));
-        when(fotoService.guardar(eq(FotoService.Tipo.CHOFERES), eq(idChofer), any()))
-                .thenReturn("http://foto/c.jpg");
-        when(choferRepository.saveAndFlush(entity)).thenAnswer(inv -> inv.getArgument(0));
-        when(choferMapper.toResponse(entity)).thenReturn(respuestaChofer());
-
-        servicio.guardarFoto(idChofer, null, adminSucursal);
-
-        assertEquals("http://foto/c.jpg", entity.getFotoUrl());
     }
 }

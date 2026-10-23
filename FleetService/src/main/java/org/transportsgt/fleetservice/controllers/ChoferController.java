@@ -33,15 +33,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.request.ActualizarChoferRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarActivoRequest;
 import org.transportsgt.fleetservice.dto.request.CrearChoferRequest;
 import org.transportsgt.fleetservice.dto.response.ChoferResponse;
 import org.transportsgt.fleetservice.dto.response.PaginaResponse;
 import org.transportsgt.fleetservice.exception.RespuestaError;
-import org.transportsgt.fleetservice.services.ChoferService;
-import org.transportsgt.fleetservice.services.FotoService;
+import org.transportsgt.fleetservice.services.chofer.GestionChoferesService;
+import org.transportsgt.fleetservice.services.consulta.ConsultaFlotaService;
+import org.transportsgt.fleetservice.services.foto.FotoLeida;
+import org.transportsgt.fleetservice.services.foto.FotosFlotaService;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -62,7 +64,10 @@ public class ChoferController {
 
     private static final String SOLO_ADMIN_SUCURSAL = "hasRole('ADMIN_SUCURSAL')";
 
-    private final ChoferService choferService;
+    private final GestionChoferesService gestionService;
+    private final ConsultaFlotaService consultaService;
+    private final FotosFlotaService fotosService;
+    private final ConvertidorUsuarioAutenticado convertidor;
 
     @GetMapping
     @Operation(summary = "Listar choferes",
@@ -81,7 +86,7 @@ public class ChoferController {
             @ParameterObject @PageableDefault(size = 20, sort = "nombreCompleto", direction = Sort.Direction.ASC)
             Pageable pageable,
             @AuthenticationPrincipal Jwt jwt) {
-        return choferService.listar(idSucursal, activo, texto, pageable, UsuarioAutenticado.de(jwt));
+        return consultaService.listarChoferes(idSucursal, activo, texto, pageable, convertidor.desde(jwt));
     }
 
     @GetMapping("/{id}")
@@ -95,7 +100,7 @@ public class ChoferController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_CHOFER)))
     })
     public ChoferResponse obtener(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return choferService.obtener(id, UsuarioAutenticado.de(jwt));
+        return consultaService.obtenerChofer(id, convertidor.desde(jwt));
     }
 
     @PostMapping
@@ -124,7 +129,7 @@ public class ChoferController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_409_LICENCIA)))
     })
     public ChoferResponse crear(@Valid @RequestBody CrearChoferRequest request, @AuthenticationPrincipal Jwt jwt) {
-        return choferService.crear(request, UsuarioAutenticado.de(jwt));
+        return gestionService.crear(request, convertidor.desde(jwt));
     }
 
     @PutMapping("/{id}")
@@ -149,7 +154,7 @@ public class ChoferController {
     })
     public ChoferResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ActualizarChoferRequest request,
                                      @AuthenticationPrincipal Jwt jwt) {
-        return choferService.actualizar(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.actualizar(id, request, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/activo")
@@ -169,7 +174,7 @@ public class ChoferController {
     })
     public ChoferResponse cambiarActivo(@PathVariable UUID id, @Valid @RequestBody CambiarActivoRequest request,
                                         @AuthenticationPrincipal Jwt jwt) {
-        return choferService.cambiarActivo(id, request, UsuarioAutenticado.de(jwt));
+        return gestionService.cambiarActivo(id, request, convertidor.desde(jwt));
     }
 
     @GetMapping("/{id}/foto")
@@ -184,7 +189,7 @@ public class ChoferController {
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
     public ResponseEntity<Resource> leerFoto(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        FotoService.FotoLeida foto = choferService.leerFoto(id, UsuarioAutenticado.de(jwt));
+        FotoLeida foto = fotosService.leerFotoChofer(id, convertidor.desde(jwt));
         return ResponseEntity.ok()
                 .contentType(foto.tipo())
                 // private: solo la caché del navegador, nunca una compartida (proxy/CDN)
@@ -214,6 +219,6 @@ public class ChoferController {
     public ChoferResponse guardarFoto(@PathVariable UUID id,
                                       @RequestParam("archivo") MultipartFile archivo,
                                       @AuthenticationPrincipal Jwt jwt) {
-        return choferService.guardarFoto(id, archivo, UsuarioAutenticado.de(jwt));
+        return fotosService.guardarFotoChofer(id, archivo, convertidor.desde(jwt));
     }
 }
