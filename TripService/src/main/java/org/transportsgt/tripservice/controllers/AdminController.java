@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.tripservice.dto.response.Responses;
 import org.transportsgt.tripservice.exception.RespuestaError;
-import org.transportsgt.tripservice.services.RepublicacionEventosService;
+import org.transportsgt.tripservice.services.admin.RepublicacionEventosService;
 
 @RestController
 @RequestMapping("/admin")

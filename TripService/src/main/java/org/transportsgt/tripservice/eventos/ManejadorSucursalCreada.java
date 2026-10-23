@@ -7,7 +7,7 @@ import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.DatosSucursal;
-import org.transportsgt.tripservice.repositories.SucursalRefRepository;
+import org.transportsgt.tripservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Proyección de sucursales de Identidad. Idempotente por versión. */
 @Slf4j
@@ -15,7 +15,7 @@ import org.transportsgt.tripservice.repositories.SucursalRefRepository;
 @RequiredArgsConstructor
 public class ManejadorSucursalCreada implements ManejadorEvento<DatosSucursal> {
 
-    private final SucursalRefRepository repository;
+    private final ProyeccionReferenciasService proyeccion;
 
     @Override
     public TipoEvento tipo() {
@@ -25,8 +25,7 @@ public class ManejadorSucursalCreada implements ManejadorEvento<DatosSucursal> {
     @Override
     public void manejar(SobreEvento<DatosSucursal> evento) {
         DatosSucursal d = evento.datos();
-        long version = evento.versionAgregado() == null ? 0L : evento.versionAgregado();
-        repository.upsert(d.idSucursal(), d.nombre(), d.activa(), version);
+        proyeccion.aplicarSucursal(d, evento.versionAgregado());
         log.debug("SucursalCreada {} aplicada", d.idSucursal());
     }
 }

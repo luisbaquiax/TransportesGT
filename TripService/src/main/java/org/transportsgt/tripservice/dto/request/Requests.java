@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.TipoViaje;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -12,6 +15,21 @@ import java.util.UUID;
 public final class Requests {
 
     private Requests() {
+    }
+
+    /**
+     * Filtros opcionales de GET /viajes (todos combinados con AND). {@code desde} y {@code hasta} son inclusivos;
+     * {@code sinAsignar=true} lista solo los alquileres PENDIENTE_ASIGNACION.
+     */
+    public record FiltroViajes(
+            TipoViaje tipoViaje,
+            EstadoViaje estado,
+            UUID idRuta,
+            UUID idSucursal,
+            OffsetDateTime desde,
+            OffsetDateTime hasta,
+            Boolean sinAsignar
+    ) {
     }
 
     public record RutaRequest(

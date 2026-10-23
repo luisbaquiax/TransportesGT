@@ -7,7 +7,7 @@ import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.tripservice.repositories.BusRefRepository;
+import org.transportsgt.tripservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Proyección de buses de Flota. Idempotente por versión. */
 @Slf4j
@@ -15,7 +15,7 @@ import org.transportsgt.tripservice.repositories.BusRefRepository;
 @RequiredArgsConstructor
 public class ManejadorBusRegistrado implements ManejadorEvento<DatosBus> {
 
-    private final BusRefRepository repository;
+    private final ProyeccionReferenciasService proyeccion;
 
     @Override
     public TipoEvento tipo() {
@@ -25,9 +25,7 @@ public class ManejadorBusRegistrado implements ManejadorEvento<DatosBus> {
     @Override
     public void manejar(SobreEvento<DatosBus> evento) {
         DatosBus d = evento.datos();
-        long version = evento.versionAgregado() == null ? 0L : evento.versionAgregado();
-        repository.upsert(d.idBus(), d.idSucursal(), d.placa(), (short) d.capacidadPasajeros(),
-                d.estadoOperativo().name(), d.activo(), version);
+        proyeccion.aplicarBus(d, evento.versionAgregado());
         log.debug("BusRegistrado {} aplicado", d.idBus());
     }
 }

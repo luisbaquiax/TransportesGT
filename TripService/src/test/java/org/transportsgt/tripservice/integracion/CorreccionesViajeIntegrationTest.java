@@ -119,7 +119,7 @@ class CorreccionesViajeIntegrationTest extends IntegracionBase {
     void cajeroConsultaLosViajesDeSuSucursalSinModificarlos() throws Exception {
         mockMvc.perform(get("/viajes").header("Authorization", "Bearer " + tokenCajero()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[*].id", hasItem(VIAJE_SEMILLA.toString())));
+                .andExpect(jsonPath("$.contenido[*].id", hasItem(VIAJE_SEMILLA.toString())));
         mockMvc.perform(get("/viajes/" + VIAJE_SEMILLA).header("Authorization", "Bearer " + tokenCajero()))
                 .andExpect(status().isOk());
         // Cajero de otra sucursal

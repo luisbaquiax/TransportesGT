@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -25,16 +27,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.eventos.payload.EstadoViaje;
 import org.transportsgt.eventos.payload.TipoViaje;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.tripservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
+import org.transportsgt.tripservice.dto.response.PaginaResponse;
 import org.transportsgt.tripservice.dto.response.Responses;
 import org.transportsgt.tripservice.exception.RespuestaError;
-import org.transportsgt.tripservice.services.ViajeService;
+import org.transportsgt.tripservice.services.consulta.ConsultaViajesService;
+import org.transportsgt.tripservice.services.viaje.ProgramacionViajesService;
+import org.transportsgt.tripservice.services.viaje.RegistroViajeService;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -43,19 +47,25 @@ import java.util.UUID;
 @Tag(name = "Viajes", description = "Viajes regulares y de alquiler privado")
 public class ViajeController {
 
-    private final ViajeService viajeService;
+    private final ConsultaViajesService consultaViajes;
+    private final ProgramacionViajesService programacionViajes;
+    private final RegistroViajeService registroViaje;
+    private final ConvertidorUsuarioAutenticado convertidor;
 
     @GetMapping
     @Operation(summary = "Listado de viajes",
-            description = "SIS ve todos; SUC y CAJ ven los de su sucursal; CHO solo los suyos. "
+            description = "Paginado y filtrado en la base de datos. SIS ve todos; SUC y CAJ ven los de su sucursal; "
+                    + "CHO solo los suyos. Ordenado por hora de salida. desde y hasta son inclusivos. "
                     + "sinAsignar=true lista los alquileres pendientes de bus y chofer.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado",
-                    content = @Content(schema = @Schema(implementation = Responses.ViajeResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Página de viajes",
+                    content = @Content(schema = @Schema(implementation = PaginaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Paginación o filtros inválidos",
+                    content = @Content(schema = @Schema(implementation = RespuestaError.class))),
             @ApiResponse(responseCode = "401", description = "Sin token",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
-    public List<Responses.ViajeResponse> listar(
+    public PaginaResponse<Responses.ViajeResponse> listar(
             @RequestParam(required = false) TipoViaje tipoViaje,
             @RequestParam(required = false) EstadoViaje estado,
             @RequestParam(required = false) UUID idRuta,
@@ -63,17 +73,19 @@ public class ViajeController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime desde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime hasta,
             @RequestParam(required = false) Boolean sinAsignar,
+            @RequestParam(defaultValue = "0") @Min(0) int pagina,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.listar(Optional.ofNullable(tipoViaje), Optional.ofNullable(estado),
-                idRuta, idSucursal, desde, hasta, Optional.ofNullable(sinAsignar),
-                UsuarioAutenticado.de(jwt));
+        return consultaViajes.listar(
+                new Requests.FiltroViajes(tipoViaje, estado, idRuta, idSucursal, desde, hasta, sinAsignar),
+                pagina, tamano, convertidor.desde(jwt));
     }
 
     @GetMapping("/resumen")
     @Operation(summary = "Resumen público de varios viajes",
             description = "Para el historial de compras: origen, destino, horarios, precio y placa, sin datos del chofer "
                     + "ni registros de salida o llegada. Cualquier usuario autenticado. Los ids inexistentes o de "
-                    + "viajes eliminados se omiten. Máximo " + ViajeService.MAX_IDS_RESUMEN + " ids, separados por coma.")
+                    + "viajes eliminados se omiten. Máximo " + ConsultaViajesService.MAX_IDS_RESUMEN + " ids, separados por coma.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Viajes encontrados, por hora de salida",
                     content = @Content(schema = @Schema(implementation = Responses.ViajeResumenResponse.class))),
@@ -86,7 +98,7 @@ public class ViajeController {
             @Parameter(description = "Ids de viaje separados por coma", required = true,
                     example = "50000000-0000-4000-8000-000000000001")
             @RequestParam List<UUID> ids) {
-        return viajeService.resumen(ids);
+        return consultaViajes.resumen(ids);
     }
 
     @GetMapping("/{id}")
@@ -98,7 +110,7 @@ public class ViajeController {
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
     public Responses.ViajeResponse detalle(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.detalle(id, UsuarioAutenticado.de(jwt));
+        return consultaViajes.detalle(id, convertidor.desde(jwt));
     }
 
     @GetMapping("/activos")
@@ -114,7 +126,7 @@ public class ViajeController {
     public List<Responses.ViajeResponse> activos(
             @Parameter(description = "Identificador del bus", required = true)
             @RequestParam UUID idBus) {
-        return viajeService.activosPorBus(idBus);
+        return consultaViajes.activosPorBus(idBus);
     }
 
     @PostMapping
@@ -130,7 +142,7 @@ public class ViajeController {
     public ResponseEntity<Responses.ViajeResponse> crear(
             @Valid @RequestBody Requests.ViajeRegularRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        Responses.ViajeResponse resp = viajeService.crearRegular(request, UsuarioAutenticado.de(jwt));
+        Responses.ViajeResponse resp = programacionViajes.crearRegular(request, convertidor.desde(jwt));
         return ResponseEntity.created(URI.create("/viajes/" + resp.id())).body(resp);
     }
 
@@ -151,7 +163,7 @@ public class ViajeController {
             @PathVariable UUID id,
             @Valid @RequestBody Requests.ViajeUpdateRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.actualizar(id, request, UsuarioAutenticado.de(jwt));
+        return programacionViajes.actualizar(id, request, convertidor.desde(jwt));
     }
 
     @PatchMapping("/{id}/asignacion")
@@ -167,7 +179,7 @@ public class ViajeController {
             @PathVariable UUID id,
             @Valid @RequestBody Requests.AsignacionRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.asignar(id, request, UsuarioAutenticado.de(jwt));
+        return programacionViajes.asignar(id, request, convertidor.desde(jwt));
     }
 
     @DeleteMapping("/{id}")
@@ -182,7 +194,7 @@ public class ViajeController {
                                     value = "{\"codigo\":\"VIAJE_NO_ELIMINABLE\"}")))
     })
     public ResponseEntity<Void> eliminar(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        viajeService.eliminar(id, UsuarioAutenticado.de(jwt));
+        programacionViajes.eliminar(id, convertidor.desde(jwt));
         return ResponseEntity.noContent().build();
     }
 
@@ -199,7 +211,7 @@ public class ViajeController {
             @PathVariable UUID id,
             @Valid @RequestBody Requests.SalidaRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.registrarSalida(id, request, UsuarioAutenticado.de(jwt));
+        return registroViaje.registrarSalida(id, request, convertidor.desde(jwt));
     }
 
     @PostMapping("/{id}/llegada")
@@ -216,6 +228,6 @@ public class ViajeController {
             @PathVariable UUID id,
             @Valid @RequestBody Requests.LlegadaRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return viajeService.registrarLlegada(id, request, UsuarioAutenticado.de(jwt));
+        return registroViaje.registrarLlegada(id, request, convertidor.desde(jwt));
     }
 }

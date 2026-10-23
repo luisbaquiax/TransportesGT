@@ -137,14 +137,16 @@ public abstract class IntegracionBase {
         return token(org.transportsgt.eventos.payload.Rol.CAJERO, XELA, null);
     }
 
-    /** Chofer 1 de la semilla: idUsuario = e0000000-...-0001. */
+    /**
+     * Chofer 1 de la semilla: idUsuario = e0000000-...-0001.
+     */
     protected String tokenChofer1() {
         return token(org.transportsgt.eventos.payload.Rol.CHOFER, XELA,
                 UUID.fromString("e0000000-0000-4000-8000-000000000001"));
     }
 
     protected <B extends org.springframework.test.web.servlet.request.AbstractMockHttpServletRequestBuilder<B>>
-            B conToken(B peticion, String token) {
+    B conToken(B peticion, String token) {
         return peticion.header("Authorization", "Bearer " + token);
     }
 
@@ -206,7 +208,9 @@ public abstract class IntegracionBase {
         return jdbc.queryForObject("SELECT estado FROM viaje WHERE id = ?", String.class, idViaje);
     }
 
-    /** Viaje regular en el futuro con bus y chofer libres (evita traslapes con la semilla). */
+    /**
+     * Viaje regular en el futuro con bus y chofer libres (evita traslapes con la semilla).
+     */
     protected String crearViajeRegularFuturo() throws Exception {
         OffsetDateTime salida = OffsetDateTime.now().plusDays(30);
         OffsetDateTime llegada = salida.plusHours(4);

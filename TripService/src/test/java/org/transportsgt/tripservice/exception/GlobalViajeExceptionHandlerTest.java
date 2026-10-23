@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GlobalViajeExceptionHandlerTest {
 
-    private final GlobalViajeExceptionHandler handler = new GlobalViajeExceptionHandler();
+    private final GlobalViajeExceptionHandler handler = new GlobalViajeExceptionHandler(new FabricaRespuestaError());
 
     @Mock
     private HttpServletRequest request;

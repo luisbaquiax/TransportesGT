@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.tripservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.dto.response.Responses;
 import org.transportsgt.tripservice.exception.RespuestaError;
-import org.transportsgt.tripservice.services.RutaService;
+import org.transportsgt.tripservice.services.ruta.RutaService;
 
 import java.net.URI;
 import java.util.List;
@@ -38,6 +38,7 @@ import java.util.UUID;
 public class RutaController {
 
     private final RutaService rutaService;
+    private final ConvertidorUsuarioAutenticado convertidor;
 
     @GetMapping
     @Operation(summary = "Listado de rutas", description = "Filtro opcional por sucursal de origen y destino.")
@@ -81,7 +82,7 @@ public class RutaController {
     public ResponseEntity<Responses.RutaResponse> crear(
             @Valid @RequestBody Requests.RutaRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        Responses.RutaResponse resp = rutaService.crear(request, UsuarioAutenticado.de(jwt));
+        Responses.RutaResponse resp = rutaService.crear(request, convertidor.desde(jwt));
         return ResponseEntity.created(URI.create("/rutas/" + resp.id())).body(resp);
     }
 
@@ -97,7 +98,7 @@ public class RutaController {
             @PathVariable UUID id,
             @Valid @RequestBody Requests.RutaRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        return rutaService.actualizar(id, request, UsuarioAutenticado.de(jwt));
+        return rutaService.actualizar(id, request, convertidor.desde(jwt));
     }
 
     @DeleteMapping("/{id}")
@@ -111,7 +112,7 @@ public class RutaController {
                                     value = "{\"codigo\":\"RUTA_CON_VIAJES\"}")))
     })
     public ResponseEntity<Void> eliminar(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        rutaService.eliminar(id, UsuarioAutenticado.de(jwt));
+        rutaService.eliminar(id, convertidor.desde(jwt));
         return ResponseEntity.noContent().build();
     }
 }

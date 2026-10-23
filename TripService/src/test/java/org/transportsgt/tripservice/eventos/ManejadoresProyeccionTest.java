@@ -13,6 +13,7 @@ import org.transportsgt.eventos.payload.TipoLicencia;
 import org.transportsgt.tripservice.repositories.BusRefRepository;
 import org.transportsgt.tripservice.repositories.ChoferRefRepository;
 import org.transportsgt.tripservice.repositories.SucursalRefRepository;
+import org.transportsgt.tripservice.services.proyeccion.impl.ProyeccionReferenciasServiceImpl;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,6 +34,11 @@ class ManejadoresProyeccionTest {
     @Mock
     private ChoferRefRepository choferRepository;
 
+    /** Los manejadores delegan en la proyección; se prueba el recorrido completo hasta el upsert. */
+    private ProyeccionReferenciasServiceImpl proyeccion() {
+        return new ProyeccionReferenciasServiceImpl(sucursalRepository, busRepository, choferRepository);
+    }
+
     private <T> SobreEvento<T> sobre(Long version, T datos) {
         return new SobreEvento<>(UUID.randomUUID(), "prueba", 1, Instant.now(),
                 "pruebas", UUID.randomUUID(), version, null, datos);
@@ -43,7 +49,7 @@ class ManejadoresProyeccionTest {
         UUID id = UUID.randomUUID();
         DatosSucursal d = new DatosSucursal(id, "Quetzaltenango", "Quetzaltenango",
                 "Calle 1", null, null, true);
-        new ManejadorSucursalCreada(sucursalRepository).manejar(sobre(3L, d));
+        new ManejadorSucursalCreada(proyeccion()).manejar(sobre(3L, d));
         verify(sucursalRepository).upsert(id, "Quetzaltenango", true, 3L);
     }
 
@@ -51,7 +57,7 @@ class ManejadoresProyeccionTest {
     void sucursalCreadaConVersionNulaUsaCero() {
         UUID id = UUID.randomUUID();
         DatosSucursal d = new DatosSucursal(id, "X", null, null, null, null, false);
-        new ManejadorSucursalCreada(sucursalRepository).manejar(sobre(null, d));
+        new ManejadorSucursalCreada(proyeccion()).manejar(sobre(null, d));
         verify(sucursalRepository).upsert(id, "X", false, 0L);
     }
 
@@ -59,7 +65,7 @@ class ManejadoresProyeccionTest {
     void sucursalActualizadaHaceUpsert() {
         UUID id = UUID.randomUUID();
         DatosSucursal d = new DatosSucursal(id, "Huehue", null, null, null, null, true);
-        new ManejadorSucursalActualizada(sucursalRepository).manejar(sobre(5L, d));
+        new ManejadorSucursalActualizada(proyeccion()).manejar(sobre(5L, d));
         verify(sucursalRepository).upsert(id, "Huehue", true, 5L);
     }
 
@@ -69,7 +75,7 @@ class ManejadoresProyeccionTest {
         UUID suc = UUID.randomUUID();
         DatosBus d = new DatosBus(id, suc, "P123ABC", "Mercedes", "O500", 2022, 45,
                 EstadoOperativo.DISPONIBLE, true);
-        new ManejadorBusRegistrado(busRepository).manejar(sobre(2L, d));
+        new ManejadorBusRegistrado(proyeccion()).manejar(sobre(2L, d));
         verify(busRepository).upsert(id, suc, "P123ABC", (short) 45, "DISPONIBLE", true, 2L);
     }
 
@@ -79,7 +85,7 @@ class ManejadoresProyeccionTest {
         UUID suc = UUID.randomUUID();
         DatosBus d = new DatosBus(id, suc, "P999ZZZ", "Hino", "FC", 2020, 30,
                 EstadoOperativo.EN_TALLER, false);
-        new ManejadorBusActualizado(busRepository).manejar(sobre(null, d));
+        new ManejadorBusActualizado(proyeccion()).manejar(sobre(null, d));
         verify(busRepository).upsert(id, suc, "P999ZZZ", (short) 30, "EN_TALLER", false, 0L);
     }
 
@@ -91,7 +97,7 @@ class ManejadoresProyeccionTest {
         DatosChofer d = new DatosChofer(id, usuario, suc, "Juan Pérez",
                 "juan@t.gt", "5555", "LIC-1", TipoLicencia.E,
                 LocalDate.of(2027, 12, 31), new BigDecimal("150.00"), true);
-        new ManejadorChoferRegistrado(choferRepository).manejar(sobre(1L, d));
+        new ManejadorChoferRegistrado(proyeccion()).manejar(sobre(1L, d));
         verify(choferRepository).upsert(eq(id), eq(usuario), eq(suc), eq("Juan Pérez"),
                 eq(new BigDecimal("150.00")), eq(LocalDate.of(2027, 12, 31)), eq(true), eq(1L));
     }
@@ -103,7 +109,7 @@ class ManejadoresProyeccionTest {
         DatosChofer d = new DatosChofer(id, null, suc, "María López",
                 "maria@t.gt", "5556", "LIC-2", TipoLicencia.C,
                 LocalDate.of(2028, 6, 30), new BigDecimal("140.00"), false);
-        new ManejadorChoferActualizado(choferRepository).manejar(sobre(4L, d));
+        new ManejadorChoferActualizado(proyeccion()).manejar(sobre(4L, d));
         verify(choferRepository).upsert(eq(id), isNull(), eq(suc), eq("María López"),
                 eq(new BigDecimal("140.00")), eq(LocalDate.of(2028, 6, 30)), eq(false), eq(4L));
     }
