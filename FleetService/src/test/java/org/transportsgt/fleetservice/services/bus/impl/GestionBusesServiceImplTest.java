@@ -1,5 +1,7 @@
-package org.transportsgt.fleetservice.services.impl;
+package org.transportsgt.fleetservice.services.bus.impl;
 
+import org.transportsgt.fleetservice.repositories.ChoferRepository;
+import org.transportsgt.fleetservice.services.comun.BuscadorFlota;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +34,7 @@ import org.transportsgt.fleetservice.mappers.BusMapper;
 import org.transportsgt.fleetservice.models.Bus;
 import org.transportsgt.fleetservice.repositories.BusRepository;
 import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
-import org.transportsgt.fleetservice.services.AutorizacionSucursal;
-import org.transportsgt.fleetservice.services.FotoService;
+import org.transportsgt.fleetservice.services.autorizacion.AutorizacionSucursal;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,7 +50,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BusServiceImplTest {
+class GestionBusesServiceImplTest {
 
     @Mock
     private BusRepository busRepository;
@@ -58,13 +59,11 @@ class BusServiceImplTest {
     @Mock
     private ConsultaViajes consultaViajes;
     @Mock
-    private FotoService fotoService;
-    @Mock
     private BusMapper busMapper;
     @Mock
     private EventosFlota eventos;
 
-    private BusServiceImpl servicio;
+    private GestionBusesServiceImpl servicio;
 
     private final UUID idSucursal = UUID.fromString("10000000-0000-4000-8000-000000000001");
     private final UUID idBus = UUID.fromString("b0000000-0000-4000-8000-000000000001");
@@ -75,10 +74,14 @@ class BusServiceImplTest {
             new UsuarioAutenticado(UUID.randomUUID(), "admin@transportes.gt",
                     Rol.ADMIN_SISTEMA, null, "Admin Sistema");
 
+    @Mock
+    private ChoferRepository choferRepository;
+
     @BeforeEach
     void setUp() {
-        servicio = new BusServiceImpl(busRepository, new AutorizacionSucursal(sucursalRefRepository),
-                consultaViajes, fotoService, busMapper, eventos);
+        servicio = new GestionBusesServiceImpl(busRepository, new BuscadorFlota(busRepository, choferRepository),
+                new AutorizacionSucursal(sucursalRefRepository), new ValidadorBus(busRepository),
+                consultaViajes, busMapper, eventos);
     }
 
     private Bus bus(long version) {
@@ -109,6 +112,10 @@ class BusServiceImplTest {
     private void sucursalOk() {
         when(sucursalRefRepository.existsById(idSucursal)).thenReturn(true);
         when(sucursalRefRepository.existsByIdAndActivaTrue(idSucursal)).thenReturn(true);
+    }
+
+    private static void assertNotNull(Object valor) {
+        org.junit.jupiter.api.Assertions.assertNotNull(valor);
     }
 
     @Test
@@ -148,51 +155,6 @@ class BusServiceImplTest {
         when(sucursalRefRepository.existsByIdAndActivaTrue(idSucursal)).thenReturn(false);
         assertThrows(org.transportsgt.fleetservice.exception.SucursalInactivaException.class,
                 () -> servicio.crear(requestCrear(), adminSucursal));
-    }
-
-    @Test
-    void listarAdminSucursalRestringeASuSucursal() {
-        when(busRepository.findAll(any(Specification.class), any(Pageable.class)))
-                .thenReturn(new PageImpl<>(List.of(bus(0L))));
-        when(busMapper.toResponse(any(Bus.class))).thenReturn(respuestaBus());
-
-        PaginaResponse<BusResponse> pagina =
-                servicio.listar(null, null, null, null, Pageable.unpaged(), adminSucursal);
-
-        assertEquals(1, pagina.totalElementos());
-    }
-
-    @Test
-    void listarAdminSucursalConOtraSucursalLanza403() {
-        UUID otra = UUID.fromString("10000000-0000-4000-8000-000000000002");
-        assertThrows(OperacionNoAutorizadaException.class,
-                () -> servicio.listar(otra, null, null, null, Pageable.unpaged(), adminSucursal));
-    }
-
-    @Test
-    void obtenerDevuelveBus() {
-        when(busRepository.findById(idBus)).thenReturn(Optional.of(bus(0L)));
-        when(busMapper.toResponse(any(Bus.class))).thenReturn(respuestaBus());
-
-        assertNotNull(servicio.obtener(idBus, adminSistema));
-    }
-
-    private static void assertNotNull(Object valor) {
-        org.junit.jupiter.api.Assertions.assertNotNull(valor);
-    }
-
-    @Test
-    void obtenerInexistenteLanza404() {
-        when(busRepository.findById(idBus)).thenReturn(Optional.empty());
-        assertThrows(BusNoEncontradoException.class, () -> servicio.obtener(idBus, adminSistema));
-    }
-
-    @Test
-    void obtenerDeOtraSucursalLanza403() {
-        when(busRepository.findById(idBus)).thenReturn(Optional.of(bus(0L)));
-        UsuarioAutenticado deOtra = new UsuarioAutenticado(UUID.randomUUID(), "x@transportes.gt",
-                Rol.ADMIN_SUCURSAL, UUID.randomUUID(), "Otra");
-        assertThrows(OperacionNoAutorizadaException.class, () -> servicio.obtener(idBus, deOtra));
     }
 
     @Test
@@ -292,18 +254,5 @@ class BusServiceImplTest {
 
         assertEquals(EstadoOperativo.EN_TALLER, entity.getEstadoOperativo());
         verify(eventos).busActualizado(entity);
-    }
-
-    @Test
-    void guardarFotoUsaFotoServiceYActualizaUrl() {
-        Bus entity = bus(1L);
-        when(busRepository.findById(idBus)).thenReturn(Optional.of(entity));
-        when(fotoService.guardar(eq(FotoService.Tipo.BUSES), eq(idBus), any())).thenReturn("http://foto/x.jpg");
-        when(busRepository.saveAndFlush(entity)).thenAnswer(inv -> inv.getArgument(0));
-        when(busMapper.toResponse(entity)).thenReturn(respuestaBus());
-
-        servicio.guardarFoto(idBus, null, adminSucursal);
-
-        assertEquals("http://foto/x.jpg", entity.getFotoUrl());
     }
 }

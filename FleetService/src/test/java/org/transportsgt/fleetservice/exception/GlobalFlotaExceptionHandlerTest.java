@@ -21,7 +21,8 @@ import static org.mockito.Mockito.when;
 
 class GlobalFlotaExceptionHandlerTest {
 
-    private final GlobalFlotaExceptionHandler handler = new GlobalFlotaExceptionHandler();
+    private final TraductorErroresBd traductor = new TraductorErroresBd();
+    private final GlobalFlotaExceptionHandler handler = new GlobalFlotaExceptionHandler(new FabricaRespuestaError(), traductor);
 
     private HttpServletRequest request() {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -109,11 +110,11 @@ class GlobalFlotaExceptionHandlerTest {
     @Test
     void mensajeDeTriggerSeLimpia() {
         assertEquals("Los registros de bus no se eliminan",
-                GlobalFlotaExceptionHandler.mensajeTrigger(
+                traductor.mensajeTrigger(
                         "ERROR: Los registros de bus no se eliminan\nWhere: PL/pgSQL function"));
         assertEquals("La operación viola una regla de datos",
-                GlobalFlotaExceptionHandler.mensajeTrigger("  "));
-        assertEquals("sin formato", GlobalFlotaExceptionHandler.mensajeTrigger("sin formato"));
+                traductor.mensajeTrigger("  "));
+        assertEquals("sin formato", traductor.mensajeTrigger("sin formato"));
     }
 
     @Test

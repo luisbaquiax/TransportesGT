@@ -1,23 +1,19 @@
 package org.transportsgt.fleetservice.eventos;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.transportsgt.eventos.ManejadorEvento;
 import org.transportsgt.eventos.SobreEvento;
 import org.transportsgt.eventos.TipoEvento;
 import org.transportsgt.eventos.payload.DatosSucursal;
-import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
+import org.transportsgt.fleetservice.services.proyeccion.ProyeccionReferenciasService;
 
-/**
- * Mismo mecanismo que SucursalCreada: el upsert solo aplica versiones mayores (catálogo §1.5).
- */
-@Slf4j
+/** Misma proyección que SucursalCreada: actualiza nombre y activa si la versión es mayor. */
 @Component
 @RequiredArgsConstructor
 public class ManejadorSucursalActualizada implements ManejadorEvento<DatosSucursal> {
 
-    private final SucursalRefRepository sucursalRefRepository;
+    private final ProyeccionReferenciasService servicio;
 
     @Override
     public TipoEvento tipo() {
@@ -26,9 +22,6 @@ public class ManejadorSucursalActualizada implements ManejadorEvento<DatosSucurs
 
     @Override
     public void manejar(SobreEvento<DatosSucursal> evento) {
-        DatosSucursal datos = evento.datos();
-        long version = evento.versionAgregado() == null ? 0L : evento.versionAgregado();
-        int aplicado = sucursalRefRepository.upsert(datos.idSucursal(), datos.nombre(), datos.activa(), version);
-        log.debug("SucursalActualizada {}: {} fila(s) aplicada(s)", datos.idSucursal(), aplicado);
+        servicio.aplicarSucursal(evento.datos(), evento.versionAgregado());
     }
 }

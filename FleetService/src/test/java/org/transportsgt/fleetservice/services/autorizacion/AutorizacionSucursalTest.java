@@ -1,4 +1,4 @@
-package org.transportsgt.fleetservice.services;
+package org.transportsgt.fleetservice.services.autorizacion;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

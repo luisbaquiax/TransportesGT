@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.fleetservice.exception.RespuestaError;
-import org.transportsgt.fleetservice.services.FotoService;
+import org.transportsgt.fleetservice.services.foto.FotosFlotaService;
+import org.transportsgt.fleetservice.services.foto.TipoFoto;
 
 import java.util.Locale;
 import java.util.Map;
@@ -34,11 +35,11 @@ import java.util.Map;
 @Deprecated(forRemoval = true)
 public class FotosController {
 
-    private static final Map<String, FotoService.Tipo> TIPOS = Map.of(
-            "buses", FotoService.Tipo.BUSES,
-            "choferes", FotoService.Tipo.CHOFERES);
+    private static final Map<String, TipoFoto> TIPOS = Map.of(
+            "buses", TipoFoto.BUSES,
+            "choferes", TipoFoto.CHOFERES);
 
-    private final FotoService fotoService;
+    private final FotosFlotaService fotosService;
 
     @GetMapping("/{tipo}/{nombre}")
     @Operation(summary = "Obtener una foto",
@@ -54,26 +55,15 @@ public class FotosController {
             @PathVariable String tipo,
             @Parameter(description = "Nombre del archivo", example = "5d1c0a7e-8b43-4f2e-9a51-2d8f8c0e9a11.jpg")
             @PathVariable String nombre) {
-        FotoService.Tipo tipoEnum = TIPOS.get(tipo.toLowerCase(Locale.ROOT));
+        TipoFoto tipoEnum = TIPOS.get(tipo.toLowerCase(Locale.ROOT));
         if (tipoEnum == null) {
             return ResponseEntity.notFound().build();
         }
-        return fotoService.leer(tipoEnum, nombre)
-                .map(resource -> ResponseEntity.ok()
-                        .contentType(tipado(nombre))
+        return fotosService.leerPorNombre(tipoEnum, nombre)
+                .map(foto -> ResponseEntity.ok()
+                        .contentType(foto.tipo())
                         .cacheControl(org.springframework.http.CacheControl.maxAge(java.time.Duration.ofDays(7)).cachePrivate())
-                        .body(resource))
+                        .body(foto.contenido()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    private static MediaType tipado(String nombre) {
-        String bajo = nombre.toLowerCase(Locale.ROOT);
-        if (bajo.endsWith(".png")) {
-            return MediaType.IMAGE_PNG;
-        }
-        if (bajo.endsWith(".webp")) {
-            return MediaType.parseMediaType("image/webp");
-        }
-        return MediaType.IMAGE_JPEG;
     }
 }

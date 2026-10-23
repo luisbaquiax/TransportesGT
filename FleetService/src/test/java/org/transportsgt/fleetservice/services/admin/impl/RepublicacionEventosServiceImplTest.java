@@ -1,4 +1,4 @@
-package org.transportsgt.fleetservice.services.impl;
+package org.transportsgt.fleetservice.services.admin.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

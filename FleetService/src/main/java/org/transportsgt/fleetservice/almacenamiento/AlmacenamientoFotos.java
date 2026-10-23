@@ -16,7 +16,7 @@ import java.util.Optional;
  * </ul>
  *
  * Todas las operaciones trabajan con <em>claves</em> de la forma {@code buses/{uuid}.jpg},
- * sin barra inicial: {@code FotoService} valida el nombre antes de llamar.
+ * sin barra inicial: {@code FotosFlotaService} valida el nombre antes de llamar.
  */
 public interface AlmacenamientoFotos {
 

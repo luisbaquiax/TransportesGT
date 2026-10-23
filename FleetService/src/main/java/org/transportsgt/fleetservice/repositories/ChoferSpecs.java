@@ -2,6 +2,7 @@ package org.transportsgt.fleetservice.repositories;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.transportsgt.fleetservice.models.Chofer;
 
 import java.util.ArrayList;
@@ -12,12 +13,10 @@ import java.util.UUID;
 /**
  * Filtros opcionales del listado de choferes.
  */
-public final class ChoferSpecs {
+@Component
+public class ChoferSpecs {
 
-    private ChoferSpecs() {
-    }
-
-    public static Specification<Chofer> filtrar(UUID idSucursal, Boolean activo, String texto) {
+    public Specification<Chofer> filtrar(UUID idSucursal, Boolean activo, String texto) {
         return (root, query, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
             if (idSucursal != null) {

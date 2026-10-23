@@ -2,6 +2,7 @@ package org.transportsgt.fleetservice.repositories;
 
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 import org.transportsgt.eventos.payload.EstadoOperativo;
 import org.transportsgt.fleetservice.models.Bus;
 
@@ -13,12 +14,10 @@ import java.util.UUID;
 /**
  * Filtros opcionales del listado de buses.
  */
-public final class BusSpecs {
+@Component
+public class BusSpecs {
 
-    private BusSpecs() {
-    }
-
-    public static Specification<Bus> filtrar(UUID idSucursal, EstadoOperativo estadoOperativo,
+    public Specification<Bus> filtrar(UUID idSucursal, EstadoOperativo estadoOperativo,
                                              Boolean activo, String texto) {
         return (root, query, cb) -> {
             List<Predicate> condiciones = new ArrayList<>();
