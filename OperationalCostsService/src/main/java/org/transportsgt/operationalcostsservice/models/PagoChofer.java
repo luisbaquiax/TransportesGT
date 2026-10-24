@@ -34,7 +34,9 @@ public class PagoChofer {
     @Column(name = "id_chofer", nullable = false)
     private UUID idChofer;
 
-    /** sucursal_ref(id). */
+    /**
+     * sucursal_ref(id).
+     */
     @Column(name = "id_sucursal", nullable = false)
     private UUID idSucursal;
 

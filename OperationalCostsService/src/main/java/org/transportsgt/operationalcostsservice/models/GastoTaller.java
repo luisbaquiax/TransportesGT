@@ -30,15 +30,21 @@ public class GastoTaller {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** bus_ref(id). */
+    /**
+     * bus_ref(id).
+     */
     @Column(name = "id_bus", nullable = false)
     private UUID idBus;
 
-    /** sucursal_ref(id): la del bus. */
+    /**
+     * sucursal_ref(id): la del bus.
+     */
     @Column(name = "id_sucursal", nullable = false)
     private UUID idSucursal;
 
-    /** Elegida por el usuario. */
+    /**
+     * Elegida por el usuario.
+     */
     @Column(name = "fecha_servicio", nullable = false)
     private LocalDate fechaServicio;
 

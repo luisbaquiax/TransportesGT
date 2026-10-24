@@ -55,7 +55,9 @@ import java.util.UUID;
 @Tag(name = "Costos", description = "Costos operativos: depreciación, categorías, taller y costos de viaje")
 public class CostosController {
 
-    /** Límite máximo de elementos por página en listados. */
+    /**
+     * Límite máximo de elementos por página en listados.
+     */
     private static final int TAMANO_MAXIMO_PAGINA = 100;
 
     private final TarifaDepreciacionService tarifaService;
@@ -63,7 +65,6 @@ public class CostosController {
     private final GastoTallerService tallerService;
     private final ResumenViajeService resumenViajeService;
 
-    // ---------- Depreciación ----------
 
     @GetMapping("/depreciacion/tarifa-vigente")
     @Operation(summary = "Tarifa de depreciación vigente",
@@ -97,7 +98,6 @@ public class CostosController {
         return ResponseEntity.created(URI.create("/costos/depreciacion/tarifas")).body(resp);
     }
 
-    // ---------- Categorías ----------
 
     @GetMapping("/categorias")
     @Operation(summary = "Catálogo de categorías de gasto")
@@ -140,7 +140,6 @@ public class CostosController {
         return ResponseEntity.noContent().build();
     }
 
-    // ---------- Taller ----------
 
     @PostMapping("/taller")
     @Operation(summary = "Registrar gasto de taller (ADMIN_SUCURSAL)",
@@ -182,8 +181,6 @@ public class CostosController {
     public GastoTallerResponse detalleTaller(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         return tallerService.detalleGastoTaller(id, UsuarioAutenticado.de(jwt));
     }
-
-    // ---------- Viaje ----------
 
     @GetMapping("/viajes/{idViaje}")
     @Operation(summary = "Resumen de costos de un viaje",

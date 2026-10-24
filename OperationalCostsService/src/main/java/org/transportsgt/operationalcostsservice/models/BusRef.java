@@ -17,11 +17,15 @@ import java.util.UUID;
 @Builder
 public class BusRef {
 
-    /** = idBus del evento. */
+    /**
+     * = idBus del evento.
+     */
     @Id
     private UUID id;
 
-    /** sucursal_ref(id). */
+    /**
+     * sucursal_ref(id).
+     */
     @Column(name = "id_sucursal", nullable = false)
     private UUID idSucursal;
 
@@ -31,7 +35,9 @@ public class BusRef {
     @Column(name = "activo", nullable = false)
     private Boolean activo;
 
-    /** versionAgregado del último evento aplicado. */
+    /**
+     * versionAgregado del último evento aplicado.
+     */
     @Column(name = "version", nullable = false)
     private Long version;
 }
