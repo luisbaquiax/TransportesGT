@@ -25,7 +25,9 @@ public class CategoriaGasto {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    /** Único sin distinguir mayúsculas ({@code uq_categoria_nombre}). */
+    /**
+     * Único sin distinguir mayúsculas ({@code uq_categoria_nombre}).
+     */
     @Column(name = "nombre", nullable = false, length = 80)
     private String nombre;
 

@@ -28,11 +28,15 @@ public class ConfiguracionDepreciacion {
     @Column(name = "monto_por_km", nullable = false, precision = 10, scale = 4)
     private BigDecimal montoPorKm;
 
-    /** Un segundo cambio con la misma fecha reemplaza al anterior. */
+    /**
+     * Un segundo cambio con la misma fecha reemplaza al anterior.
+     */
     @Column(name = "vigente_desde", nullable = false, unique = true)
     private LocalDate vigenteDesde;
 
-    /** Administrador de sistema. */
+    /**
+     * Administrador de sistema.
+     */
     @Column(name = "creado_por", nullable = false)
     private UUID creadoPor;
 

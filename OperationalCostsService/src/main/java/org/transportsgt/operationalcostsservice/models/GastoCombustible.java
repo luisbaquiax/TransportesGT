@@ -31,11 +31,15 @@ public class GastoCombustible {
     @Column(name = "id_viaje", nullable = false, unique = true)
     private UUID idViaje;
 
-    /** bus_ref(id). */
+    /**
+     * bus_ref(id).
+     */
     @Column(name = "id_bus", nullable = false)
     private UUID idBus;
 
-    /** sucursal_ref(id): la del bus. */
+    /**
+     * sucursal_ref(id): la del bus.
+     */
     @Column(name = "id_sucursal", nullable = false)
     private UUID idSucursal;
 
