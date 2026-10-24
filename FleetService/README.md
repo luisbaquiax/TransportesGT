@@ -45,11 +45,12 @@ Sembrados al arrancar (idempotentes con `ON CONFLICT DO NOTHING`):
 - 3 sucursales (Quetzaltenango, Ciudad de Guatemala, Huehuetenango) — las mismas de Identidad.
 - 9 buses (placas `P900ABC`–`P908ABC`): `P905ABC` inactivo, `P907ABC` en taller.
 - 9 choferes (licencias `LIC-GT-101`–`LIC-GT-109`): `LIC-GT-101` vence pronto, `LIC-GT-109` inactivo.
-- 18 eventos en `outbox_evento` (9 `BusRegistrado` + 9 `ChoferRegistrado`) pendientes de publicación.
+- `LIC-GT-101`, `LIC-GT-104` y `LIC-GT-107` enlazados a los usuarios CHOFER de Identidad.
 
-**Los datos iniciales no generan eventos.** Después de levantar los demás servicios, ejecute (con token de
-ADMIN_SISTEMA) `POST /v1/fleet/admin/republicar-eventos`: encola `BusRegistrado` y `ChoferRegistrado` de todo
-lo existente para poblar las proyecciones de los demás servicios. Es idempotente.
+Los datos de todos los servicios están sincronizados desde sus migraciones `V2` (mismos IDs, versión 0; ver
+`docs/datos-semilla.md`), así que no hace falta republicar nada al arrancar.
+`POST /v1/fleet/admin/republicar-eventos` (SIS) sigue disponible para recuperar una proyección: encola `BusRegistrado` y
+`ChoferRegistrado` de todo lo existente. Es idempotente.
 
 ## Endpoints
 

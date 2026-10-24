@@ -41,11 +41,11 @@ cd ../infra && docker compose up -d
 Sembrados al arrancar (idempotentes con `ON CONFLICT DO NOTHING`):
 
 - 3 sucursales (Quetzaltenango, Ciudad de Guatemala, Huehuetenango) — las mismas de Identidad/Flota.
-- 2 clientes de referencia para pruebas manuales.
+- Los perfiles comerciales de todos los usuarios de Identidad (los dos clientes con NIT).
+- La tarifa inicial (Q 10.00/km y Q 500.00/día) y un alquiler en cada estado, enlazados a sus viajes en Viajes.
 
-**Los datos iniciales no generan eventos.** Después de levantar los demás servicios, ejecute (con token de
-ADMIN_SISTEMA) `POST /v1/rentals/alquileres/admin/republicar-eventos`: encola `AlquilerSolicitado` de todo
-lo existente para poblar proyecciones de Costos. Es idempotente.
+Los datos de todos los servicios están sincronizados desde sus migraciones `V2` (mismos IDs, versión 0; ver
+`docs/datos-semilla.md`), así que no hace falta republicar nada al arrancar.
 
 ## Endpoints
 
@@ -62,7 +62,6 @@ sucursal; `ADMIN_SISTEMA` puede consultar todo.
 | GET | `/alquileres/mios` | autenticado | Historial del usuario (en línea + mostrador con su NIT) |
 | GET | `/alquileres` | SUC, CAJ, SIS | Lista paginada; filtros `estado`, `desde`, `hasta`, `sinAsignar` |
 | GET | `/alquileres/{id}` | autenticado | Detalle con historial de cotizaciones |
-| POST | `/alquileres/admin/republicar-eventos` | SIS | Encola eventos de todo lo existente |
 
 Códigos de error estables: `NO_AUTENTICADO` (401), `OPERACION_NO_AUTORIZADA` (403),
 `ALQUILER_NO_ENCONTRADO` / `RUTA_NO_ENCONTRADA` (404), `TRANSICION_INVALIDA` (409),

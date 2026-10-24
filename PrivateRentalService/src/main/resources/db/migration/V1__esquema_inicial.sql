@@ -88,6 +88,7 @@ CREATE TABLE alquiler (
     placa_bus            VARCHAR(15),
     id_chofer            UUID,
     nombre_chofer        VARCHAR(150),
+    version_viaje        BIGINT,                              -- versión del último ViajeProgramado/Actualizado aplicado
     motivo_cancelacion   VARCHAR(30),
     cancelado_en         TIMESTAMPTZ,
     version              BIGINT        NOT NULL DEFAULT 0,
@@ -142,9 +143,7 @@ CREATE TABLE tarifa_alquiler (
     creado_por      UUID          NOT NULL,                  -- administrador de sistema
     creado_en       TIMESTAMPTZ   NOT NULL DEFAULT now()
 );
--- Dato inicial obligatorio (valores de ejemplo, ajustables): sin una tarifa no se puede estimar ningún alquiler
-INSERT INTO tarifa_alquiler (precio_por_km, precio_por_dia, vigente_desde, creado_por)
-VALUES (10.00, 500.00, DATE '2026-01-01', 'b0000000-0000-0000-0000-000000000001');
+-- La tarifa inicial obligatoria (sin ella no se estima ningún alquiler) está en V2__datos_prueba.sql
 
 -- Perfil comercial del cliente (alimentada por PerfilClienteActualizado)
 CREATE TABLE cliente_ref (

@@ -41,11 +41,17 @@ cd ../infra && docker compose up -d
 
 ## Datos de prueba
 
-El servicio **no tiene datos iniciales propios**: cada cliente (con su cartera en saldo 0) nace al consumir
-`UsuarioCreado`, de **cualquier rol**, incluido el administrador de sistema sembrado en Identidad.
+`V2__datos_iniciales.sql` trae el perfil y la cartera de **todos** los usuarios sembrados en Identidad (cualquier rol),
+como si hubiera consumido su `UsuarioCreado`. Los dos clientes tienen NIT y saldo (`cliente@` NIT 12345678 con Q 4,830;
+`cliente2@` NIT 87654321 con Q 4,915), y sus movimientos cuadran con las compras de Boletos y el alquiler cancelado
+(ver `docs/datos-semilla.md`). Los usuarios nuevos siguen naciendo al consumir `UsuarioCreado`.
 
-- **Con Identidad levantada:** ejecute `POST /v1/identity/admin/republicar-eventos` (token de ADMIN_SISTEMA). Publica
-  `UsuarioCreado` de todos los usuarios existentes y este servicio crea sus clientes.
+Boletos y Alquileres también traen en su V2 la proyección de estos clientes, así que no hace falta republicar nada al
+arrancar. `POST /v1/customers/admin/republicar-eventos` (SIS) sigue disponible para recuperar esas proyecciones:
+encola `PerfilClienteActualizado` de cada cliente con su versión actual (idempotente).
+
+- **Para recuperar perfiles:** con Identidad levantada, `POST /v1/identity/admin/republicar-eventos` (ADMIN_SISTEMA)
+  publica `UsuarioCreado` de todos los usuarios existentes.
 - **Sin Identidad:** publique a mano un `UsuarioCreado` desde la consola de RabbitMQ
   (<http://localhost:15672>, `guest` / `guest`):
   1. *Exchanges* → `transporte.eventos` → *Publish message*.
@@ -89,6 +95,7 @@ Si el JSON es inválido, el mensaje aparece en la cola `cartera.identidad.dlq`.
 | `GET /cartera/yo/movimientos?tipo=&desde=&hasta=&pagina=&tamano=` | autenticado | Página `{ contenido, pagina, tamano, totalElementos, totalPaginas }`, más reciente primero | — |
 | `POST /cartera/pagos` | **Interno** (Boletos, Alquileres) con el JWT del usuario reenviado | `Clave-Idempotencia` = `idReferencia`. 201 `{ idPago, saldoPosterior }` + `Location` · 200 si ya existía · 409 con otros datos · 422 `SALDO_INSUFICIENTE` / `PERFIL_INCOMPLETO` · 403 `CUENTA_INACTIVA` | — |
 | `GET /cartera/pagos?tipoReferencia=&idReferencia=` | **Interno**: JWT (solo sus pagos) o `X-Clave-Interna` (cualquiera) | 200 `{ idPago, monto, fechaPago }` o 404 | — |
+| `POST /admin/republicar-eventos` | ADMIN_SISTEMA | `{ clientes }`: perfiles encolados | PerfilClienteActualizado (uno por cliente) |
 
 Los reembolsos **no tienen endpoint**: nacen al consumir `BoletosAnulados` y `AlquilerCancelado`.
 `GET /cartera/pagos` con `X-Clave-Interna` no se publica en el gateway: los jobs llaman directo al puerto 8085.
@@ -129,7 +136,7 @@ Las colas y enlaces los declara la librería a partir de los `ManejadorEvento` r
 
 | Evento | Llave | `idAgregado` / versión | Cuándo |
 |---|---|---|---|
-| PerfilClienteActualizado | `cartera.cliente.actualizado` | `id_usuario` / `cliente.version` | Al crear el cliente (con `nit` nulo) y cuando cambian el nombre, el NIT o `activo` (no por un cambio de correo) |
+| PerfilClienteActualizado | `cartera.cliente.actualizado` | `id_usuario` / `cliente.version` | Al crear el cliente (con `nit` nulo) y cuando cambian el nombre, el NIT o `activo` (no por un cambio de correo), y al republicar |
 | CarteraRecargada | `cartera.cartera.recargada` | `id` de la cartera / `cartera.version` | Recarga nueva (con `saldoPosterior` y `fechaRecarga`) |
 | CarteraReembolsada | `cartera.cartera.reembolsada` | `id` de la cartera / `cartera.version` | Reembolso aplicado (con `saldoPosterior` y `motivo`) |
 

@@ -47,14 +47,21 @@ cd ../infra && docker compose up -d
 | ADMIN_SUCURSAL | `admin.capital@transportes.gt` | `Admin1234` | Ciudad de Guatemala |
 | ADMIN_SUCURSAL | `admin.huehue@transportes.gt` | `Admin1234` | Huehuetenango |
 | CAJERO | `cajero.xela@transportes.gt` | `Cajero1234` | Quetzaltenango |
-| CLIENTE | `cliente@transportes.gt` | `Cliente1234` | — |
+| CAJERO | `cajero.capital@transportes.gt` | `Cajero1234` | Ciudad de Guatemala |
+| CAJERO | `cajero.huehue@transportes.gt` | `Cajero1234` | Huehuetenango |
+| CHOFER | `chofer101@transportes.gt` | `Chofer1234` | Quetzaltenango |
+| CHOFER | `chofer104@transportes.gt` | `Chofer1234` | Ciudad de Guatemala |
+| CHOFER | `chofer107@transportes.gt` | `Chofer1234` | Huehuetenango |
+| CLIENTE | `cliente@transportes.gt` | `Cliente1234` | — (NIT 12345678, saldo Q 4,830) |
+| CLIENTE | `cliente2@transportes.gt` | `Cliente1234` | — (NIT 87654321, saldo Q 4,915) |
 
 Sucursales (coordenadas del parque central): Quetzaltenango `14.8347, -91.5181` · Ciudad de Guatemala
 `14.6427, -90.5133` · Huehuetenango `15.3197, -91.4709`.
 
-**Los datos iniciales no generan eventos.** Después de levantar los demás servicios, ejecute (con token de
-ADMIN_SISTEMA) `POST /v1/identity/admin/republicar-eventos`: publica `SucursalCreada` y `UsuarioCreado` de todo lo
-existente. Es idempotente, porque los consumidores comparan `versionAgregado`.
+Los datos de todos los servicios están sincronizados desde sus migraciones `V2` (mismos IDs, versión 0; ver
+`docs/datos-semilla.md`), así que no hace falta republicar nada al arrancar.
+`POST /v1/identity/admin/republicar-eventos` (ADMIN_SISTEMA) sigue disponible para recuperar una proyección: publica
+`SucursalCreada` y `UsuarioCreado` de todo lo existente y es idempotente, porque los consumidores comparan `versionAgregado`.
 
 ## Endpoints
 
