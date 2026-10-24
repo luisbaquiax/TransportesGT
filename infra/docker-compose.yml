@@ -87,8 +87,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_flota
       SERVER_PORT: 8082
       VIAJES_URL: http://trip-service:8083/v1/trips
-      # Flota consulta Viajes antes de desactivar un bus (GET /viajes/activos)
-      VIAJES_URL: http://trip-service:8083/v1/trips
       CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
     ports:
       - "8082:8082"
@@ -108,6 +106,10 @@ services:
       SPRING_DATASOURCE_USERNAME: svc_viajes
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_viajes
       SERVER_PORT: 8083
+      # Viajes consulta asiento-maximo en Boletos al cambiar el bus de un viaje regular
+      BOLETOS_URL: http://ticket-service:8084/v1/tickets
+      # Misma clave que Flota usa en GET /viajes/activos (X-Clave-Interna)
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
     ports:
       - "8083:8083"
     depends_on:

@@ -33,12 +33,11 @@ public class RutaServiceImpl implements RutaService {
     public List<Responses.RutaResponse> listar(UUID idSucursalOrigen, UUID idSucursalDestino) {
         List<Ruta> rutas;
         if (idSucursalOrigen != null && idSucursalDestino != null) {
-            rutas = rutaRepository.findAll().stream()
-                    .filter(r -> r.getIdSucursalOrigen().equals(idSucursalOrigen)
-                            && r.getIdSucursalDestino().equals(idSucursalDestino))
-                    .toList();
+            rutas = rutaRepository.findAllByIdSucursalOrigenAndIdSucursalDestino(idSucursalOrigen, idSucursalDestino);
         } else if (idSucursalOrigen != null) {
             rutas = rutaRepository.findAllByIdSucursalOrigen(idSucursalOrigen);
+        } else if (idSucursalDestino != null) {
+            rutas = rutaRepository.findAllByIdSucursalDestino(idSucursalDestino);
         } else {
             rutas = rutaRepository.findAll();
         }

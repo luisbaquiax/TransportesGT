@@ -12,7 +12,9 @@ import org.transportsgt.tripservice.repositories.SucursalRefRepository;
 
 import java.util.UUID;
 
-/** Reglas de una ruta: quién la gestiona, origen distinto del destino, sucursales activas y sin duplicados. */
+/**
+ * Reglas de una ruta: quién la gestiona, origen distinto del destino, sucursales activas y sin duplicados.
+ */
 @Component
 @RequiredArgsConstructor
 class ValidadorRuta {
@@ -20,7 +22,9 @@ class ValidadorRuta {
     private final RutaRepository rutaRepository;
     private final SucursalRefRepository sucursalRefRepository;
 
-    /** @param accion texto del mensaje, p. ej. "crear la ruta" */
+    /**
+     * @param accion texto del mensaje, p. ej. "crear la ruta"
+     */
     void verificarGestion(UsuarioAutenticado usuario, UUID idSucursalOrigen, String accion) {
         if (!usuario.perteneceASucursal(idSucursalOrigen)) {
             throw new OperacionNoAutorizadaException(

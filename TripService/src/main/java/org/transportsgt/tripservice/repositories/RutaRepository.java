@@ -19,6 +19,10 @@ public interface RutaRepository extends JpaRepository<Ruta, UUID>, JpaSpecificat
 
     List<Ruta> findAllByIdSucursalOrigen(UUID idSucursalOrigen);
 
+    List<Ruta> findAllByIdSucursalDestino(UUID idSucursalDestino);
+
+    List<Ruta> findAllByIdSucursalOrigenAndIdSucursalDestino(UUID idSucursalOrigen, UUID idSucursalDestino);
+
     /** Republicación de eventos. */
     List<Ruta> findAllByOrderByCreadoEn();
 }
