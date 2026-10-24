@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.transportsgt.apigateway.exception.FabricaRespuestaError;
 import org.transportsgt.apigateway.exception.RespuestaError;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -21,13 +22,14 @@ import java.nio.charset.StandardCharsets;
 public class EscritorRespuestaError {
 
     private final JsonMapper jsonMapper;
+    private final FabricaRespuestaError fabricaRespuestaError;
 
     public void escribir(HttpServletRequest request, HttpServletResponse response, HttpStatus status,
                          String mensaje, String codigo) throws IOException {
         response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        RespuestaError cuerpo = RespuestaError.de(status, mensaje, codigo, request.getRequestURI());
+        RespuestaError cuerpo = fabricaRespuestaError.crear(status, mensaje, codigo, request.getRequestURI());
         response.getWriter().write(jsonMapper.writeValueAsString(cuerpo));
     }
 }

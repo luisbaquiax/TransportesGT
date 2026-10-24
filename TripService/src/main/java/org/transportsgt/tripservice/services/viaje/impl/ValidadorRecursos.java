@@ -11,11 +11,17 @@ import org.transportsgt.tripservice.repositories.BusRefRepository;
 import org.transportsgt.tripservice.repositories.ChoferRefRepository;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 class ValidadorRecursos {
+
+    /**
+     * La licencia vale hasta su día de vencimiento inclusive, en hora de Guatemala.
+     */
+    private static final ZoneId ZONA = ZoneId.of("America/Guatemala");
 
     private final BusRefRepository busRefRepository;
     private final ChoferRefRepository choferRefRepository;
@@ -67,7 +73,7 @@ class ValidadorRecursos {
             throw new ReglaNegocioException("CHOFER_OTRA_SUCURSAL", "El chofer no pertenece a la sucursal del viaje");
         }
         if (chofer.getFechaVencimientoLicencia() != null && llegadaEstimada != null
-                && chofer.getFechaVencimientoLicencia().isBefore(llegadaEstimada.toLocalDate())) {
+                && chofer.getFechaVencimientoLicencia().isBefore(llegadaEstimada.atZoneSameInstant(ZONA).toLocalDate())) {
             throw new ReglaNegocioException("LICENCIA_VENCIDA",
                     "La licencia del chofer vence antes de finalizar el viaje");
         }

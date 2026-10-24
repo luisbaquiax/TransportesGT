@@ -41,7 +41,8 @@ public class RutaController {
     private final ConvertidorUsuarioAutenticado convertidor;
 
     @GetMapping
-    @Operation(summary = "Listado de rutas", description = "Filtro opcional por sucursal de origen y destino.")
+    @Operation(summary = "Listado de rutas", description = "Todas las rutas, para cualquier usuario autenticado; filtros opcionales por sucursal "
+                    + "de origen y de destino. Solo la sucursal de origen las gestiona (POST, PUT, DELETE).")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Listado",
                     content = @Content(schema = @Schema(implementation = Responses.RutaResponse.class))),
@@ -52,9 +53,8 @@ public class RutaController {
             @Parameter(description = "Filtrar por sucursal de origen")
             @RequestParam(required = false) UUID idSucursalOrigen,
             @Parameter(description = "Filtrar por sucursal de destino")
-            @RequestParam(required = false) UUID idSucursalDestino,
-            @AuthenticationPrincipal Jwt jwt) {
-        return rutaService.listar(idSucursalOrigen, idSucursalDestino, UsuarioAutenticado.de(jwt));
+            @RequestParam(required = false) UUID idSucursalDestino) {
+        return rutaService.listar(idSucursalOrigen, idSucursalDestino);
     }
 
     @GetMapping("/{id}")
@@ -65,8 +65,8 @@ public class RutaController {
             @ApiResponse(responseCode = "404", description = "No existe",
                     content = @Content(schema = @Schema(implementation = RespuestaError.class)))
     })
-    public Responses.RutaResponse detalle(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return rutaService.detalle(id, UsuarioAutenticado.de(jwt));
+    public Responses.RutaResponse detalle(@PathVariable UUID id) {
+        return rutaService.detalle(id);
     }
 
     @PostMapping

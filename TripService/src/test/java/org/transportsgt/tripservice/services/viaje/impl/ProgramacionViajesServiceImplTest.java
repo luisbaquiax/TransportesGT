@@ -28,6 +28,7 @@ import org.transportsgt.tripservice.repositories.ViajeRepository;
 import org.transportsgt.tripservice.services.autorizacion.AutorizacionViaje;
 import org.transportsgt.tripservice.services.comun.BuscadorViajes;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -132,6 +133,43 @@ class ProgramacionViajesServiceImplTest {
         ReglaNegocioException ex = assertThrows(ReglaNegocioException.class,
                 () -> servicio.crearRegular(req, f.adminSucursal));
         assertEquals("BUS_OTRA_SUCURSAL", ex.getCodigo());
+    }
+
+    /** La licencia vale hasta su día de vencimiento inclusive, contado en hora de Guatemala. */
+    @Test
+    void crearRegularAceptaLicenciaQueVenceElDiaDeLlegadaEnGuatemala() {
+        // 23:30 de Guatemala del 10 de diciembre llega expresada en UTC (ya es 11 en UTC)
+        OffsetDateTime salida = OffsetDateTime.parse("2030-12-10T18:00:00-06:00");
+        OffsetDateTime llegada = OffsetDateTime.parse("2030-12-11T05:30:00Z");
+        var chofer = f.choferRef();
+        chofer.setFechaVencimientoLicencia(LocalDate.of(2030, 12, 10));
+        Viaje guardado = f.viajeProgramado();
+        when(rutaRepository.findById(f.rutaId)).thenReturn(Optional.of(f.ruta()));
+        when(busRefRepository.findById(f.bus1)).thenReturn(Optional.of(f.busActivo()));
+        when(choferRefRepository.findById(f.chofer1)).thenReturn(Optional.of(chofer));
+        when(sucursalRefRepository.findById(f.xela)).thenReturn(Optional.empty());
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenReturn(guardado);
+
+        servicio.crearRegular(new Requests.ViajeRegularRequest(f.rutaId, f.bus1, f.chofer1, salida, llegada),
+                f.adminSucursal);
+
+        verify(eventos).viajeProgramado(any(), any(), any());
+    }
+
+    @Test
+    void crearRegularRechazaLicenciaQueVenceAntesDeLaLlegada() {
+        // 01:00 de Guatemala del 11 de diciembre (con otra zona, la fecha local sería todavía el 10)
+        OffsetDateTime salida = OffsetDateTime.parse("2030-12-10T18:00:00-06:00");
+        OffsetDateTime llegada = OffsetDateTime.parse("2030-12-10T19:00:00-12:00");
+        var chofer = f.choferRef();
+        chofer.setFechaVencimientoLicencia(LocalDate.of(2030, 12, 10));
+        when(rutaRepository.findById(f.rutaId)).thenReturn(Optional.of(f.ruta()));
+        when(busRefRepository.findById(f.bus1)).thenReturn(Optional.of(f.busActivo()));
+        when(choferRefRepository.findById(f.chofer1)).thenReturn(Optional.of(chofer));
+
+        ReglaNegocioException ex = assertThrows(ReglaNegocioException.class, () -> servicio.crearRegular(
+                new Requests.ViajeRegularRequest(f.rutaId, f.bus1, f.chofer1, salida, llegada), f.adminSucursal));
+        assertEquals("LICENCIA_VENCIDA", ex.getCodigo());
     }
 
     // ------------------------------------------------------------------
