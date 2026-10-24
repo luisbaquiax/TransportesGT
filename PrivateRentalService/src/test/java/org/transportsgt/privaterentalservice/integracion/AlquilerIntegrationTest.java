@@ -128,7 +128,8 @@ class AlquilerIntegrationTest extends IntegracionBase {
 
     @Test
     void cotizacionDeOtraSucursalEs403() throws Exception {
-        String token = tokenClienteConPerfil(UUID.fromString("a0000000-0000-4000-8000-000000000001"), null);
+        // cliente@transportes.gt: su perfil con NIT viene en la semilla V2
+        String token = tokenClienteConPerfil(UUID.fromString("00000000-0000-4000-8000-000000000031"), null);
         String id = solicitar(token);
         // Admin de otra sucursal (Huehue)
         mockMvc.perform(conToken(post("/alquileres/%s/cotizacion".formatted(id)),

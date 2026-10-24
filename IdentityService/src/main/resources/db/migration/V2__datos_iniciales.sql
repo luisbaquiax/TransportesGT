@@ -1,8 +1,8 @@
--- Datos iniciales (seed). Contraseñas documentadas en el README:
---   ADMIN_SISTEMA y ADMIN_SUCURSAL: Admin1234 · CAJERO: Cajero1234 · CLIENTE: Cliente1234
+-- Datos iniciales (docs/datos-semilla.md). Contraseñas:
+--   ADMIN_SISTEMA y ADMIN_SUCURSAL: Admin1234 · CAJERO: Cajero1234 · CHOFER: Chofer1234 · CLIENTE: Cliente1234
 --
--- Estos INSERT NO generan eventos. Para poblar las proyecciones de los demás servicios:
---   POST /v1/identity/admin/republicar-eventos  (con un token de ADMIN_SISTEMA)
+-- Estos INSERT no generan eventos: cada servicio trae en su propia V2 las proyecciones de estos usuarios y
+-- sucursales (mismos IDs, versión 0). POST /v1/identity/admin/republicar-eventos sigue disponible para recuperar.
 --
 -- Orden: el trigger trg_admin_sucursal_creador exige que creado_por sea un ADMIN_SISTEMA activo,
 -- así que primero va el administrador de sistema.
@@ -45,17 +45,44 @@ VALUES ('00000000-0000-4000-8000-000000000013', 'admin.huehue@transportes.gt',
         'Lucía Gabriela Ramírez', 'ADMIN_SUCURSAL', '10000000-0000-4000-8000-000000000003', TRUE,
         '00000000-0000-4000-8000-000000000001', now());
 
--- Cajero de Quetzaltenango (creado por el administrador de esa sucursal)
+-- Un cajero por sucursal (creado por el administrador de esa sucursal)
 INSERT INTO usuario (id, correo, hash_contrasena, nombre_completo, rol, id_sucursal, activo, creado_por,
                      contrasena_cambiada_en)
 VALUES ('00000000-0000-4000-8000-000000000021', 'cajero.xela@transportes.gt',
         '$2a$10$mYeDpTUJNtQAXwxaBCQP..nN6va5gjhh5TelMFsl6do3oW9Juv3nu',
         'Ana López', 'CAJERO', '10000000-0000-4000-8000-000000000001', TRUE,
-        '00000000-0000-4000-8000-000000000011', now());
+        '00000000-0000-4000-8000-000000000011', now()),
+       ('00000000-0000-4000-8000-000000000022', 'cajero.capital@transportes.gt',
+        '$2a$10$mYeDpTUJNtQAXwxaBCQP..nN6va5gjhh5TelMFsl6do3oW9Juv3nu',
+        'Mónica Beatriz Herrera', 'CAJERO', '10000000-0000-4000-8000-000000000002', TRUE,
+        '00000000-0000-4000-8000-000000000012', now()),
+       ('00000000-0000-4000-8000-000000000023', 'cajero.huehue@transportes.gt',
+        '$2a$10$mYeDpTUJNtQAXwxaBCQP..nN6va5gjhh5TelMFsl6do3oW9Juv3nu',
+        'Rodrigo Esteban Pú', 'CAJERO', '10000000-0000-4000-8000-000000000003', TRUE,
+        '00000000-0000-4000-8000-000000000013', now());
 
--- Cliente (autorregistrado: sin creado_por)
+-- Un chofer con acceso por sucursal: mismo correo y nombre que su ficha de Flota (chofer c…001, c…004, c…007)
+INSERT INTO usuario (id, correo, hash_contrasena, nombre_completo, rol, id_sucursal, activo, creado_por,
+                     contrasena_cambiada_en)
+VALUES ('00000000-0000-4000-8000-000000000041', 'chofer101@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Carlos Alberto Méndez Ruiz', 'CHOFER', '10000000-0000-4000-8000-000000000001', TRUE,
+        '00000000-0000-4000-8000-000000000011', now()),
+       ('00000000-0000-4000-8000-000000000042', 'chofer104@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Alejandro Ramiro Gómez', 'CHOFER', '10000000-0000-4000-8000-000000000002', TRUE,
+        '00000000-0000-4000-8000-000000000012', now()),
+       ('00000000-0000-4000-8000-000000000043', 'chofer107@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Sandra Victoria Aguilar', 'CHOFER', '10000000-0000-4000-8000-000000000003', TRUE,
+        '00000000-0000-4000-8000-000000000013', now());
+
+-- Clientes (autorregistrados: sin creado_por). Su NIT y saldo están en Clientes y Cartera.
 INSERT INTO usuario (id, correo, hash_contrasena, nombre_completo, rol, id_sucursal, activo, creado_por,
                      contrasena_cambiada_en)
 VALUES ('00000000-0000-4000-8000-000000000031', 'cliente@transportes.gt',
         '$2a$10$gCMxqYrl4x6hDdhkSh0j1eggBoku6B/w2zRtSBRxb4J2GWABB4haW',
-        'Carlos Méndez', 'CLIENTE', NULL, TRUE, NULL, now());
+        'Carlos Méndez', 'CLIENTE', NULL, TRUE, NULL, now()),
+       ('00000000-0000-4000-8000-000000000032', 'cliente2@transportes.gt',
+        '$2a$10$gCMxqYrl4x6hDdhkSh0j1eggBoku6B/w2zRtSBRxb4J2GWABB4haW',
+        'Andrea Sofía Castillo', 'CLIENTE', NULL, TRUE, NULL, now());

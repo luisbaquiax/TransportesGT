@@ -64,9 +64,8 @@ CREATE TABLE configuracion_depreciacion (
 --   SELECT monto_por_km FROM configuracion_depreciacion
 --    WHERE vigente_desde <= :fecha ORDER BY vigente_desde DESC LIMIT 1;
 
--- Dato inicial obligatorio: sin una tarifa vigente, el primer LlegadaRegistrada no podría calcular la depreciación
-INSERT INTO configuracion_depreciacion (monto_por_km, vigente_desde, creado_por)
-VALUES (2.0000, DATE '2026-01-01', 'b0000000-0000-0000-0000-000000000001');
+-- Dato inicial obligatorio (sin una tarifa vigente, LlegadaRegistrada no puede calcular la depreciación):
+-- está en V2__datos_iniciales.sql
 
 CREATE TABLE categoria_gasto (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -77,9 +76,7 @@ CREATE TABLE categoria_gasto (
 );
 CREATE UNIQUE INDEX uq_categoria_nombre ON categoria_gasto (lower(nombre));
 
-INSERT INTO categoria_gasto (nombre) VALUES
-    ('Llantas'), ('Motor'), ('Frenos'), ('Suspensión'),
-    ('Cambio de aceite'), ('Eléctrico'), ('Carrocería'), ('Otros');
+-- Las categorías iniciales están en V2__datos_iniciales.sql
 
 CREATE TABLE gasto_taller (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(RUTAS_PUBLICAS).permitAll()
                         // Reglas propias de Clientes y Cartera
                         .requestMatchers(HttpMethod.GET, "/clientes/buscar").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
+                        .requestMatchers("/admin/**").hasRole("ADMIN_SISTEMA")
                         .requestMatchers("/clientes/**", "/cartera/**").authenticated()
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e
