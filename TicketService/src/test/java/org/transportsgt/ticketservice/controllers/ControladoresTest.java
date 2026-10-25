@@ -1,5 +1,7 @@
 package org.transportsgt.ticketservice.controllers;
 
+import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -112,7 +114,7 @@ class ControladoresTest {
 
         @BeforeEach
         void setUp() {
-            controlador = new CompraController(compraEnLinea, consultaCompras);
+            controlador = new CompraController(new ConvertidorUsuarioAutenticado(), compraEnLinea, consultaCompras);
             request = new CompraRequest(compra.idCompra(), compra.idViaje(), List.of(12), CompraFixture.FECHA_PAGO);
         }
 
@@ -190,7 +192,7 @@ class ControladoresTest {
         @Test
         void vender_cuandoEsNueva_responde201YCuandoSeRepite200() {
             // Arrange
-            VentaMostradorController controlador = new VentaMostradorController(servicio);
+            VentaMostradorController controlador = new VentaMostradorController(new ConvertidorUsuarioAutenticado(), servicio);
             Jwt cajero = ClienteRefFixture.jwt(UUID.randomUUID(), Rol.CAJERO, ViajeRefFixture.SUCURSAL_XELA);
             VentaMostradorRequest request = new VentaMostradorRequest(compra.idCompra(), compra.idViaje(), List.of(12),
                     null, null, CompraFixture.FECHA_PAGO);

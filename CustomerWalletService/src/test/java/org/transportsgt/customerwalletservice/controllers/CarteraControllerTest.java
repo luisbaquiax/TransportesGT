@@ -1,5 +1,7 @@
 package org.transportsgt.customerwalletservice.controllers;
 
+import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -68,7 +70,7 @@ class CarteraControllerTest {
 
     @BeforeEach
     void setUp() {
-        controlador = new CarteraController(carteraService, pagoService);
+        controlador = new CarteraController(new ConvertidorUsuarioAutenticado(), carteraService, pagoService);
         idUsuario = UUID.randomUUID();
         jwt = ClienteFixture.jwt(idUsuario, Rol.CLIENTE);
         idReferencia = UUID.randomUUID();
@@ -225,7 +227,7 @@ class CarteraControllerTest {
         @Test
         void usuarioAutenticado_leeLosClaimsDelJwt() {
             // Act
-            UsuarioAutenticado usuario = UsuarioAutenticado.de(jwt);
+            UsuarioAutenticado usuario = new ConvertidorUsuarioAutenticado().desde(jwt);
 
             // Assert
             assertAll(

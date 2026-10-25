@@ -1,5 +1,7 @@
 package org.transportsgt.customerwalletservice.exception;
 
+import org.transportsgt.customerwalletservice.exception.FabricaRespuestaError;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -51,7 +53,7 @@ class GlobalWalletClientServiceExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalWalletClientServiceExceptionHandler();
+        handler = new GlobalWalletClientServiceExceptionHandler(new FabricaRespuestaError());
         request = new MockHttpServletRequest("POST", RUTA);
     }
 

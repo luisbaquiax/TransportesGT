@@ -1,5 +1,7 @@
 package org.transportsgt.ticketservice.exception;
 
+import org.transportsgt.ticketservice.exception.FabricaRespuestaError;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -51,7 +53,7 @@ class GlobalBoletosServiceExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalBoletosServiceExceptionHandler();
+        handler = new GlobalBoletosServiceExceptionHandler(new FabricaRespuestaError());
         request = new MockHttpServletRequest("POST", RUTA);
     }
 

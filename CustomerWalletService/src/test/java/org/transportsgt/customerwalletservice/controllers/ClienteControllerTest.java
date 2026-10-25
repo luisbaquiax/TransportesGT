@@ -1,5 +1,7 @@
 package org.transportsgt.customerwalletservice.controllers;
 
+import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,7 +41,7 @@ class ClienteControllerTest {
 
     @BeforeEach
     void setUp() {
-        controlador = new ClienteController(clienteService);
+        controlador = new ClienteController(new ConvertidorUsuarioAutenticado(), clienteService);
         idUsuario = UUID.randomUUID();
         jwt = ClienteFixture.jwt(idUsuario, Rol.CLIENTE);
         perfil = new ClienteResponse(idUsuario, ClienteFixture.NOMBRE, ClienteFixture.CORREO, ClienteFixture.NIT,

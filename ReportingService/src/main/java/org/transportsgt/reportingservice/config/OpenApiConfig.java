@@ -18,12 +18,12 @@ public class OpenApiConfig {
     public static final String ESQUEMA_JWT = "bearerAuth";
 
     @Bean
-    public OpenAPI identidadOpenApi(@Value("${server.servlet.context-path:}") String contextPath) {
+    public OpenAPI reportesOpenApi(@Value("${server.servlet.context-path:}") String contextPath) {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Servicio de choferes y buses")
+                        .title("Servicio de reportes")
                         .version("v1")
-                        .description("Choferes y buses de la empresa TransportsGT"))
+                        .description("Reportes de ingresos, gastos, ganancias, flota y rutas de TransportsGT (JSON y PDF)"))
                 .servers(List.of(new Server().url(contextPath.isBlank() ? "/" : contextPath)))
                 .components(new Components().addSecuritySchemes(ESQUEMA_JWT, new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)

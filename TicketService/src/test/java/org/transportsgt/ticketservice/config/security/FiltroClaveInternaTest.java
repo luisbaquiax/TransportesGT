@@ -1,4 +1,6 @@
 //package org.transportsgt.ticketservice.config.security;
+
+import org.transportsgt.ticketservice.exception.FabricaRespuestaError;
 //
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +32,7 @@
 //
 //    @BeforeEach
 //    void setUp() {
-//        filtro = new FiltroClaveInterna(CLAVE, new EscritorRespuestaError(JsonMapper.builder().build()));
+//        filtro = new FiltroClaveInterna(CLAVE, new EscritorRespuestaError(JsonMapper.builder().build(), new FabricaRespuestaError()));
 //        respuesta = new MockHttpServletResponse();
 //        cadena = new MockFilterChain();
 //    }
@@ -54,7 +56,7 @@
 //
 //        @Test
 //        void constructor_cuandoLaClaveEstaVacia_fallaAlArrancar() {
-//            EscritorRespuestaError escritor = new EscritorRespuestaError(JsonMapper.builder().build());
+//            EscritorRespuestaError escritor = new EscritorRespuestaError(JsonMapper.builder().build(), new FabricaRespuestaError());
 //            assertAll(
 //                    () -> assertThrows(IllegalStateException.class, () -> new FiltroClaveInterna(" ", escritor)),
 //                    () -> assertThrows(IllegalStateException.class, () -> new FiltroClaveInterna(null, escritor))

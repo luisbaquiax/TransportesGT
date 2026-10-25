@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.operationalcostsservice.config.OpenApiConfig;
-import org.transportsgt.operationalcostsservice.config.security.UsuarioAutenticado;
+import org.transportsgt.operationalcostsservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.operationalcostsservice.dto.request.CategoriaActivaRequest;
 import org.transportsgt.operationalcostsservice.dto.request.CategoriaRequest;
 import org.transportsgt.operationalcostsservice.dto.request.GastoTallerRequest;
@@ -54,6 +54,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Costos", description = "Costos operativos: depreciación, categorías, taller y costos de viaje")
 public class CostosController {
+
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
 
     /**
      * Límite máximo de elementos por página en listados.
@@ -94,7 +96,7 @@ public class CostosController {
     public ResponseEntity<TarifaDepreciacionResponse> cambiarTarifa(
             @Valid @RequestBody TarifaDepreciacionRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        TarifaDepreciacionResponse resp = tarifaService.cambiarTarifa(request, UsuarioAutenticado.de(jwt));
+        TarifaDepreciacionResponse resp = tarifaService.cambiarTarifa(request, convertidorUsuarioAutenticado.desde(jwt));
         return ResponseEntity.created(URI.create("/costos/depreciacion/tarifas")).body(resp);
     }
 
@@ -154,7 +156,7 @@ public class CostosController {
     public ResponseEntity<GastoTallerResponse> registrarTaller(
             @Valid @RequestBody GastoTallerRequest request,
             @AuthenticationPrincipal Jwt jwt) {
-        GastoTallerResponse resp = tallerService.registrarGastoTaller(request, UsuarioAutenticado.de(jwt));
+        GastoTallerResponse resp = tallerService.registrarGastoTaller(request, convertidorUsuarioAutenticado.desde(jwt));
         return ResponseEntity.created(URI.create("/costos/taller/" + resp.id())).body(resp);
     }
 
@@ -169,7 +171,7 @@ public class CostosController {
             @RequestParam(defaultValue = "20") int tamano,
             @AuthenticationPrincipal Jwt jwt) {
         Page<GastoTallerResponse> page = tallerService.listarGastosTaller(idBus, desde, hasta,
-                UsuarioAutenticado.de(jwt),
+                convertidorUsuarioAutenticado.desde(jwt),
                 PageRequest.of(pagina, Math.min(tamano, TAMANO_MAXIMO_PAGINA),
                         Sort.by(Sort.Direction.DESC, "fechaServicio")));
         return new PaginaResponse<>(page.getContent(), page.getNumber(), page.getSize(),
@@ -179,7 +181,7 @@ public class CostosController {
     @GetMapping("/taller/{id}")
     @Operation(summary = "Detalle de gasto de taller con líneas")
     public GastoTallerResponse detalleTaller(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        return tallerService.detalleGastoTaller(id, UsuarioAutenticado.de(jwt));
+        return tallerService.detalleGastoTaller(id, convertidorUsuarioAutenticado.desde(jwt));
     }
 
     @GetMapping("/viajes/{idViaje}")
@@ -187,6 +189,6 @@ public class CostosController {
             description = "Combustible, depreciación y salario del chofer (generados al consumir LlegadaRegistrada).")
     public ResumenCostosViajeResponse resumenViaje(@PathVariable UUID idViaje,
                                                    @AuthenticationPrincipal Jwt jwt) {
-        return resumenViajeService.resumenViaje(idViaje, UsuarioAutenticado.de(jwt));
+        return resumenViajeService.resumenViaje(idViaje, convertidorUsuarioAutenticado.desde(jwt));
     }
 }

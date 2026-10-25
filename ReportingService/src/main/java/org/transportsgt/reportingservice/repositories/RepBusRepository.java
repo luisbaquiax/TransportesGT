@@ -39,13 +39,12 @@ public interface RepBusRepository extends JpaRepository<RepBus, UUID>, JpaSpecif
     @Query(nativeQuery = true, value = "UPDATE rep_bus SET estado_operativo = 'EN_TRANSITO' WHERE id = :id")
     int registrarSalida(@Param("id") UUID id);
 
-    /** LlegadaRegistrada: el kilometraje nunca baja y el bus vuelve a DISPONIBLE si seguía EN_TRANSITO. */
+    /** LlegadaRegistrada: el kilometraje nunca baja (llegadas desordenadas) y el bus vuelve a DISPONIBLE. */
     @Modifying
     @Query(nativeQuery = true, value = """
             UPDATE rep_bus
                SET kilometraje_actual = GREATEST(kilometraje_actual, :kilometraje),
-                   estado_operativo = CASE WHEN estado_operativo = 'EN_TRANSITO' THEN 'DISPONIBLE'
-                                           ELSE estado_operativo END
+                   estado_operativo = 'DISPONIBLE'
              WHERE id = :id
             """)
     int registrarLlegada(@Param("id") UUID id, @Param("kilometraje") BigDecimal kilometrajeFinal);

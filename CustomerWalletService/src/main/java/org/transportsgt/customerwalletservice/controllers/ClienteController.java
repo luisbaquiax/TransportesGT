@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.customerwalletservice.dto.response.ClienteBusquedaResponse;
 import org.transportsgt.customerwalletservice.dto.response.ClienteResponse;
@@ -31,6 +31,8 @@ import org.transportsgt.customerwalletservice.services.ClienteService;
 @RequiredArgsConstructor
 @Tag(name = "Clientes", description = "Perfil comercial (NIT, DPI, teléfono, dirección)")
 public class ClienteController {
+
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
 
     private final ClienteService clienteService;
 
@@ -48,7 +50,7 @@ public class ClienteController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_CLIENTE)))
     })
     public ClienteResponse obtenerPerfil(@AuthenticationPrincipal Jwt jwt) {
-        return clienteService.obtenerPerfil(UsuarioAutenticado.de(jwt));
+        return clienteService.obtenerPerfil(convertidorUsuarioAutenticado.desde(jwt));
     }
 
     @PutMapping("/yo")
@@ -75,7 +77,7 @@ public class ClienteController {
     })
     public ClienteResponse actualizarPerfil(@Valid @RequestBody ActualizarPerfilRequest request,
                                             @AuthenticationPrincipal Jwt jwt) {
-        return clienteService.actualizarPerfil(UsuarioAutenticado.de(jwt), request);
+        return clienteService.actualizarPerfil(convertidorUsuarioAutenticado.desde(jwt), request);
     }
 
     @GetMapping("/buscar")
