@@ -50,4 +50,20 @@ public class Boleto {
     @CreationTimestamp
     @Column(name = "creado_en", nullable = false, updatable = false)
     private OffsetDateTime creadoEn;
+
+    /**
+     * Hora en que el pasajero abordó; null si todavía no.
+     */
+    @Column(name = "abordado_en")
+    private OffsetDateTime abordadoEn;
+
+    /**
+     * Usuario (SUC o CAJ) que registró el abordaje.
+     */
+    @Column(name = "abordado_por")
+    private UUID abordadoPor;
+
+    public boolean abordado() {
+        return abordadoEn != null;
+    }
 }
