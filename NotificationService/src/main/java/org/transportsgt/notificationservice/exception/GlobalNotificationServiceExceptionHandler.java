@@ -3,6 +3,7 @@ package org.transportsgt.notificationservice.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,11 @@ import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalNotificationServiceExceptionHandler {
+
+    private final FabricaRespuestaError fabricaRespuestaError;
     static final String MENSAJE_CONCURRENCIA = "El registro fue modificado por otro usuario, recárguelo";
     static final String MENSAJE_INTERNO = "Ocurrió un error inesperado. Intente de nuevo más tarde";
 
@@ -154,7 +158,7 @@ public class GlobalNotificationServiceExceptionHandler {
 
     private ResponseEntity<RespuestaError> build(HttpStatus status, String message, String codigo,
                                                  HttpServletRequest request) {
-        return ResponseEntity.status(status).body(RespuestaError.de(status, message, codigo, request.getRequestURI()));
+        return ResponseEntity.status(status).body(fabricaRespuestaError.crear(status, message, codigo, request.getRequestURI()));
     }
 
     private static SQLException buscarSqlException(Throwable ex) {

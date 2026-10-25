@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.transportsgt.customerwalletservice.config.OpenApiConfig;
 import org.transportsgt.customerwalletservice.config.security.FiltroClaveInterna;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
 import org.transportsgt.customerwalletservice.dto.response.CarteraResponse;
@@ -56,6 +56,8 @@ import java.util.UUID;
 @Tag(name = "Cartera", description = "Saldo, recargas, movimientos y pagos de la cartera digital")
 public class CarteraController {
 
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
+
     public static final String CABECERA_IDEMPOTENCIA = "Clave-Idempotencia";
 
     private final CarteraService carteraService;
@@ -75,7 +77,7 @@ public class CarteraController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_CLIENTE)))
     })
     public CarteraResponse obtener(@AuthenticationPrincipal Jwt jwt) {
-        return carteraService.obtener(UsuarioAutenticado.de(jwt));
+        return carteraService.obtener(convertidorUsuarioAutenticado.desde(jwt));
     }
 
     @PostMapping("/recargas")
@@ -106,7 +108,7 @@ public class CarteraController {
             @RequestHeader(value = CABECERA_IDEMPOTENCIA, required = false) String claveIdempotencia,
             @Valid @RequestBody RecargaRequest request, @AuthenticationPrincipal Jwt jwt) {
         Resultado<MovimientoResponse> resultado =
-                carteraService.recargar(UsuarioAutenticado.de(jwt), claveIdempotencia, request);
+                carteraService.recargar(convertidorUsuarioAutenticado.desde(jwt), claveIdempotencia, request);
         return ResponseEntity.status(resultado.creado() ? HttpStatus.CREATED : HttpStatus.OK).body(resultado.valor());
     }
 
@@ -128,7 +130,7 @@ public class CarteraController {
             @RequestParam(defaultValue = "0") @Min(0) int pagina,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        return carteraService.movimientos(UsuarioAutenticado.de(jwt), tipo, desde, hasta, pagina, tamano);
+        return carteraService.movimientos(convertidorUsuarioAutenticado.desde(jwt), tipo, desde, hasta, pagina, tamano);
     }
 
     @PostMapping("/pagos")
@@ -165,7 +167,7 @@ public class CarteraController {
             @Parameter(description = "Igual a idReferencia (idCompra o idAlquiler)")
             @RequestHeader(value = CABECERA_IDEMPOTENCIA, required = false) String claveIdempotencia,
             @Valid @RequestBody PagoRequest request, @AuthenticationPrincipal Jwt jwt) {
-        Resultado<PagoResponse> resultado = pagoService.pagar(UsuarioAutenticado.de(jwt), claveIdempotencia, request);
+        Resultado<PagoResponse> resultado = pagoService.pagar(convertidorUsuarioAutenticado.desde(jwt), claveIdempotencia, request);
         if (!resultado.creado()) {
             return ResponseEntity.ok(resultado.valor());
         }
@@ -200,7 +202,7 @@ public class CarteraController {
             @Parameter(example = "6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b") @RequestParam UUID idReferencia,
             Authentication autenticacion) {
         UUID idUsuario = autenticacion instanceof JwtAuthenticationToken token
-                ? UsuarioAutenticado.de(token.getToken()).id()
+                ? convertidorUsuarioAutenticado.desde(token.getToken()).id()
                 : null;
         return pagoService.consultarPago(idUsuario, tipoReferencia, idReferencia);
     }

@@ -24,7 +24,8 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
 
     /**
      * Aplica ViajeProgramado/Actualizado. Ignora el evento si su versión no es mayor que la guardada. No toca los
-     * datos reales de salida y llegada ni {@code eliminado}.
+     * datos reales de salida y llegada ni {@code eliminado}, y el estado nunca baja de FINALIZADO (LlegadaRegistrada
+     * pudo llegar antes que un ViajeActualizado más viejo).
      *
      * @param tipoViaje nombre del enum {@code TipoViaje}
      * @param estado    nombre del enum {@code EstadoViaje}
@@ -38,7 +39,9 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
                     :nombreOrigen, :nombreDestino, CAST(:idBus AS uuid), CAST(:idChofer AS uuid), :fechaHoraSalida,
                     :fechaHoraLlegadaEstimada, :version)
             ON CONFLICT (id) DO UPDATE
-               SET tipo_viaje = EXCLUDED.tipo_viaje, estado = EXCLUDED.estado, id_ruta = EXCLUDED.id_ruta,
+               SET tipo_viaje = EXCLUDED.tipo_viaje,
+                   estado = CASE WHEN rep_viaje.estado = 'FINALIZADO' THEN rep_viaje.estado ELSE EXCLUDED.estado END,
+                   id_ruta = EXCLUDED.id_ruta,
                    id_alquiler = EXCLUDED.id_alquiler, id_sucursal_origen = EXCLUDED.id_sucursal_origen,
                    nombre_origen = EXCLUDED.nombre_origen, nombre_destino = EXCLUDED.nombre_destino,
                    id_bus = EXCLUDED.id_bus, id_chofer = EXCLUDED.id_chofer,
@@ -54,11 +57,11 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
                @Param("fechaHoraLlegadaEstimada") OffsetDateTime fechaHoraLlegadaEstimada,
                @Param("version") long version);
 
-    /** SalidaRegistrada. */
+    /** SalidaRegistrada. Si la llegada ya se aplicó (desorden), no pisa sus datos. */
     @Modifying
     @Query("""
             UPDATE RepViaje v SET v.fechaHoraSalidaReal = :fechaHoraSalidaReal, v.kilometrajeInicial = :kilometrajeInicial
-             WHERE v.id = :id
+             WHERE v.id = :id AND v.fechaHoraLlegadaReal IS NULL
             """)
     int registrarSalida(@Param("id") UUID id, @Param("fechaHoraSalidaReal") OffsetDateTime fechaHoraSalidaReal,
                         @Param("kilometrajeInicial") BigDecimal kilometrajeInicial);
@@ -67,7 +70,8 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
     @Modifying
     @Query("""
             UPDATE RepViaje v
-               SET v.fechaHoraSalidaReal = :fechaHoraSalidaReal, v.fechaHoraLlegadaReal = :fechaHoraLlegadaReal,
+               SET v.estado = org.transportsgt.eventos.payload.EstadoViaje.FINALIZADO,
+                   v.fechaHoraSalidaReal = :fechaHoraSalidaReal, v.fechaHoraLlegadaReal = :fechaHoraLlegadaReal,
                    v.kilometrajeInicial = :kilometrajeInicial, v.kilometrajeFinal = :kilometrajeFinal,
                    v.distanciaRecorridaKm = :distanciaRecorridaKm
              WHERE v.id = :id

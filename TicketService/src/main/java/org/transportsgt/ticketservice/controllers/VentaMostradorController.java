@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.VentaMostradorRequest;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.dto.response.Resultado;
@@ -32,6 +32,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 @Tag(name = "Venta en mostrador", description = "Venta presencial por cajero o administrador de sucursal")
 public class VentaMostradorController {
+
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
 
     private final VentaMostradorService ventaMostrador;
 
@@ -63,7 +65,7 @@ public class VentaMostradorController {
     })
     public ResponseEntity<CompraResponse> vender(@Valid @RequestBody VentaMostradorRequest request,
                                                  @AuthenticationPrincipal Jwt jwt) {
-        Resultado<CompraResponse> resultado = ventaMostrador.vender(UsuarioAutenticado.de(jwt), request);
+        Resultado<CompraResponse> resultado = ventaMostrador.vender(convertidorUsuarioAutenticado.desde(jwt), request);
         if (!resultado.creado()) {
             return ResponseEntity.ok(resultado.valor());
         }

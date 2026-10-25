@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.CompraRequest;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.dto.response.PaginaResponse;
@@ -43,6 +43,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Compras", description = "Compra en línea (saga con Cartera) y consultas de compras")
 public class CompraController {
+
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
 
     private final CompraEnLineaService compraEnLinea;
     private final ConsultaComprasService consultaCompras;
@@ -83,7 +85,7 @@ public class CompraController {
     })
     public ResponseEntity<CompraResponse> comprar(@Valid @RequestBody CompraRequest request,
                                                   @AuthenticationPrincipal Jwt jwt) {
-        ResultadoCompra resultado = compraEnLinea.comprar(UsuarioAutenticado.de(jwt), jwt.getTokenValue(), request);
+        ResultadoCompra resultado = compraEnLinea.comprar(convertidorUsuarioAutenticado.desde(jwt), jwt.getTokenValue(), request);
         return switch (resultado.tipo()) {
             case CONFIRMADA -> ResponseEntity.created(ubicacion(resultado.compra())).body(resultado.compra());
             case EXISTENTE -> ResponseEntity.ok(resultado.compra());
@@ -102,7 +104,7 @@ public class CompraController {
             @RequestParam(defaultValue = "0") @Min(0) int pagina,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        return consultaCompras.mias(UsuarioAutenticado.de(jwt), estado, pagina, tamano);
+        return consultaCompras.mias(convertidorUsuarioAutenticado.desde(jwt), estado, pagina, tamano);
     }
 
     @GetMapping("/{idCompra}")
@@ -118,7 +120,7 @@ public class CompraController {
                             examples = @ExampleObject(value = EjemplosApi.ERROR_404_COMPRA)))
     })
     public CompraResponse detalle(@PathVariable UUID idCompra, @AuthenticationPrincipal Jwt jwt) {
-        return consultaCompras.detalle(UsuarioAutenticado.de(jwt), idCompra);
+        return consultaCompras.detalle(convertidorUsuarioAutenticado.desde(jwt), idCompra);
     }
 
     @GetMapping
@@ -131,7 +133,7 @@ public class CompraController {
             @RequestParam(defaultValue = "0") @Min(0) int pagina,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        return consultaCompras.listado(UsuarioAutenticado.de(jwt), idViaje, estado, pagina, tamano);
+        return consultaCompras.listado(convertidorUsuarioAutenticado.desde(jwt), idViaje, estado, pagina, tamano);
     }
 
     private URI ubicacion(CompraResponse compra) {

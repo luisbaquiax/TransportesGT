@@ -1,5 +1,7 @@
 package org.transportsgt.notificationservice.controllers;
 
+import org.transportsgt.notificationservice.config.security.ConvertidorUsuarioAutenticado;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -72,7 +74,7 @@ class ControladoresTest {
     @Test
     void listarLicencias_cuandoLlamaUnAdmin_usaElUsuarioDelToken() {
         // Arrange
-        LicenciaController controlador = new LicenciaController(consultaLicencias);
+        LicenciaController controlador = new LicenciaController(new ConvertidorUsuarioAutenticado(), consultaLicencias);
         PaginaResponse<RecordatorioLicenciaResponse> pagina = new PaginaResponse<>(List.of(), 0, 20, 0, 0);
         ArgumentCaptor<UsuarioAutenticado> usuario = ArgumentCaptor.forClass(UsuarioAutenticado.class);
         when(consultaLicencias.listar(usuario.capture(), eq(ContactoFixture.SUCURSAL_XELA), eq(EstadoRecordatorio.PENDIENTE),

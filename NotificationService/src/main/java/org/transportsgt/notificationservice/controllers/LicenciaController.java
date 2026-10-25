@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.notificationservice.config.security.UsuarioAutenticado;
+import org.transportsgt.notificationservice.config.security.ConvertidorUsuarioAutenticado;
 import org.transportsgt.notificationservice.dto.response.PaginaResponse;
 import org.transportsgt.notificationservice.dto.response.RecordatorioLicenciaResponse;
 import org.transportsgt.notificationservice.exception.RespuestaError;
@@ -32,6 +32,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Avisos de licencia", description = "Avisos de vencimiento programados (30, 15 y 3 días antes)")
 public class LicenciaController {
+
+    private final ConvertidorUsuarioAutenticado convertidorUsuarioAutenticado;
 
     private final ConsultaLicenciasService consultaLicencias;
 
@@ -52,6 +54,6 @@ public class LicenciaController {
             @RequestParam(defaultValue = "0") @Min(0) int pagina,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int tamano,
             @AuthenticationPrincipal Jwt jwt) {
-        return consultaLicencias.listar(UsuarioAutenticado.de(jwt), idSucursal, estado, pagina, tamano);
+        return consultaLicencias.listar(convertidorUsuarioAutenticado.desde(jwt), idSucursal, estado, pagina, tamano);
     }
 }

@@ -3,6 +3,7 @@ package org.transportsgt.operationalcostsservice.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,11 @@ import java.util.stream.Collectors;
 
 /** Traduce toda excepción a {@link RespuestaError}: { timestamp, status, error, codigo, ruta }. */
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalCostosExceptionHandler {
+
+    private final FabricaRespuestaError fabricaRespuestaError;
 
     private static final String PG_UNICO = "23505";
     private static final String PG_LLAVE_FORANEA = "23503";
@@ -151,6 +155,6 @@ public class GlobalCostosExceptionHandler {
     private ResponseEntity<RespuestaError> build(HttpStatus status, String mensaje, String codigo,
                                                  HttpServletRequest request) {
         return ResponseEntity.status(status)
-                .body(RespuestaError.de(status, mensaje, codigo, request.getRequestURI()));
+                .body(fabricaRespuestaError.crear(status, mensaje, codigo, request.getRequestURI()));
     }
 }

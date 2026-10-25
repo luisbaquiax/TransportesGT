@@ -1,5 +1,7 @@
 package org.transportsgt.notificationservice.exception;
 
+import org.transportsgt.notificationservice.exception.FabricaRespuestaError;
+
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -53,7 +55,7 @@ class GlobalNotificationServiceExceptionHandlerTest {
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalNotificationServiceExceptionHandler();
+        handler = new GlobalNotificationServiceExceptionHandler(new FabricaRespuestaError());
         request = new MockHttpServletRequest("POST", RUTA);
     }
 

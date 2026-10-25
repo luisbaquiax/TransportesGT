@@ -1,5 +1,7 @@
 package org.transportsgt.operationalcostsservice.exception;
 
+import org.transportsgt.operationalcostsservice.exception.FabricaRespuestaError;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GlobalCostosExceptionHandlerTest {
 
-    private final GlobalCostosExceptionHandler handler = new GlobalCostosExceptionHandler();
+    private final GlobalCostosExceptionHandler handler = new GlobalCostosExceptionHandler(new FabricaRespuestaError());
 
     @Mock
     HttpServletRequest request;
