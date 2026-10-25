@@ -45,6 +45,8 @@ public class SecurityConfig {
                         // Reglas propias de Boletos
                         .requestMatchers("/boletos/ventas-mostrador").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
                         .requestMatchers(HttpMethod.GET, "/boletos/compras").hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
+                        .requestMatchers("/boletos/viajes/*/pasajeros", "/boletos/viajes/*/abordajes")
+                        .hasAnyRole("CAJERO", "ADMIN_SUCURSAL")
                         // JWT reenviado por Viajes o X-Clave-Interna
                         .requestMatchers(HttpMethod.GET, "/boletos/viajes/*/asiento-maximo").authenticated()
                         .requestMatchers("/boletos/**").authenticated()

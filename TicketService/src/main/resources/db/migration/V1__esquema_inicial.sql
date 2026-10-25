@@ -121,7 +121,13 @@ CREATE TABLE boleto (
     estado          VARCHAR(12)  NOT NULL DEFAULT 'RESERVADO'
         CHECK (estado IN ('RESERVADO','CONFIRMADO','ANULADO')),
     codigo          VARCHAR(20)  NOT NULL UNIQUE,
-    creado_en       TIMESTAMPTZ  NOT NULL DEFAULT now()
+    creado_en       TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    -- Abordaje (SUC o CAJ de la sucursal de origen). Un boleto abordado sigue CONFIRMADO; solo se anula si Viajes
+    -- elimina el viaje antes de la salida, y conserva el registro.
+    abordado_en     TIMESTAMPTZ,
+    abordado_por    UUID,
+    CONSTRAINT ck_boleto_abordaje CHECK ((abordado_en IS NULL) = (abordado_por IS NULL)),
+    CONSTRAINT ck_boleto_abordaje_estado CHECK (abordado_en IS NULL OR estado <> 'RESERVADO')
 );
 
 -- GARANTÍA DE CONCURRENCIA: un asiento no puede estar activo dos veces en el mismo viaje.

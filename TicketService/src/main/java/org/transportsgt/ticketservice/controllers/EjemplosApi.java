@@ -23,6 +23,12 @@ final class EjemplosApi {
             {"timestamp":"2026-10-20T10:15:30","status":409,"error":"El viaje ya salió","codigo":"VIAJE_NO_DISPONIBLE","ruta":"/v1/tickets/boletos/compras"}""";
     static final String ERROR_409_COMPRA = """
             {"timestamp":"2026-10-20T10:15:30","status":409,"error":"Ya existe una compra con ese idCompra y otros datos","codigo":"COMPRA_DUPLICADA","ruta":"/v1/tickets/boletos/compras"}""";
+    static final String ERROR_404_BOLETO = """
+            {"timestamp":"2026-10-20T10:15:30","status":404,"error":"No existe un boleto con el código BOL-7K3MPQ2Z","codigo":"NO_ENCONTRADO","ruta":"/v1/tickets/boletos/viajes/5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b/abordajes"}""";
+    static final String ERROR_409_BOLETO = """
+            {"timestamp":"2026-10-20T10:15:30","status":409,"error":"El boleto BOL-7K3MPQ2A es de otro viaje","codigo":"BOLETO_NO_VALIDO","ruta":"/v1/tickets/boletos/viajes/5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b/abordajes"}""";
+    static final String ERROR_409_COMPRA_NO_CONFIRMADA = """
+            {"timestamp":"2026-10-20T10:15:30","status":409,"error":"La compra está ANULADA: solo una compra confirmada tiene boletos","codigo":"COMPRA_NO_CONFIRMADA","ruta":"/v1/tickets/boletos/compras/6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b/pdf"}""";
     static final String ERROR_422_SALDO = """
             {"timestamp":"2026-10-20T10:15:30","status":422,"error":"El saldo de la cartera no alcanza para el pago","codigo":"SALDO_INSUFICIENTE","ruta":"/v1/tickets/boletos/compras"}""";
     static final String ERROR_422_PERFIL = """
@@ -38,4 +44,15 @@ final class EjemplosApi {
             {"idCompra":"6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","idViaje":"5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","canal":"EN_LINEA","estado":"CONFIRMADA","asientos":[{"numeroAsiento":12,"codigo":"BOL-7K3Q9X2M","estado":"CONFIRMADO"},{"numeroAsiento":13,"codigo":"BOL-2HD8R4PZ","estado":"CONFIRMADO"}],"precioUnitario":"85.00","montoTotal":"170.00","nitComprador":"1234567K","nombreComprador":"Carlos Méndez","idPago":"1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d","fechaPago":"2026-10-20","reservaExpiraEn":"2026-10-20T16:25:00Z","motivoAnulacion":null,"creadoEn":"2026-10-20T16:15:00Z","confirmadoEn":"2026-10-20T16:15:02Z"}""";
     static final String COMPRA_RESERVADA = """
             {"idCompra":"6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","idViaje":"5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","canal":"EN_LINEA","estado":"RESERVADA","asientos":[{"numeroAsiento":12,"codigo":"BOL-7K3Q9X2M","estado":"RESERVADO"}],"precioUnitario":"85.00","montoTotal":"85.00","nitComprador":"1234567K","nombreComprador":"Carlos Méndez","idPago":null,"fechaPago":"2026-10-20","reservaExpiraEn":"2026-10-20T16:25:00Z","motivoAnulacion":null,"creadoEn":"2026-10-20T16:15:00Z","confirmadoEn":null}""";
+
+    static final String PASAJEROS = """
+            {"idViaje":"5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","nombreOrigen":"Quetzaltenango","nombreDestino":"Ciudad de Guatemala",
+            "fechaHoraSalida":"2026-10-25T08:00:00-06:00","placaBus":"P900ABC","estado":"PROGRAMADO","boletos":2,"abordados":1,
+            "pasajeros":[{"numeroAsiento":5,"codigo":"BOL-7K3MPQ2A","idCompra":"6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+            "canal":"EN_LINEA","nombreComprador":"Carlos Méndez","nitComprador":"12345678","abordadoEn":"2026-10-25T07:42:10-06:00"},
+            {"numeroAsiento":6,"codigo":"BOL-7K3MPQ2B","idCompra":"6f1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b",
+            "canal":"EN_LINEA","nombreComprador":"Carlos Méndez","nitComprador":"12345678","abordadoEn":null}]}""";
+    static final String ABORDAJE = """
+            {"codigo":"BOL-7K3MPQ2A","idViaje":"5d1c2a7e-3b4d-4e5f-8a9b-0c1d2e3f4a5b","numeroAsiento":5,
+            "nombreComprador":"Carlos Méndez","abordadoEn":"2026-10-25T07:42:10-06:00"}""";
 }

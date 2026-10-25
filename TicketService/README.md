@@ -127,6 +127,9 @@ Un mensaje con JSON inválido o datos imposibles aparece en `boletos.viajes.dlq`
 | `GET /boletos/compras/mias?pagina=&tamano=` | autenticado | Compras en línea del usuario **y** ventas de mostrador con el NIT de su perfil (también las anteriores a la cuenta) | — |
 | `GET /boletos/compras/{id}` | autenticado | El comprador ve las suyas; SUC y CAJ, las de su sucursal; SIS, todas. Si no le corresponde → 404 | — |
 | `GET /boletos/compras?idViaje=&estado=&pagina=&tamano=` | CAJERO, ADMIN_SUCURSAL | Compras de su sucursal, más recientes primero | — |
+| `GET /boletos/compras/{id}/pdf` | autenticado | Mismos permisos que el detalle. PDF adjunto con el viaje, el comprador y **un QR por boleto** (contenido: el `codigo`). Compra no `CONFIRMADA` → 409 `COMPRA_NO_CONFIRMADA` | — |
+| `GET /boletos/viajes/{id}/pasajeros` | CAJERO, ADMIN_SUCURSAL (sucursal de origen) | Boletos `CONFIRMADO` por asiento con `abordadoEn`, y los totales `boletos` / `abordados` | — |
+| `POST /boletos/viajes/{id}/abordajes` | CAJERO, ADMIN_SUCURSAL (sucursal de origen) | `{ codigo }` (QR o a mano). 201 · 200 si ya había abordado · 404 código inexistente · 409 `BOLETO_NO_VALIDO` (anulado o de otro viaje) · 409 `VIAJE_NO_DISPONIBLE` (ya salió) | — |
 
 Errores: `{ timestamp, status, error, codigo, ruta }` con un `codigo` estable (lista en Swagger).
 
@@ -169,6 +172,12 @@ Una compra que nunca se confirmó (saldo insuficiente o reserva vencida) se anul
   reserva vencida libera; si Cartera no responde, espera al siguiente ciclo. Cada compra va en su propia transacción.
 - **ViajeEliminado.** El viaje, las compras anuladas, sus BoletosAnulados y `evento_procesado` se confirman en una
   sola transacción.
+- **Abordaje.** Lo registra el personal de la sucursal de origen mientras el viaje está `PROGRAMADO` (al registrar
+  la salida pasa a `EN_TRANSITO`). Se guarda en `boleto.abordado_en` / `abordado_por`: el boleto sigue `CONFIRMADO`,
+  así que no cambian el índice de asientos, los reportes ni la anulación. Un boleto abordado no se anula desde Boletos
+  (no hay endpoint para eso); solo si Viajes elimina el viaje antes de la salida, y conserva el registro. El boleto se
+  bloquea (`FOR UPDATE`) para que dos lectores no lo registren a la vez. No publica eventos.
+- **PDF.** OpenPDF arma el documento y ZXing el QR (el `codigo` del boleto, `BOL-` + 8 caracteres de `SecureRandom`).
 - **Mostrador.** Sin pago de cartera (`idPago = null`). NIT normalizado con `Nit.normalizar()`; vacío o `CF` →
   consumidor final.
 - **Outbox.** Cada evento se guarda en `outbox_evento` en la misma transacción que el cambio, después de `flush()`.

@@ -12,7 +12,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,6 +36,7 @@ import org.transportsgt.ticketservice.dto.response.ResultadoCompra;
 import org.transportsgt.ticketservice.exception.RespuestaError;
 import org.transportsgt.ticketservice.models.EstadoCompra;
 import org.transportsgt.ticketservice.services.compra.CompraEnLineaService;
+import org.transportsgt.ticketservice.services.consulta.BoletosPdfService;
 import org.transportsgt.ticketservice.services.consulta.ConsultaComprasService;
 
 import java.net.URI;
@@ -48,6 +52,7 @@ public class CompraController {
 
     private final CompraEnLineaService compraEnLinea;
     private final ConsultaComprasService consultaCompras;
+    private final BoletosPdfService boletosPdf;
 
     @PostMapping
     @Operation(summary = "Comprar en línea",
@@ -121,6 +126,32 @@ public class CompraController {
     })
     public CompraResponse detalle(@PathVariable UUID idCompra, @AuthenticationPrincipal Jwt jwt) {
         return consultaCompras.detalle(convertidorUsuarioAutenticado.desde(jwt), idCompra);
+    }
+
+    @GetMapping("/{idCompra}/pdf")
+    @Operation(summary = "Boletos en PDF",
+            description = "Un QR por boleto confirmado, con el código que se escanea al abordar, y los datos del viaje y "
+                    + "del comprador. Lo ven los mismos que el detalle; solo para compras CONFIRMADA.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "PDF (adjunto boletos-{idCompra}.pdf)",
+                    content = @Content(mediaType = MediaType.APPLICATION_PDF_VALUE,
+                            schema = @Schema(type = "string", format = "binary"))),
+            @ApiResponse(responseCode = "404", description = "No existe o no le corresponde",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RespuestaError.class),
+                            examples = @ExampleObject(value = EjemplosApi.ERROR_404_COMPRA))),
+            @ApiResponse(responseCode = "409", description = "La compra no está confirmada",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = RespuestaError.class),
+                            examples = @ExampleObject(value = EjemplosApi.ERROR_409_COMPRA_NO_CONFIRMADA)))
+    })
+    public ResponseEntity<byte[]> pdf(@PathVariable UUID idCompra, @AuthenticationPrincipal Jwt jwt) {
+        byte[] pdf = boletosPdf.generar(convertidorUsuarioAutenticado.desde(jwt), idCompra);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename("boletos-" + idCompra + ".pdf").build().toString())
+                .body(pdf);
     }
 
     @GetMapping

@@ -10,7 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -33,6 +35,13 @@ import org.transportsgt.ticketservice.mappers.CompraMapperImpl;
 import org.transportsgt.ticketservice.models.EstadoCompra;
 import org.transportsgt.ticketservice.services.compra.CompraEnLineaService;
 import org.transportsgt.ticketservice.services.consulta.ConsultaComprasService;
+import org.transportsgt.ticketservice.services.consulta.BoletosPdfService;
+import org.transportsgt.ticketservice.services.abordaje.AbordajeService;
+import org.transportsgt.ticketservice.services.abordaje.PasajerosViajeService;
+import org.transportsgt.ticketservice.dto.request.AbordajeRequest;
+import org.transportsgt.ticketservice.dto.response.AbordajeResponse;
+import org.transportsgt.ticketservice.dto.response.PasajerosViajeResponse;
+import org.transportsgt.eventos.payload.EstadoViaje;
 import org.transportsgt.ticketservice.services.consulta.ConsultaViajesService;
 import org.transportsgt.ticketservice.services.compra.VentaMostradorService;
 import org.transportsgt.eventos.payload.Rol;
@@ -108,13 +117,15 @@ class ControladoresTest {
         private CompraEnLineaService compraEnLinea;
         @Mock
         private ConsultaComprasService consultaCompras;
+        @Mock
+        private BoletosPdfService boletosPdf;
 
         private CompraController controlador;
         private CompraRequest request;
 
         @BeforeEach
         void setUp() {
-            controlador = new CompraController(new ConvertidorUsuarioAutenticado(), compraEnLinea, consultaCompras);
+            controlador = new CompraController(new ConvertidorUsuarioAutenticado(), compraEnLinea, consultaCompras, boletosPdf);
             request = new CompraRequest(compra.idCompra(), compra.idViaje(), List.of(12), CompraFixture.FECHA_PAGO);
         }
 
@@ -179,6 +190,60 @@ class ControladoresTest {
                     () -> assertEquals(idUsuario, usuario.getValue().id()),
                     () -> assertSame(compra, controlador.detalle(compra.idCompra(), jwt)),
                     () -> assertSame(pagina, controlador.listado(compra.idViaje(), EstadoCompra.CONFIRMADA, 0, 20, jwt))
+            );
+        }
+
+        @Test
+        void pdf_respondeElArchivoAdjunto() {
+            // Arrange
+            byte[] pdf = "%PDF-1.7".getBytes();
+            when(boletosPdf.generar(any(), eq(compra.idCompra()))).thenReturn(pdf);
+
+            // Act
+            ResponseEntity<byte[]> respuesta = controlador.pdf(compra.idCompra(), jwt);
+
+            // Assert
+            assertAll(
+                    () -> assertEquals(MediaType.APPLICATION_PDF, respuesta.getHeaders().getContentType()),
+                    () -> assertEquals("attachment; filename=\"boletos-" + compra.idCompra() + ".pdf\"",
+                            respuesta.getHeaders().getFirst(HttpHeaders.CONTENT_DISPOSITION)),
+                    () -> assertSame(pdf, respuesta.getBody())
+            );
+        }
+    }
+
+    @Nested
+    class Abordajes {
+
+        @Mock
+        private PasajerosViajeService pasajerosViaje;
+        @Mock
+        private AbordajeService abordaje;
+
+        @Test
+        void endpoints_delegan_y_abordar_responde201LaPrimeraVezY200Despues() {
+            // Arrange
+            AbordajeController controlador = new AbordajeController(new ConvertidorUsuarioAutenticado(),
+                    pasajerosViaje, abordaje);
+            Jwt cajero = ClienteRefFixture.jwt(UUID.randomUUID(), Rol.CAJERO, ViajeRefFixture.SUCURSAL_XELA);
+            UUID idViaje = compra.idViaje();
+            PasajerosViajeResponse pasajeros = new PasajerosViajeResponse(idViaje, "Quetzaltenango",
+                    "Ciudad de Guatemala", null, "P-123ABC", EstadoViaje.PROGRAMADO, 0, 0, List.of());
+            AbordajeResponse abordado = new AbordajeResponse("BOL-12", idViaje, (short) 12, "Carlos Méndez", null);
+            when(pasajerosViaje.pasajeros(any(), eq(idViaje))).thenReturn(pasajeros);
+            when(abordaje.registrar(any(), eq(idViaje), eq("BOL-12")))
+                    .thenReturn(Resultado.nuevo(abordado), Resultado.existente(abordado));
+
+            // Act
+            ResponseEntity<AbordajeResponse> nuevo = controlador.abordar(idViaje, new AbordajeRequest("BOL-12"), cajero);
+            ResponseEntity<AbordajeResponse> repetido = controlador.abordar(idViaje, new AbordajeRequest("BOL-12"), cajero);
+
+            // Assert
+            assertAll(
+                    () -> assertSame(pasajeros, controlador.pasajeros(idViaje, cajero)),
+                    () -> assertEquals(HttpStatus.CREATED, nuevo.getStatusCode()),
+                    () -> assertEquals(HttpStatus.OK, repetido.getStatusCode()),
+                    () -> assertSame(abordado, repetido.getBody())
             );
         }
     }
