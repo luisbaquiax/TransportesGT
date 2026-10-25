@@ -18,6 +18,12 @@ VALUES ('00000000-0000-4000-8000-000000000001', NULL, 'Administrador del Sistema
        ('00000000-0000-4000-8000-000000000041', NULL, 'Carlos Alberto Méndez Ruiz', TRUE, 0),
        ('00000000-0000-4000-8000-000000000042', NULL, 'Alejandro Ramiro Gómez', TRUE, 0),
        ('00000000-0000-4000-8000-000000000043', NULL, 'Sandra Victoria Aguilar', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000044', NULL, 'María Elena Sajquiy de López', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000045', NULL, 'José Francisco Cabrera', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000046', NULL, 'María Fernanda Ríos', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000047', NULL, 'Pedro Juan Chocó', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000048', NULL, 'Marcos Antonio Telet', TRUE, 0),
+       ('00000000-0000-4000-8000-000000000049', NULL, 'Luis Eduardo Sical', TRUE, 0),
        ('00000000-0000-4000-8000-000000000031', '12345678', 'Carlos Méndez', TRUE, 0),
        ('00000000-0000-4000-8000-000000000032', '87654321', 'Andrea Sofía Castillo', TRUE, 0);
 

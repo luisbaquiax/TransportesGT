@@ -52,6 +52,12 @@ cd ../infra && docker compose up -d
 | CHOFER | `chofer101@transportes.gt` | `Chofer1234` | Quetzaltenango |
 | CHOFER | `chofer104@transportes.gt` | `Chofer1234` | Ciudad de Guatemala |
 | CHOFER | `chofer107@transportes.gt` | `Chofer1234` | Huehuetenango |
+| CHOFER | `chofer102@transportes.gt` | `Chofer1234` | Quetzaltenango |
+| CHOFER | `chofer103@transportes.gt` | `Chofer1234` | Quetzaltenango |
+| CHOFER | `chofer105@transportes.gt` | `Chofer1234` | Ciudad de Guatemala |
+| CHOFER | `chofer106@transportes.gt` | `Chofer1234` | Ciudad de Guatemala |
+| CHOFER | `chofer108@transportes.gt` | `Chofer1234` | Huehuetenango |
+| CHOFER | `chofer109@transportes.gt` | `Chofer1234` | Huehuetenango |
 | CLIENTE | `cliente@transportes.gt` | `Cliente1234` | — (NIT 12345678, saldo Q 4,830) |
 | CLIENTE | `cliente2@transportes.gt` | `Cliente1234` | — (NIT 87654321, saldo Q 4,915) |
 

@@ -61,7 +61,7 @@ VALUES ('00000000-0000-4000-8000-000000000021', 'cajero.xela@transportes.gt',
         'Rodrigo Esteban Pú', 'CAJERO', '10000000-0000-4000-8000-000000000003', TRUE,
         '00000000-0000-4000-8000-000000000013', now());
 
--- Un chofer con acceso por sucursal: mismo correo y nombre que su ficha de Flota (chofer c…001, c…004, c…007)
+-- Todos los choferes tienen acceso: mismo correo y nombre que su ficha de Flota (…041 → c…001 … …049 → c…009)
 INSERT INTO usuario (id, correo, hash_contrasena, nombre_completo, rol, id_sucursal, activo, creado_por,
                      contrasena_cambiada_en)
 VALUES ('00000000-0000-4000-8000-000000000041', 'chofer101@transportes.gt',
@@ -75,6 +75,30 @@ VALUES ('00000000-0000-4000-8000-000000000041', 'chofer101@transportes.gt',
        ('00000000-0000-4000-8000-000000000043', 'chofer107@transportes.gt',
         '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
         'Sandra Victoria Aguilar', 'CHOFER', '10000000-0000-4000-8000-000000000003', TRUE,
+        '00000000-0000-4000-8000-000000000013', now()),
+       ('00000000-0000-4000-8000-000000000044', 'chofer102@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'María Elena Sajquiy de López', 'CHOFER', '10000000-0000-4000-8000-000000000001', TRUE,
+        '00000000-0000-4000-8000-000000000011', now()),
+       ('00000000-0000-4000-8000-000000000045', 'chofer103@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'José Francisco Cabrera', 'CHOFER', '10000000-0000-4000-8000-000000000001', TRUE,
+        '00000000-0000-4000-8000-000000000011', now()),
+       ('00000000-0000-4000-8000-000000000046', 'chofer105@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'María Fernanda Ríos', 'CHOFER', '10000000-0000-4000-8000-000000000002', TRUE,
+        '00000000-0000-4000-8000-000000000012', now()),
+       ('00000000-0000-4000-8000-000000000047', 'chofer106@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Pedro Juan Chocó', 'CHOFER', '10000000-0000-4000-8000-000000000002', TRUE,
+        '00000000-0000-4000-8000-000000000012', now()),
+       ('00000000-0000-4000-8000-000000000048', 'chofer108@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Marcos Antonio Telet', 'CHOFER', '10000000-0000-4000-8000-000000000003', TRUE,
+        '00000000-0000-4000-8000-000000000013', now()),
+       ('00000000-0000-4000-8000-000000000049', 'chofer109@transportes.gt',
+        '$2a$10$FK3rXROv54qQUbi1kl1B7uQugiX07HC3odBOhGVAkLDK7MD9OcNtG',
+        'Luis Eduardo Sical', 'CHOFER', '10000000-0000-4000-8000-000000000003', TRUE,
         '00000000-0000-4000-8000-000000000013', now());
 
 -- Clientes (autorregistrados: sin creado_por). Su NIT y saldo están en Clientes y Cartera.
