@@ -1,7 +1,7 @@
 package org.transportsgt.identityservice.config.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -21,12 +21,13 @@ import java.util.Base64;
  * El decoder y el convertidor son iguales a los del gateway y los demás servicios.
  */
 @Configuration
+@EnableConfigurationProperties(JwtProperties.class)
 public class JwtConfig {
 
     private final SecretKey key;
 
-    public JwtConfig(@Value("${jwt.secret}") String secret) {
-        this.key = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
+    public JwtConfig(JwtProperties propiedades) {
+        this.key = new SecretKeySpec(Base64.getDecoder().decode(propiedades.secret()), "HmacSHA256");
     }
 
     @Bean

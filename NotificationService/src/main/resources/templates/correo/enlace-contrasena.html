@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="${activacion} ? 'Activa tu cuenta de Transportes GT' : 'Restablece tu contraseña'">Enlace de contraseña</title>
+</head>
+<body>
+<main>
+    <p th:if="${activacion}">Se creó tu cuenta en Transportes GT. Define tu contraseña para activarla:</p>
+    <p th:unless="${activacion}">Recibimos una solicitud para restablecer tu contraseña. Para elegir una nueva:</p>
+    <p style="margin:24px 0;">
+        <a th:href="${enlace}" href="#"
+           style="background:#0b4f8a;color:#ffffff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:bold;"
+           th:text="${activacion} ? 'Activar mi cuenta' : 'Restablecer contraseña'">Continuar</a>
+    </p>
+    <p>El enlace es de un solo uso y vence el <strong th:text="${fmt.fechaHora(expiraEn)}">06/10/2026 09:30</strong>.</p>
+    <p th:unless="${activacion}">Si no pediste este cambio, ignora este correo: tu contraseña sigue igual.</p>
+</main>
+</body>
+</html>

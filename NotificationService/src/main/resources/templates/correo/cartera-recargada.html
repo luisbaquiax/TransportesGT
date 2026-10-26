@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Recarga de cartera acreditada</title>
+</head>
+<body>
+<main>
+    <p>Acreditamos una recarga en tu cartera digital.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Monto recargado</td><td th:text="${fmt.dinero(datos.monto())}">Q 200.00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Fecha de la recarga</td><td th:text="${fmt.fecha(datos.fechaRecarga())}">20/10/2026</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Saldo disponible</td><td><strong th:text="${fmt.dinero(datos.saldoPosterior())}">Q 350.00</strong></td></tr>
+    </table>
+</main>
+</body>
+</html>

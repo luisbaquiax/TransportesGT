@@ -2,6 +2,7 @@ package org.transportsgt.identityservice.repositories;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.transportsgt.eventos.payload.Rol;
 import org.transportsgt.identityservice.models.Usuario;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
+public interface UsuarioRepository extends JpaRepository<Usuario, UUID>, JpaSpecificationExecutor<Usuario> {
 
     /** Para el login: trae la sucursal para armar los claims del JWT. */
     @EntityGraph(attributePaths = "sucursal")
@@ -28,4 +29,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     long countBySucursalIdAndRolAndActivoTrue(UUID idSucursal, Rol rol);
 
     long countByRolAndActivoTrue(Rol rol);
+
+    /** Republicación de eventos: todos los usuarios con su sucursal. */
+    @EntityGraph(attributePaths = "sucursal")
+    List<Usuario> findAllByOrderByCreadoEn();
 }

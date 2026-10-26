@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{correo/layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Nueva solicitud de alquiler</title>
+</head>
+<body>
+<main>
+    <p>Un cliente solicitó un alquiler en tu sucursal. Revísalo y envía la cotización.</p>
+    <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Cliente</td><td th:text="|${datos.nombreCliente()} (NIT ${datos.nit()})|">Cliente</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Origen</td><td th:text="${datos.origen()}">Origen</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Destino</td><td th:text="${datos.destino()}">Destino</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Salida</td><td th:text="${fmt.fechaHora(datos.fechaHoraSalida())}">10/11/2026 07:00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Retorno</td><td th:text="${fmt.fechaHora(datos.fechaHoraRetorno())}">12/11/2026 18:00</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Pasajeros</td><td th:text="${datos.numeroPasajeros()}">30</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6b7785;">Precio estimado</td><td><strong th:text="${fmt.dinero(datos.precioEstimado())}">Q 3,500.00</strong></td></tr>
+    </table>
+</main>
+</body>
+</html>

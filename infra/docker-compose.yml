@@ -1,9 +1,9 @@
-# Infraestructura local: PostgreSQL (una base por microservicio) + RabbitMQ
+# Infraestructura local: PostgreSQL, RabbitMQ, microservicios y API Gateway
 #
 # Uso:
 #   cp .env.example .env        # y ajusta las contraseñas
 #   docker compose up -d
-#   docker compose ps           # ambos servicios deben quedar "healthy"
+#   docker compose ps           # infraestructura y aplicaciones en ejecución
 #
 # Reiniciar desde cero (borra TODOS los datos y vuelve a ejecutar init-db/):
 #   docker compose down -v
@@ -22,7 +22,7 @@ services:
       # Contraseña que usará init-db/01-crear-bases.sh para los usuarios svc_*
       SVC_DB_PASSWORD: ${SVC_DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # Los scripts de esta carpeta se ejecutan UNA sola vez, con el volumen vacío
@@ -45,7 +45,7 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     ports:
       - "5672:5672"     # AMQP (los microservicios)
-      - "15672:15672"   # Consola web: http://localhost:15672
+      - "15672:15672"   # Consola web: http://localhost:15673
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -54,6 +54,231 @@ services:
       timeout: 10s
       retries: 5
       start_period: 40s
+
+  identity-service:
+    build:
+      context: ../IdentityService
+      dockerfile: Dockerfile
+    container_name: transporte-identity
+    environment: &service-environment
+      SPRING_DATASOURCE_USERNAME: svc_identidad
+      SPRING_DATASOURCE_PASSWORD: ${SVC_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:-d766b3eb3a78dbbbda222d3341f38fa7e3674868102221b384598fbb596586b2}
+      JWT_ISSUER: servicio-identidad
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_identidad
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  fleet-service:
+    build:
+      context: ../FleetService
+      dockerfile: Dockerfile
+    container_name: transporte-fleet
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_flota
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_flota
+      SERVER_PORT: 8082
+      VIAJES_URL: http://trip-service:8083/v1/trips
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  trip-service:
+    build:
+      context: ../TripService
+      dockerfile: Dockerfile
+    container_name: transporte-trips
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_viajes
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_viajes
+      SERVER_PORT: 8083
+      # Viajes consulta asiento-maximo en Boletos al cambiar el bus de un viaje regular
+      BOLETOS_URL: http://ticket-service:8084/v1/tickets
+      # Misma clave que Flota usa en GET /viajes/activos (X-Clave-Interna)
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  ticket-service:
+    build:
+      context: ../TicketService
+      dockerfile: Dockerfile
+    container_name: transporte-tickets
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_boletos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_boletos
+      SERVER_PORT: 8084
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
+      CARTERA_URL: http://customer-wallet-service:8085/v1/customers
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  customer-wallet-service:
+    build:
+      context: ../CustomerWalletService
+      dockerfile: Dockerfile
+    container_name: transporte-customers
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_clientes
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_clientes
+      SERVER_PORT: 8085
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
+    ports:
+      - "8085:8085"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  private-rental-service:
+    build:
+      context: ../PrivateRentalService
+      dockerfile: Dockerfile
+    container_name: transporte-rentals
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_alquileres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_alquileres
+      SERVER_PORT: 8086
+      CLAVE_INTERNA: ${CLAVE_INTERNA:-cambiar-en-local}
+      CARTERA_URL: http://customer-wallet-service:8085/v1/customers
+    ports:
+      - "8086:8086"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  operational-costs-service:
+    build:
+      context: ../OperationalCostsService
+      dockerfile: Dockerfile
+    container_name: transporte-costs
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_costos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_costos
+      SERVER_PORT: 8087
+    ports:
+      - "8087:8087"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  notification-service:
+    build:
+      context: ../NotificationService
+      dockerfile: Dockerfile
+    container_name: transporte-notifications
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_notificaciones
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_notificaciones
+      SERVER_PORT: 8088
+      MAIL_HOST: ${MAIL_HOST:-localhost}
+      MAIL_PORT: ${MAIL_PORT:-1025}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_SMTP_AUTH: ${MAIL_SMTP_AUTH:-false}
+      MAIL_REMITENTE: ${MAIL_REMITENTE:-Transportes GT <no-responder@transportes.gt>}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  reporting-service:
+    build:
+      context: ../ReportingService
+      dockerfile: Dockerfile
+    container_name: transporte-reports
+    environment:
+      <<: *service-environment
+      SPRING_DATASOURCE_USERNAME: svc_reportes
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bd_reportes
+      SERVER_PORT: 8089
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-${MAIL_USERNAME:-}}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-${MAIL_PASSWORD:-}}
+    ports:
+      - "8089:8089"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: ../ApiGateway
+      dockerfile: Dockerfile
+    container_name: transporte-gateway
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-d766b3eb3a78dbbbda222d3341f38fa7e3674868102221b384598fbb596586b2}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      IDENTITY_URL: http://identity-service:8081
+      FLEET_URL: http://fleet-service:8082
+      TRIPS_URL: http://trip-service:8083
+      TICKETS_URL: http://ticket-service:8084
+      CUSTOMERS_URL: http://customer-wallet-service:8085
+      RENTALS_URL: http://private-rental-service:8086
+      COSTS_URL: http://operational-costs-service:8087
+      NOTIFICATIONS_URL: http://notification-service:8088
+      REPORTS_URL: http://reporting-service:8089
+      PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      identity-service:
+        condition: service_started
+      fleet-service:
+        condition: service_started
+      trip-service:
+        condition: service_started
+      ticket-service:
+        condition: service_started
+      customer-wallet-service:
+        condition: service_started
+      private-rental-service:
+        condition: service_started
+      operational-costs-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      reporting-service:
+        condition: service_started
 
 volumes:
   postgres_data:

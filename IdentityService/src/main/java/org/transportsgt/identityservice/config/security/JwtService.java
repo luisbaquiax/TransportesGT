@@ -1,38 +1,38 @@
 package org.transportsgt.identityservice.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
+import org.transportsgt.identityservice.exception.TokenJwtInvalidoException;
 
-import java.time.Duration;
+import java.time.Clock;
 import java.time.Instant;
 
 /**
- * Emite el JWT de acceso. La validación la hace el resource server (JwtDecoder).
+ * Emite y valida el JWT de acceso (HS256). En cada petición lo valida el resource server con el mismo JwtDecoder.
  */
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
     private final JwtEncoder jwtEncoder;
-
-    @Value("${jwt.expiration}")
-    private Duration expiracion;
-
-    @Value("${jwt.issuer}")
-    private String emisor;
+    private final JwtDecoder jwtDecoder;
+    private final JwtProperties propiedades;
+    private final Clock clock;
 
     public TokenEmitido generarToken(UsuarioPrincipal usuario) {
-        Instant ahora = Instant.now();
-        Instant expiraEn = ahora.plus(expiracion);
+        Instant ahora = clock.instant();
+        Instant expiraEn = ahora.plus(propiedades.expiration());
 
         JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
-                .issuer(emisor)
+                .issuer(propiedades.issuer())
                 .issuedAt(ahora)
                 .expiresAt(expiraEn)
                 .subject(usuario.id().toString())       // authentication.getName() = idUsuario
@@ -50,6 +50,17 @@ public class JwtService {
         String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims.build())).getTokenValue();
 
         return new TokenEmitido(token, expiraEn);
+    }
+
+    /**
+     * @throws TokenJwtInvalidoException si la firma no coincide, el token expiró o está mal formado
+     */
+    public Jwt validar(String token) {
+        try {
+            return jwtDecoder.decode(token);
+        } catch (JwtException e) {
+            throw new TokenJwtInvalidoException();
+        }
     }
 
     public record TokenEmitido(String token, Instant expiraEn) {
