@@ -2,7 +2,7 @@ package org.transportsgt.notificationservice.services.bandeja;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.notificationservice.exception.ContactoNoDisponibleException;
 import org.transportsgt.notificationservice.models.Contacto;
 import org.transportsgt.notificationservice.repositories.ContactoRepository;

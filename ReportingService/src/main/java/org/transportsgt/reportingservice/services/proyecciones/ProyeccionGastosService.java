@@ -1,11 +1,11 @@
 package org.transportsgt.reportingservice.services.proyecciones;
 
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosDepreciacion;
-import org.transportsgt.eventos.payload.DatosGastoCombustible;
-import org.transportsgt.eventos.payload.DatosGastoTaller;
-import org.transportsgt.eventos.payload.DatosPagoChofer;
-import org.transportsgt.eventos.payload.DatosTarifaDepreciacion;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.costos.DatosDepreciacion;
+import org.transportsgt.eventos.payload.costos.DatosGastoCombustible;
+import org.transportsgt.eventos.payload.costos.DatosGastoTaller;
+import org.transportsgt.eventos.payload.costos.DatosPagoChofer;
+import org.transportsgt.eventos.payload.costos.DatosTarifaDepreciacion;
 
 /**
  * Hechos de {@code rep_gasto} y tarifa de depreciación (eventos de Costos).

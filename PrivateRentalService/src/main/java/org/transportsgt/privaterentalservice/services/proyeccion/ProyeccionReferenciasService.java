@@ -1,7 +1,7 @@
 package org.transportsgt.privaterentalservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
-import org.transportsgt.eventos.payload.DatosSucursal;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
 
 /**
  * Réplicas locales (_ref) de sucursales y perfiles de cliente. Idempotentes por versión: una versión que no es mayor

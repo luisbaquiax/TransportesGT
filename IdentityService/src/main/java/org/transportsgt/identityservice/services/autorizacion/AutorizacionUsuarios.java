@@ -1,8 +1,8 @@
 package org.transportsgt.identityservice.services.autorizacion;
 
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.identityservice.models.Usuario;
 

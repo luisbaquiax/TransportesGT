@@ -1,10 +1,10 @@
 package org.transportsgt.tripservice.services.viaje.impl;
 
-import org.transportsgt.eventos.payload.EstadoOperativo;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.eventos.payload.TipoViaje;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.models.BusRef;
 import org.transportsgt.tripservice.models.ChoferRef;
 import org.transportsgt.tripservice.models.Ruta;

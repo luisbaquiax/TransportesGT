@@ -3,7 +3,7 @@ package org.transportsgt.fleetservice.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.transportsgt.eventos.payload.DatosChofer;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
 import org.transportsgt.fleetservice.dto.request.ActualizarChoferRequest;
 import org.transportsgt.fleetservice.dto.request.CrearChoferRequest;
 import org.transportsgt.fleetservice.dto.response.ChoferResponse;

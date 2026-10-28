@@ -1,12 +1,12 @@
 package org.transportsgt.reportingservice.services.proyecciones;
 
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosLlegada;
-import org.transportsgt.eventos.payload.DatosRuta;
-import org.transportsgt.eventos.payload.DatosRutaEliminada;
-import org.transportsgt.eventos.payload.DatosSalida;
-import org.transportsgt.eventos.payload.DatosViaje;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.viajes.DatosLlegada;
+import org.transportsgt.eventos.payload.viajes.DatosRuta;
+import org.transportsgt.eventos.payload.viajes.DatosRutaEliminada;
+import org.transportsgt.eventos.payload.viajes.DatosSalida;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
 
 /**
  * Proyecciones {@code rep_ruta} y {@code rep_viaje} (eventos de Viajes), más el estado y kilometraje de

@@ -3,7 +3,7 @@ package org.transportsgt.tripservice.repositories;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 import org.transportsgt.tripservice.models.Viaje;
 
 import java.time.OffsetDateTime;

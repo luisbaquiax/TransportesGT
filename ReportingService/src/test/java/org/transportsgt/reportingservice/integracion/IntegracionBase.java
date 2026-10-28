@@ -17,11 +17,11 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.transportsgt.eventos.ConvertidorEventos;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.TopologiaEventos;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.contrato.ConvertidorEventos;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.mensajeria.rabbit.TopologiaEventos;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 import org.transportsgt.fleetservice.models.Bus;
 
 import java.math.BigDecimal;

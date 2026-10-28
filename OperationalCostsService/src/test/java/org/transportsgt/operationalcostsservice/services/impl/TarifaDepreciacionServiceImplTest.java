@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.operationalcostsservice.config.security.PoliticaAccesoSucursal;
-import org.transportsgt.operationalcostsservice.config.security.UsuarioAutenticado;
+import org.transportsgt.operationalcostsservice.config.security.authorization.PoliticaAccesoSucursal;
+import org.transportsgt.operationalcostsservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.operationalcostsservice.dto.request.TarifaDepreciacionRequest;
 import org.transportsgt.operationalcostsservice.dto.response.TarifaDepreciacionResponse;
 import org.transportsgt.operationalcostsservice.eventos.EventosCostos;
@@ -14,7 +14,7 @@ import org.transportsgt.operationalcostsservice.exception.OperacionNoAutorizadaE
 import org.transportsgt.operationalcostsservice.mappers.CostosMapper;
 import org.transportsgt.operationalcostsservice.models.ConfiguracionDepreciacion;
 import org.transportsgt.operationalcostsservice.repositories.ConfiguracionDepreciacionRepository;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.time.Clock;

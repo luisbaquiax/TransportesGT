@@ -2,7 +2,7 @@ package org.transportsgt.notificationservice.services.enlace.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.notificationservice.config.NotificacionesProperties;
 
 import java.net.URLEncoder;

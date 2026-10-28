@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.controllers;
 
-import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.CompraRequest;
 import org.transportsgt.ticketservice.dto.request.VentaMostradorRequest;
 import org.transportsgt.ticketservice.dto.response.AsientoMaximoResponse;
@@ -41,10 +41,10 @@ import org.transportsgt.ticketservice.services.abordaje.PasajerosViajeService;
 import org.transportsgt.ticketservice.dto.request.AbordajeRequest;
 import org.transportsgt.ticketservice.dto.response.AbordajeResponse;
 import org.transportsgt.ticketservice.dto.response.PasajerosViajeResponse;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 import org.transportsgt.ticketservice.services.consulta.ConsultaViajesService;
 import org.transportsgt.ticketservice.services.compra.VentaMostradorService;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.time.LocalDate;
 import java.util.List;

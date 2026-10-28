@@ -1,6 +1,6 @@
 package org.transportsgt.notificationservice.services.bitacora;
 
-import org.transportsgt.notificationservice.config.security.UsuarioAutenticado;
+import org.transportsgt.notificationservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.notificationservice.dto.response.PaginaResponse;
 import org.transportsgt.notificationservice.dto.response.RecordatorioLicenciaResponse;
 import org.transportsgt.notificationservice.models.EstadoRecordatorio;

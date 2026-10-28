@@ -2,7 +2,7 @@ package org.transportsgt.identityservice.services.usuario.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.identityservice.exception.UltimoAdministradorSistemaException;
 import org.transportsgt.identityservice.exception.UltimoAdministradorSucursalException;
 import org.transportsgt.identityservice.models.Usuario;

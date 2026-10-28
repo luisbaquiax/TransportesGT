@@ -12,10 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.transportsgt.eventos.payload.EstadoOperativo;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.fleetservice.clients.ConsultaViajes;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.request.ActualizarBusRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarActivoRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarEstadoOperativoRequest;
@@ -254,5 +254,18 @@ class GestionBusesServiceImplTest {
 
         assertEquals(EstadoOperativo.EN_TALLER, entity.getEstadoOperativo());
         verify(eventos).busActualizado(entity);
+    }
+
+    @Test
+    void cambiarAlMismoEstadoOperativoNoPublica() {
+        Bus entity = bus(1L);
+        when(busRepository.findById(idBus)).thenReturn(Optional.of(entity));
+        when(busMapper.toResponse(entity)).thenReturn(respuestaBus());
+
+        servicio.cambiarEstadoOperativo(idBus,
+                new CambiarEstadoOperativoRequest(EstadoOperativo.DISPONIBLE, null), adminSucursal);
+
+        verify(eventos, never()).busActualizado(any());
+        verify(busRepository, never()).saveAndFlush(any());
     }
 }

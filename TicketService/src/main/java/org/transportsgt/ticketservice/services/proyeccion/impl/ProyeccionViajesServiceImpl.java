@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.transportsgt.ticketservice.repositories.ViajeRefRepository;
 import org.transportsgt.ticketservice.services.proyeccion.ProyeccionViajesService;
-import org.transportsgt.eventos.payload.BusAsignado;
-import org.transportsgt.eventos.payload.DatosViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.flota.BusAsignado;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 @Service
 @RequiredArgsConstructor

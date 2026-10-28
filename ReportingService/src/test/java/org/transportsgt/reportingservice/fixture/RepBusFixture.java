@@ -1,6 +1,6 @@
 package org.transportsgt.reportingservice.fixture;
 
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 import org.transportsgt.reportingservice.models.RepBus;
 import org.transportsgt.reportingservice.repositories.reportssucursal.BusConsulta;
 import org.transportsgt.reportingservice.repositories.reportssucursal.DepreciacionConsulta;

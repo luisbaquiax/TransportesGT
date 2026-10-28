@@ -2,12 +2,12 @@ package org.transportsgt.operationalcostsservice.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.transportsgt.eventos.payload.DatosDepreciacion;
-import org.transportsgt.eventos.payload.DatosGastoCombustible;
-import org.transportsgt.eventos.payload.DatosGastoTaller;
-import org.transportsgt.eventos.payload.DatosPagoChofer;
-import org.transportsgt.eventos.payload.DatosTarifaDepreciacion;
-import org.transportsgt.eventos.payload.LineaTaller;
+import org.transportsgt.eventos.payload.costos.DatosDepreciacion;
+import org.transportsgt.eventos.payload.costos.DatosGastoCombustible;
+import org.transportsgt.eventos.payload.costos.DatosGastoTaller;
+import org.transportsgt.eventos.payload.costos.DatosPagoChofer;
+import org.transportsgt.eventos.payload.costos.DatosTarifaDepreciacion;
+import org.transportsgt.eventos.payload.costos.LineaTaller;
 import org.transportsgt.operationalcostsservice.dto.response.CategoriaResponse;
 import org.transportsgt.operationalcostsservice.dto.response.GastoTallerResponse;
 import org.transportsgt.operationalcostsservice.dto.response.ResumenCostosViajeResponse;

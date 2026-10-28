@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.customerwalletservice.dto.response.ClienteBusquedaResponse;
 import org.transportsgt.customerwalletservice.dto.response.ClienteResponse;
@@ -19,8 +19,8 @@ import org.transportsgt.customerwalletservice.models.Cliente;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.ClienteRepository;
 import org.transportsgt.customerwalletservice.services.ClienteService;
-import org.transportsgt.eventos.Nit;
-import org.transportsgt.eventos.payload.DatosUsuario;
+import org.transportsgt.eventos.soporte.Nit;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -48,12 +48,12 @@ public class ClienteServiceImpl implements ClienteService {
         }
         Cliente cliente = existente.get();
         if (version <= cliente.getVersionUsuario()) {
-            log.debug("Usuario {}: versión {} no es mayor que la aplicada ({}), se ignora",
-                    datos.idUsuario(), version, cliente.getVersionUsuario());
+//            log.debug("Usuario {}: versión {} no es mayor que la aplicada ({}), se ignora",
+//                    datos.idUsuario(), version, cliente.getVersionUsuario());
             return false;
         }
         boolean cambiaPerfil = !Objects.equals(cliente.getNombreCompleto(), datos.nombreCompleto())
-                || !Objects.equals(cliente.getActivo(), datos.activo());
+                || !Objects.equals(cliente.getActivo(), (Boolean) datos.activo());
         cliente.setNombreCompleto(datos.nombreCompleto());
         cliente.setCorreo(datos.correo());
         cliente.setActivo(datos.activo());

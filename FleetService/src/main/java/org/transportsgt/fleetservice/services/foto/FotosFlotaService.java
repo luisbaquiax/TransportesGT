@@ -1,7 +1,7 @@
 package org.transportsgt.fleetservice.services.foto;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.response.BusResponse;
 import org.transportsgt.fleetservice.dto.response.ChoferResponse;
 

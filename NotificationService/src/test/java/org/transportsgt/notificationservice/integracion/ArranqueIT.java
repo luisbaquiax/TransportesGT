@@ -3,8 +3,8 @@ package org.transportsgt.notificationservice.integracion;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.transportsgt.eventos.Productor;
-import org.transportsgt.eventos.TopologiaEventos;
+import org.transportsgt.eventos.contrato.Productor;
+import org.transportsgt.eventos.mensajeria.rabbit.TopologiaEventos;
 
 import java.util.List;
 

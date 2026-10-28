@@ -1,8 +1,8 @@
 package org.transportsgt.identityservice.services.consulta;
 
 import org.springframework.data.domain.Pageable;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.response.PaginaResponse;
 import org.transportsgt.identityservice.dto.response.SucursalResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;

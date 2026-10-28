@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.VentaMostradorRequest;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.dto.response.Resultado;

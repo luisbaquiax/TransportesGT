@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.notificationservice.config.security.UsuarioAutenticado;
+import org.transportsgt.notificationservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.notificationservice.dto.response.PaginaResponse;
 import org.transportsgt.notificationservice.dto.response.RecordatorioLicenciaResponse;
 import org.transportsgt.notificationservice.exception.SinPermisoSucursalException;

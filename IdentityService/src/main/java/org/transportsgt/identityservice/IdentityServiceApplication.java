@@ -3,7 +3,7 @@ package org.transportsgt.identityservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.transportsgt.eventos.EnableEventosComun;
+import org.transportsgt.eventos.configuracion.EnableEventosComun;
 
 /**
  * {@link EnableEventosComun}: outbox (RegistroOutbox + PublicadorOutbox), limpieza del outbox,

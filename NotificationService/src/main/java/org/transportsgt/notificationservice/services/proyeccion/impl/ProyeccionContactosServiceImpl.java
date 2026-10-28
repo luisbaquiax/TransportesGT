@@ -3,7 +3,7 @@ package org.transportsgt.notificationservice.services.proyeccion.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.payload.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
 import org.transportsgt.notificationservice.repositories.ContactoRepository;
 import org.transportsgt.notificationservice.services.proyeccion.ProyeccionContactosService;
 

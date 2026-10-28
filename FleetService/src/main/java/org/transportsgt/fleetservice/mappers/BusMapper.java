@@ -3,7 +3,7 @@ package org.transportsgt.fleetservice.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.transportsgt.eventos.payload.DatosBus;
+import org.transportsgt.eventos.payload.flota.DatosBus;
 import org.transportsgt.fleetservice.dto.request.ActualizarBusRequest;
 import org.transportsgt.fleetservice.dto.request.CrearBusRequest;
 import org.transportsgt.fleetservice.dto.response.BusResponse;

@@ -2,7 +2,7 @@ package org.transportsgt.tripservice.services.viaje.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 import org.transportsgt.tripservice.exception.ReglaNegocioException;
 import org.transportsgt.tripservice.exception.SolicitudInvalidaException;
 import org.transportsgt.tripservice.models.BusRef;

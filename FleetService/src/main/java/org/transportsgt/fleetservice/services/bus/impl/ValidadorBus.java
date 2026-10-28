@@ -2,7 +2,7 @@ package org.transportsgt.fleetservice.services.bus.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 import org.transportsgt.fleetservice.exception.EstadoOperativoInvalidoException;
 import org.transportsgt.fleetservice.exception.PlacaDuplicadaException;
 import org.transportsgt.fleetservice.repositories.BusRepository;

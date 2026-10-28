@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.documentos.BoletosPdf;
 import org.transportsgt.ticketservice.exception.CompraNoConfirmadaException;
 import org.transportsgt.ticketservice.exception.CompraNoEncontradaException;

@@ -2,8 +2,8 @@ package org.transportsgt.tripservice.services.autorizacion;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.tripservice.models.Ruta;
 import org.transportsgt.tripservice.models.Viaje;

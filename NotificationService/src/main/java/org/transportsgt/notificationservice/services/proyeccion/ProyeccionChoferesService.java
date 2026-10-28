@@ -1,6 +1,6 @@
 package org.transportsgt.notificationservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosChofer;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
 
 /**
  * Copia local de los choferes (tabla {@code chofer_licencia}) y programación de sus avisos de licencia.

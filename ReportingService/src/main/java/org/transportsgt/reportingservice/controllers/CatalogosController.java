@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.dto.response.catalogos.OpcionCatalogo;
 import org.transportsgt.reportingservice.services.catalogos.CatalogoService;
 

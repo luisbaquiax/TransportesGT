@@ -54,8 +54,12 @@ class SpecsTest {
             when(root.get(anyString())).thenReturn(path);
 
             // Act
-            new NotificacionSpecs().filtrar(EstadoNotificacion.FALLIDA, TipoNotificacion.COMPRA_BOLETOS, dia,
-                    dia.plusDays(1)).toPredicate(root, query, cb);
+            new NotificacionSpecs().filtrar(
+                            EstadoNotificacion.FALLIDA,
+                            TipoNotificacion.COMPRA_BOLETOS,
+                            dia,
+                            dia.plusDays(1))
+                    .toPredicate(root, query, cb);
 
             // Assert
             assertEquals(4, condiciones());
@@ -64,7 +68,9 @@ class SpecsTest {
         @Test
         void filtrar_sinFiltros_noRestringe() {
             // Act
-            new NotificacionSpecs().filtrar(null, null, null, null).toPredicate(root, query, cb);
+            new NotificacionSpecs().filtrar(
+                            null, null, null, null)
+                    .toPredicate(root, query, cb);
 
             // Assert
             assertEquals(0, condiciones());
@@ -84,7 +90,9 @@ class SpecsTest {
             when(path.get("idSucursal")).thenReturn(path);
 
             // Act
-            new RecordatorioSpecs().filtrar(UUID.randomUUID(), EstadoRecordatorio.PENDIENTE).toPredicate(root, query, cb);
+            new RecordatorioSpecs()
+                    .filtrar(UUID.randomUUID(),EstadoRecordatorio.PENDIENTE)
+                    .toPredicate(root, query, cb);
 
             // Assert
             assertEquals(2, condiciones());

@@ -3,10 +3,10 @@ package org.transportsgt.ticketservice.eventos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.transportsgt.ticketservice.services.proyeccion.ProyeccionClientesService;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
 
 @Component
 @RequiredArgsConstructor

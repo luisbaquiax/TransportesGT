@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.transportsgt.customerwalletservice.models.MovimientoCartera;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package org.transportsgt.reportingservice.fixture;
 
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 import org.transportsgt.reportingservice.models.RepViaje;
 import org.transportsgt.reportingservice.repositories.reportssucursal.IngresoBoletoConsulta;
 

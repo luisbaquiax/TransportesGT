@@ -3,7 +3,7 @@ package org.transportsgt.customerwalletservice.services.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
 import org.transportsgt.customerwalletservice.dto.response.PagoConsultaResponse;
 import org.transportsgt.customerwalletservice.dto.response.PagoResponse;
@@ -21,7 +21,7 @@ import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
 import org.transportsgt.customerwalletservice.services.PagoService;
 import org.transportsgt.customerwalletservice.utils.Dinero;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.util.Optional;

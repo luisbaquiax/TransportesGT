@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
 import org.transportsgt.customerwalletservice.dto.response.CarteraResponse;
 import org.transportsgt.customerwalletservice.dto.response.MovimientoResponse;

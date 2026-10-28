@@ -1,6 +1,6 @@
 package org.transportsgt.notificationservice.services.enlace;
 
-import org.transportsgt.eventos.payload.DatosEnlaceContrasena;
+import org.transportsgt.eventos.payload.identidad.DatosEnlaceContrasena;
 
 import java.util.UUID;
 

@@ -2,10 +2,10 @@ package org.transportsgt.customerwalletservice.integracion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.Message;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

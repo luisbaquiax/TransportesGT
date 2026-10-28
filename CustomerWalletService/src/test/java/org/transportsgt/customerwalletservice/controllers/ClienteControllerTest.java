@@ -1,6 +1,6 @@
 package org.transportsgt.customerwalletservice.controllers;
 
-import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -10,13 +10,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.customerwalletservice.dto.response.ClienteBusquedaResponse;
 import org.transportsgt.customerwalletservice.dto.response.ClienteResponse;
 import org.transportsgt.customerwalletservice.fixture.ClienteFixture;
 import org.transportsgt.customerwalletservice.services.ClienteService;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.util.UUID;

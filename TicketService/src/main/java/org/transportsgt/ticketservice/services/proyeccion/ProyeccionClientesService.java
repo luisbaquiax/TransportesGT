@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
 
 /**
  * Mantiene {@code cliente_ref}: NIT y nombre de los compradores en línea.

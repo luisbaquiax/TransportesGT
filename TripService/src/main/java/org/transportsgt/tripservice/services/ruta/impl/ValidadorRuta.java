@@ -2,7 +2,7 @@ package org.transportsgt.tripservice.services.ruta.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.tripservice.exception.ReglaNegocioException;

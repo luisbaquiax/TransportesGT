@@ -2,7 +2,7 @@ package org.transportsgt.operationalcostsservice.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.transportsgt.operationalcostsservice.config.security.UsuarioAutenticado;
+import org.transportsgt.operationalcostsservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.operationalcostsservice.dto.request.GastoTallerRequest;
 import org.transportsgt.operationalcostsservice.dto.response.GastoTallerResponse;
 

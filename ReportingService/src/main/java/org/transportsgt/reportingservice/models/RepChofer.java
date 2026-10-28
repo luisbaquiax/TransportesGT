@@ -2,7 +2,7 @@ package org.transportsgt.reportingservice.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.transportsgt.eventos.payload.TipoLicencia;
+import org.transportsgt.eventos.payload.flota.TipoLicencia;
 
 import java.time.LocalDate;
 import java.util.UUID;

@@ -3,9 +3,9 @@ package org.transportsgt.operationalcostsservice.eventos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosSucursal;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
 import org.transportsgt.operationalcostsservice.repositories.SucursalRefRepository;
 
 /**

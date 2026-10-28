@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

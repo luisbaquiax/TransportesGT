@@ -2,7 +2,7 @@ package org.transportsgt.ticketservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.transportsgt.ticketservice.models.EstadoCompra;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

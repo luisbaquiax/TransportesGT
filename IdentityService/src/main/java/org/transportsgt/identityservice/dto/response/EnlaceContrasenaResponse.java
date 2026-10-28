@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.dto.response;
 
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 
 /**
  * @param correoEnmascarado p. ej. {@code a***z@transportes.gt}

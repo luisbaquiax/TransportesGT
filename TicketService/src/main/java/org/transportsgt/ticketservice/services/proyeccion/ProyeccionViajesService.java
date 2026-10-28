@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosViaje;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
 
 /**
  * Mantiene {@code viaje_ref}, la copia local de los viajes REGULARES.

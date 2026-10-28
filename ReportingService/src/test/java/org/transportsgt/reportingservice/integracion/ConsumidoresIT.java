@@ -2,13 +2,13 @@ package org.transportsgt.reportingservice.integracion;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.eventos.payload.DatosSucursal;
-import org.transportsgt.eventos.payload.EstadoOperativo;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoLinea;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.flota.DatosBus;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.costos.TipoLinea;
 import org.transportsgt.reportingservice.fixture.EventoFixture;
 
 import java.math.BigDecimal;

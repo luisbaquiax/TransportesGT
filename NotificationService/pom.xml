@@ -24,9 +24,11 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <jacoco.version>0.8.11</jacoco.version>
         <greenmail.version>2.1.3</greenmail.version>
-        <!-- Cobertura mínima de líneas que exige "mvn verify". -->
+        <!-- Coberturas mínimas que exige "mvn verify". -->
         <jacoco.minimo.unitarias>0.85</jacoco.minimo.unitarias>
         <jacoco.minimo.integracion>0.60</jacoco.minimo.integracion>
+        <jacoco.minimo.ramas>0.85</jacoco.minimo.ramas>
+        <jacoco.minimo.ramas.integracion>0.60</jacoco.minimo.ramas.integracion>
     </properties>
     <repositories>
         <repository>
@@ -39,7 +41,7 @@
         <dependency>
             <groupId>com.github.luisbaquiax</groupId>
             <artifactId>EventosComunesTrasnportesGt</artifactId>
-            <version>v2.1.1</version>
+            <version>v2.1.3</version>
         </dependency>
 
         <!--  Web, persistencia y mensajería (iguales en los 9 servicios) -->
@@ -305,6 +307,11 @@
                                             <value>COVEREDRATIO</value>
                                             <minimum>${jacoco.minimo.unitarias}</minimum>
                                         </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.minimo.ramas}</minimum>
+                                        </limit>
                                     </limits>
                                 </rule>
                             </rules>
@@ -341,6 +348,11 @@
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>${jacoco.minimo.integracion}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.minimo.ramas.integracion}</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

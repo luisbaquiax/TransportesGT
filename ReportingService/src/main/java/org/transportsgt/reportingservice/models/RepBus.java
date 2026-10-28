@@ -2,7 +2,7 @@ package org.transportsgt.reportingservice.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 
 import java.math.BigDecimal;
 import java.util.UUID;

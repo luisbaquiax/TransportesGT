@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.contrasena;
 
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.identityservice.models.TokenContrasena;
 import org.transportsgt.identityservice.models.Usuario;
 

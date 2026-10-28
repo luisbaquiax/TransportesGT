@@ -2,7 +2,7 @@ package org.transportsgt.fleetservice.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 
 /**
  * Cambia el estado operativo: DISPONIBLE, EN_TALLER o FUERA_DE_SERVICIO.

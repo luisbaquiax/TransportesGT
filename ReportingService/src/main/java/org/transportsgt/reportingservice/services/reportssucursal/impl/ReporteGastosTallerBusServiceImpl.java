@@ -3,7 +3,7 @@ package org.transportsgt.reportingservice.services.reportssucursal.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.dto.request.FiltroFechas;
 import org.transportsgt.reportingservice.dto.response.GrupoReporte;
 import org.transportsgt.reportingservice.dto.response.ReporteTabla;

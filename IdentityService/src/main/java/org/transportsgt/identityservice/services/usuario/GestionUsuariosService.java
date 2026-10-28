@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.usuario;
 
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.identityservice.dto.request.ActualizarUsuarioRequest;
 import org.transportsgt.identityservice.dto.request.CrearUsuarioRequest;

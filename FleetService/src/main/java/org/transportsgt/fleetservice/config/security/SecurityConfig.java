@@ -1,5 +1,8 @@
 package org.transportsgt.fleetservice.config.security;
 
+import org.transportsgt.fleetservice.config.security.handlers.JsonAccessDeniedHandler;
+import org.transportsgt.fleetservice.config.security.handlers.JsonAuthenticationEntryPoint;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

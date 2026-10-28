@@ -2,7 +2,7 @@ package org.transportsgt.notificationservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.transportsgt.eventos.EnableEventosComun;
+import org.transportsgt.eventos.configuracion.EnableEventosComun;
 
 /**
  * {@link EnableEventosComun}: consumidor idempotente, topología RabbitMQ y {@code @EnableScheduling}. También

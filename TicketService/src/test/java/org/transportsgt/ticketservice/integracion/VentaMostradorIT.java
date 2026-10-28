@@ -2,7 +2,7 @@ package org.transportsgt.ticketservice.integracion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.HashMap;
 import java.util.List;

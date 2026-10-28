@@ -1,6 +1,6 @@
 package org.transportsgt.tripservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosAlquilerConfirmado;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerConfirmado;
 
 /** Viajes de alquiler privado: no se crean por API, nacen al consumir AlquilerConfirmado. */
 public interface ViajesAlquilerService {

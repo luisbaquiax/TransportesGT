@@ -1,6 +1,6 @@
 package org.transportsgt.privaterentalservice.services.cotizacion;
 
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.CotizacionRequest;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;
 

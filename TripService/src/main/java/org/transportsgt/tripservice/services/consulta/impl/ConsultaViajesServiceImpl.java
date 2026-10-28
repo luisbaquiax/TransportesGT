@@ -6,8 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.dto.response.PaginaResponse;
 import org.transportsgt.tripservice.dto.response.Responses;
@@ -63,7 +63,7 @@ public class ConsultaViajesServiceImpl implements ConsultaViajesService {
     @Override
     @Transactional(readOnly = true)
     public List<Responses.ViajeResumenResponse> resumen(List<UUID> ids) {
-        Set<UUID> unicos = ids == null ? Set.of() : new LinkedHashSet<>(ids);
+        Set<UUID> unicos = ids == null ? new LinkedHashSet<>() : new LinkedHashSet<>(ids);
         unicos.remove(null);
         if (unicos.isEmpty()) {
             throw new SolicitudInvalidaException("Indique al menos un id de viaje");

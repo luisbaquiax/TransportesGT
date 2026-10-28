@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.transportsgt.ticketservice.clients.PasarelaPago;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.CompraRequest;
 import org.transportsgt.ticketservice.dto.response.ResultadoCompra;
 import org.transportsgt.ticketservice.exception.CarteraNoDisponibleException;
@@ -26,7 +26,7 @@ import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.repositories.CompraRepository;
 import org.transportsgt.ticketservice.utils.Dinero;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.math.BigDecimal;
 import java.util.List;

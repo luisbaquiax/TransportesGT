@@ -3,8 +3,8 @@ package org.transportsgt.customerwalletservice.integracion;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

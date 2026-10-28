@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.customerwalletservice.dto.response.ClienteBusquedaResponse;
 import org.transportsgt.customerwalletservice.dto.response.ClienteResponse;
@@ -24,8 +24,8 @@ import org.transportsgt.customerwalletservice.models.Cartera;
 import org.transportsgt.customerwalletservice.models.Cliente;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.ClienteRepository;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -123,7 +123,8 @@ class ClienteServiceImplTest {
             when(clienteRepository.findByIdUsuario(idUsuario)).thenReturn(Optional.of(cliente));
 
             // Act
-            boolean aplicado = servicio.aplicarUsuario(EventoFixture.usuario(idUsuario, "Otro nombre", false), 3L);
+            boolean aplicado = servicio.aplicarUsuario(EventoFixture
+                    .usuario(idUsuario, "Otro nombre", false), 3L);
 
             // Assert
             assertAll(
@@ -142,7 +143,8 @@ class ClienteServiceImplTest {
             when(clienteRepository.saveAndFlush(any())).thenAnswer(i -> i.getArgument(0));
 
             // Act
-            boolean aplicado = servicio.aplicarUsuario(EventoFixture.usuario(idUsuario, "Carlos M. López", false), 4L);
+            boolean aplicado = servicio.aplicarUsuario(
+                    EventoFixture.usuario(idUsuario, "Carlos M. López", false), 4L);
 
             // Assert
             assertAll(

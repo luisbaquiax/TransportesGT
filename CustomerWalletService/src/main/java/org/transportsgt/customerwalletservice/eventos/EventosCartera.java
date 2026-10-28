@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import org.transportsgt.customerwalletservice.models.Cartera;
 import org.transportsgt.customerwalletservice.models.Cliente;
 import org.transportsgt.customerwalletservice.models.MovimientoCartera;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosCarteraRecargada;
-import org.transportsgt.eventos.payload.DatosCarteraReembolsada;
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.cartera.DatosCarteraRecargada;
+import org.transportsgt.eventos.payload.cartera.DatosCarteraReembolsada;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
 
 /**
  * Arma los payloads de Clientes y Cartera y los guarda en {@code outbox_evento} con la librería de eventos.

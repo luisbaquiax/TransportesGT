@@ -2,8 +2,8 @@ package org.transportsgt.privaterentalservice.services.pago.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.services.autorizacion.AutorizacionAlquiler;
 import org.transportsgt.privaterentalservice.services.pago.EstrategiaPagoAlquiler;

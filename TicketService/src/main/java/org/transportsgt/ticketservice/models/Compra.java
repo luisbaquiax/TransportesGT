@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.transportsgt.eventos.Nit;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.soporte.Nit;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -1,6 +1,6 @@
 package org.transportsgt.customerwalletservice.services;
 
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.time.LocalDate;
 import java.util.UUID;

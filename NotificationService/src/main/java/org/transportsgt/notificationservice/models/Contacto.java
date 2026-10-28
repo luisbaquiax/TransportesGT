@@ -2,7 +2,7 @@ package org.transportsgt.notificationservice.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.UUID;
 

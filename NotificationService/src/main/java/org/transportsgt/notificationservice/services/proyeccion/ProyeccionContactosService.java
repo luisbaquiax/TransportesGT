@@ -1,6 +1,6 @@
 package org.transportsgt.notificationservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
 
 /**
  * Copia local de los usuarios (tabla {@code contacto}), alimentada por UsuarioCreado / UsuarioActualizado.

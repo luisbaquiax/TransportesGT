@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.services.abordaje;
 
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.response.AbordajeResponse;
 import org.transportsgt.ticketservice.dto.response.Resultado;
 

@@ -1,8 +1,8 @@
 package org.transportsgt.notificationservice.fixture;
 
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.notificationservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.notificationservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.notificationservice.models.Contacto;
 import org.transportsgt.notificationservice.services.bandeja.Destinatario;
 
@@ -40,7 +40,9 @@ public final class ContactoFixture {
         return new UsuarioAutenticado(UUID.randomUUID(), "usuario@transportes.gt", rol, idSucursal, NOMBRE);
     }
 
-    /** JWT ya validado, como lo entrega Spring Security al controlador. */
+    /**
+     * JWT ya validado, como lo entrega Spring Security al controlador.
+     */
     public static Jwt jwt(Rol rol, UUID idSucursal) {
         Jwt.Builder jwt = Jwt.withTokenValue("token-de-prueba")
                 .header("alg", "HS256")

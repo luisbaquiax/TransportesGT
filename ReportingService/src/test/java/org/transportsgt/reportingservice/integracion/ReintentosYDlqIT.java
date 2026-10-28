@@ -2,10 +2,10 @@ package org.transportsgt.reportingservice.integracion;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.Message;
-import org.transportsgt.eventos.Productor;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.TopologiaEventos;
+import org.transportsgt.eventos.contrato.Productor;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.mensajeria.rabbit.TopologiaEventos;
 import org.transportsgt.reportingservice.fixture.EventoFixture;
 
 import java.nio.charset.StandardCharsets;

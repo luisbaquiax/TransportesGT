@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

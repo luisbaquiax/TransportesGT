@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.identityservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarSucursalRequest;
 import org.transportsgt.identityservice.dto.request.CrearSucursalRequest;
 import org.transportsgt.identityservice.dto.response.PaginaResponse;

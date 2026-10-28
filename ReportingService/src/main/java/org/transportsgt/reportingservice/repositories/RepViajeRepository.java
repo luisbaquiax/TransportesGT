@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 import org.transportsgt.reportingservice.models.RepViaje;
 
 import java.math.BigDecimal;
@@ -70,7 +70,7 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
     @Modifying
     @Query("""
             UPDATE RepViaje v
-               SET v.estado = org.transportsgt.eventos.payload.EstadoViaje.FINALIZADO,
+               SET v.estado = org.transportsgt.eventos.payload.viajes.EstadoViaje.FINALIZADO,
                    v.fechaHoraSalidaReal = :fechaHoraSalidaReal, v.fechaHoraLlegadaReal = :fechaHoraLlegadaReal,
                    v.kilometrajeInicial = :kilometrajeInicial, v.kilometrajeFinal = :kilometrajeFinal,
                    v.distanciaRecorridaKm = :distanciaRecorridaKm

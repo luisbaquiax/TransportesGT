@@ -8,9 +8,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.identityservice.config.security.JwtService;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
-import org.transportsgt.identityservice.config.security.UsuarioPrincipal;
+import org.transportsgt.identityservice.config.security.jwt.JwtService;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioPrincipal;
 import org.transportsgt.identityservice.dto.request.LoginRequest;
 import org.transportsgt.identityservice.dto.response.LoginResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;

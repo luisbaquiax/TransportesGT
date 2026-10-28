@@ -12,7 +12,7 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.core.IntervalFunction;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
-import org.transportsgt.eventos.ContextoCorrelacion;
+import org.transportsgt.eventos.contexto.ContextoCorrelacion;
 import org.transportsgt.fleetservice.config.ViajesProperties;
 import org.transportsgt.fleetservice.exception.ViajesNoDisponibleException;
 

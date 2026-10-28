@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.identityservice.models.TokenContrasena;
 
 import java.time.OffsetDateTime;

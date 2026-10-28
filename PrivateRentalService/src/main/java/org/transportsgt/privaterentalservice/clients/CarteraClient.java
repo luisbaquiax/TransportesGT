@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.transportsgt.eventos.ContextoCorrelacion;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.contexto.ContextoCorrelacion;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 import org.transportsgt.privaterentalservice.exception.CarteraRechazoException;
 import org.transportsgt.privaterentalservice.exception.ServicioNoDisponibleException;
 

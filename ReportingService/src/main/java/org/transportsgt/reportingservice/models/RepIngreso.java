@@ -3,7 +3,7 @@ package org.transportsgt.reportingservice.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -2,8 +2,8 @@ package org.transportsgt.privaterentalservice.services.pago.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.PagoAlquilerRequest;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;
 import org.transportsgt.privaterentalservice.exception.SolicitudInvalidaException;
