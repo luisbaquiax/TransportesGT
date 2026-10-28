@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.response.PaginaResponse;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.exception.CompraNoEncontradaException;
@@ -25,7 +25,7 @@ import org.transportsgt.ticketservice.models.EstadoCompra;
 import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.repositories.CompraRepository;
 import org.transportsgt.ticketservice.repositories.CompraSpecs;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.List;
 import java.util.Optional;

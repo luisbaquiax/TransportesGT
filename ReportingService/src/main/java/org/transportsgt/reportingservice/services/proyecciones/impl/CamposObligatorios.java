@@ -1,8 +1,8 @@
 package org.transportsgt.reportingservice.services.proyecciones.impl;
 
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
 
 /**
  * Un evento sin sus datos clave es un mensaje venenoso: va a la DLQ de inmediato, sin reintentos.

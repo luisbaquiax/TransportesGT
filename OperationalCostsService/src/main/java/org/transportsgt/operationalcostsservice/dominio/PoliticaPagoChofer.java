@@ -1,6 +1,6 @@
 package org.transportsgt.operationalcostsservice.dominio;
 
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.math.BigDecimal;
 

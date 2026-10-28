@@ -1,8 +1,8 @@
 package org.transportsgt.privaterentalservice.soporte;
 
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 import org.transportsgt.privaterentalservice.models.ClienteRef;

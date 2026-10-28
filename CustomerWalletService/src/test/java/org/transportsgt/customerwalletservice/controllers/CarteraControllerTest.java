@@ -1,6 +1,6 @@
 package org.transportsgt.customerwalletservice.controllers;
 
-import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +19,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.transportsgt.customerwalletservice.config.security.FiltroClaveInterna;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.filters.FiltroClaveInterna;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
 import org.transportsgt.customerwalletservice.dto.response.CarteraResponse;
@@ -33,8 +33,8 @@ import org.transportsgt.customerwalletservice.fixture.ClienteFixture;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.services.CarteraService;
 import org.transportsgt.customerwalletservice.services.PagoService;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

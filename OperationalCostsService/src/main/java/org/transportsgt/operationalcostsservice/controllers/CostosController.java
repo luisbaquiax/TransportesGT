@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.operationalcostsservice.config.OpenApiConfig;
-import org.transportsgt.operationalcostsservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.operationalcostsservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.operationalcostsservice.dto.request.CategoriaActivaRequest;
 import org.transportsgt.operationalcostsservice.dto.request.CategoriaRequest;
 import org.transportsgt.operationalcostsservice.dto.request.GastoTallerRequest;

@@ -1,5 +1,8 @@
 package org.transportsgt.apigateway.config.security;
 
+import org.transportsgt.apigateway.config.security.handlers.JsonAccessDeniedHandler;
+import org.transportsgt.apigateway.config.security.handlers.JsonAuthenticationEntryPoint;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.identityservice.config.IdentidadProperties;
 import org.transportsgt.identityservice.eventos.EventosIdentidad;
 import org.transportsgt.identityservice.exception.TokenContrasenaInvalidoException;

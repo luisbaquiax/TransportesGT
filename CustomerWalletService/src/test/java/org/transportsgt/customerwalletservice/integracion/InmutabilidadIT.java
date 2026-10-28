@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

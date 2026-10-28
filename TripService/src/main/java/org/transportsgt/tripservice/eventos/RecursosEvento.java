@@ -2,8 +2,8 @@ package org.transportsgt.tripservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.BusAsignado;
-import org.transportsgt.eventos.payload.ChoferAsignado;
+import org.transportsgt.eventos.payload.flota.BusAsignado;
+import org.transportsgt.eventos.payload.flota.ChoferAsignado;
 import org.transportsgt.tripservice.models.BusRef;
 import org.transportsgt.tripservice.models.ChoferRef;
 import org.transportsgt.tripservice.repositories.BusRefRepository;

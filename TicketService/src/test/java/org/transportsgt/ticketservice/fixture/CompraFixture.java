@@ -5,7 +5,7 @@ import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.EstadoBoleto;
 import org.transportsgt.ticketservice.models.EstadoCompra;
 import org.transportsgt.ticketservice.models.ViajeRef;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

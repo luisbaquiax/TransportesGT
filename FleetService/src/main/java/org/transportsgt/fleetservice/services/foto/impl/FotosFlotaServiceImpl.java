@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.transportsgt.fleetservice.almacenamiento.AlmacenamientoFotos;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.response.BusResponse;
 import org.transportsgt.fleetservice.dto.response.ChoferResponse;
 import org.transportsgt.fleetservice.exception.FotoNoEncontradaException;

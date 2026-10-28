@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.sesion;
 
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.LoginRequest;
 import org.transportsgt.identityservice.dto.response.LoginResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;

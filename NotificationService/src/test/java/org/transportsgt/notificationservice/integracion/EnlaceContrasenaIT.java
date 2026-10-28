@@ -2,10 +2,10 @@ package org.transportsgt.notificationservice.integracion;
 
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosEnlaceContrasena;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosEnlaceContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

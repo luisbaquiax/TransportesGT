@@ -2,12 +2,12 @@ package org.transportsgt.ticketservice.services.consulta.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.models.ClienteRef;
 import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.repositories.ClienteRefRepository;
-import org.transportsgt.eventos.Nit;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.soporte.Nit;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.Optional;
 

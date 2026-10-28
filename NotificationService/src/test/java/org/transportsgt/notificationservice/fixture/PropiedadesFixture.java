@@ -12,7 +12,9 @@ public final class PropiedadesFixture {
     private PropiedadesFixture() {
     }
 
-    /** Como application.properties, con la barra final en FRONTEND_URL para probar que no se duplica. */
+    /**
+     * Como application.properties, con la barra final en FRONTEND_URL para probar que no se duplica.
+     */
     public static NotificacionesProperties propiedades() {
         return new NotificacionesProperties("http://localhost:5173/", "/restablecer-contrasena", "/activar-cuenta",
                 "Transportes GT <no-responder@transportes.gt>",

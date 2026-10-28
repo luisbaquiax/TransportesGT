@@ -12,14 +12,14 @@ import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.services.compra.AnulacionViajeService;
 import org.transportsgt.ticketservice.services.proyeccion.ProyeccionClientesService;
 import org.transportsgt.ticketservice.services.proyeccion.ProyeccionViajesService;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
-import org.transportsgt.eventos.payload.DatosViaje;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.util.UUID;
 

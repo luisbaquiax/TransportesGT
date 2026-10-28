@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.transportsgt.privaterentalservice.config.OpenApiConfig;
-import org.transportsgt.privaterentalservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.CotizacionRequest;
 import org.transportsgt.privaterentalservice.dto.request.FiltroAlquileres;
 import org.transportsgt.privaterentalservice.dto.request.PagoAlquilerRequest;

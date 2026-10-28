@@ -2,7 +2,7 @@ package org.transportsgt.reportingservice.services.comun;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.exception.BusNoEncontradoException;
 import org.transportsgt.reportingservice.exception.RutaNoEncontradaException;
 import org.transportsgt.reportingservice.exception.SinPermisoSucursalException;

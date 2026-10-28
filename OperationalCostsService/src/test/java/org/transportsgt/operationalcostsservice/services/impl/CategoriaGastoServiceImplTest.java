@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.transportsgt.operationalcostsservice.dto.request.CategoriaActivaRequest;
 import org.transportsgt.operationalcostsservice.dto.request.CategoriaRequest;
 import org.transportsgt.operationalcostsservice.exception.NoEncontradoException;
 import org.transportsgt.operationalcostsservice.exception.ReglaNegocioException;
@@ -91,5 +92,62 @@ class CategoriaGastoServiceImplTest {
         assertThatThrownBy(() -> servicio().cambiarActivaCategoria(UUID.randomUUID(),
                 new org.transportsgt.operationalcostsservice.dto.request.CategoriaActivaRequest(false)))
                 .isInstanceOf(NoEncontradoException.class);
+    }
+
+    @Test
+    void listarTodasLasCategorias() {
+        when(categoriaRepository.findAllByOrderByNombre()).thenReturn(List.of());
+
+        servicio().listarCategorias(null);
+
+        verify(categoriaRepository, never()).findAllByActivaTrueOrderByNombre();
+    }
+
+    @Test
+    void crearCategoriaNuevaQuedaActiva() {
+        when(categoriaRepository.existsByNombreIgnoreCase("Frenos")).thenReturn(false);
+        when(categoriaRepository.save(any(CategoriaGasto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        servicio().crearCategoria(new CategoriaRequest("Frenos", "Pastillas"));
+
+        verify(mapper).toResponse(org.mockito.ArgumentMatchers.<CategoriaGasto>argThat(
+                c -> "Frenos".equals(c.getNombre()) && Boolean.TRUE.equals(c.getActiva())));
+    }
+
+    @Test
+    void actualizarCategoriaCambiaNombreYDescripcion() {
+        UUID id = UUID.randomUUID();
+        CategoriaGasto c = CategoriaGasto.builder().id(id).nombre("Viejo").activa(true).build();
+        when(categoriaRepository.findById(id)).thenReturn(Optional.of(c));
+        when(categoriaRepository.existsByNombreIgnoreCaseAndIdNot("Nuevo", id)).thenReturn(false);
+        when(categoriaRepository.save(c)).thenReturn(c);
+
+        servicio().actualizarCategoria(id, new CategoriaRequest("Nuevo", "Desc"));
+
+        assertThat(c.getNombre()).isEqualTo("Nuevo");
+        assertThat(c.getDescripcion()).isEqualTo("Desc");
+    }
+
+    @Test
+    void actualizarCategoriaConNombreDeOtraLanza409() {
+        UUID id = UUID.randomUUID();
+        when(categoriaRepository.findById(id)).thenReturn(Optional.of(CategoriaGasto.builder().id(id).build()));
+        when(categoriaRepository.existsByNombreIgnoreCaseAndIdNot("Otra", id)).thenReturn(true);
+
+        assertThatThrownBy(() -> servicio().actualizarCategoria(id, new CategoriaRequest("Otra", null)))
+                .isInstanceOf(ReglaNegocioException.class);
+        verify(categoriaRepository, never()).save(any());
+    }
+
+    @Test
+    void cambiarActivaDesactivaLaCategoria() {
+        UUID id = UUID.randomUUID();
+        CategoriaGasto c = CategoriaGasto.builder().id(id).activa(true).build();
+        when(categoriaRepository.findById(id)).thenReturn(Optional.of(c));
+        when(categoriaRepository.save(c)).thenReturn(c);
+
+        servicio().cambiarActivaCategoria(id, new CategoriaActivaRequest(false));
+
+        assertThat(c.getActiva()).isFalse();
     }
 }

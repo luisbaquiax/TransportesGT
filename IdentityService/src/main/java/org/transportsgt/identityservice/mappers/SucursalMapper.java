@@ -3,7 +3,7 @@ package org.transportsgt.identityservice.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.transportsgt.eventos.payload.DatosSucursal;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
 import org.transportsgt.identityservice.dto.request.SucursalRequest;
 import org.transportsgt.identityservice.dto.response.SucursalResponse;
 import org.transportsgt.identityservice.models.Sucursal;

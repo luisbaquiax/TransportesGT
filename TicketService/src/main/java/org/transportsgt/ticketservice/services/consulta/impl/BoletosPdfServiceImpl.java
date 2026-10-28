@@ -3,7 +3,7 @@ package org.transportsgt.ticketservice.services.consulta.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.documentos.BoletosPdf;
 import org.transportsgt.ticketservice.exception.CompraNoConfirmadaException;
 import org.transportsgt.ticketservice.exception.CompraNoEncontradaException;

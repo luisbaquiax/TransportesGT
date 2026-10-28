@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 import org.transportsgt.tripservice.clients.BoletosClient;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.eventos.EventosViaje;
@@ -219,6 +219,34 @@ class ProgramacionViajesServiceImplTest {
                 () -> servicio.actualizar(v.getId(), new Requests.ViajeUpdateRequest(null, null, null, null),
                         f.adminSucursal));
         assertEquals("VIAJE_NO_MODIFICABLE", ex.getCodigo());
+    }
+
+    @Test
+    void actualizarConElMismoBusYNuevosHorariosNoConsultaBoletos() {
+        Viaje v = f.viajeProgramado();
+        OffsetDateTime salida = v.getFechaHoraSalida().plusHours(1);
+        Requests.ViajeUpdateRequest req = new Requests.ViajeUpdateRequest(v.getIdBus(), f.chofer1, salida,
+                salida.plusHours(4));
+        when(viajeRepository.findConRutaById(v.getId())).thenReturn(Optional.of(v));
+        when(busRefRepository.findById(v.getIdBus())).thenReturn(Optional.of(f.busActivo()));
+        when(choferRefRepository.findById(f.chofer1)).thenReturn(Optional.of(f.choferRef()));
+        when(viajeRepository.saveAndFlush(any(Viaje.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        servicio.actualizar(v.getId(), req, f.adminSucursal);
+
+        assertEquals(salida, v.getFechaHoraSalida());
+        verify(boletosClient, never()).asientoMaximo(any());
+    }
+
+    @Test
+    void actualizarRechazaViajeFinalizado() {
+        Viaje v = f.viajeProgramado();
+        v.setEstado(EstadoViaje.FINALIZADO);
+        when(viajeRepository.findConRutaById(v.getId())).thenReturn(Optional.of(v));
+
+        assertThrows(ReglaNegocioException.class,
+                () -> servicio.actualizar(v.getId(), new Requests.ViajeUpdateRequest(null, null, null, null),
+                        f.adminSucursal));
     }
 
     // ------------------------------------------------------------------

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.customerwalletservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.customerwalletservice.dto.response.ClienteBusquedaResponse;
 import org.transportsgt.customerwalletservice.dto.response.ClienteResponse;

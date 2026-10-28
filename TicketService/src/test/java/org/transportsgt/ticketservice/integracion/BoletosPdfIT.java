@@ -1,11 +1,11 @@
 package org.transportsgt.ticketservice.integracion;
 
 import org.junit.jupiter.api.Test;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.time.Instant;
 import java.util.UUID;

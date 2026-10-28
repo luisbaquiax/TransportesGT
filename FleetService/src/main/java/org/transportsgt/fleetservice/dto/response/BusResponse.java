@@ -1,6 +1,6 @@
 package org.transportsgt.fleetservice.dto.response;
 
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

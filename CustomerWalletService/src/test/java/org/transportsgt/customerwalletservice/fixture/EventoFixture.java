@@ -1,12 +1,12 @@
 package org.transportsgt.customerwalletservice.fixture;
 
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.DatosAlquilerCancelado;
-import org.transportsgt.eventos.payload.DatosBoletosAnulados;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerCancelado;
+import org.transportsgt.eventos.payload.boletos.DatosBoletosAnulados;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.time.Instant;

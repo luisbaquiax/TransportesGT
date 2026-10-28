@@ -25,7 +25,9 @@ class JobsTest {
     void envio_cuandoHayOnoHayCorreos_procesaUnLote() {
         // Arrange
         EnvioCorreosJob job = new EnvioCorreosJob(envio);
-        when(envio.procesar()).thenReturn(new ResumenEnvio(3, 1, 0), new ResumenEnvio(0, 0, 0));
+        when(envio.procesar()).thenReturn(
+                new ResumenEnvio(3, 1, 0),
+                new ResumenEnvio(0, 0, 0));
 
         // Act
         job.ejecutar();

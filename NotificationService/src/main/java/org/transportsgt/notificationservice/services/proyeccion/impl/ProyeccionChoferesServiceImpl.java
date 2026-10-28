@@ -3,7 +3,7 @@ package org.transportsgt.notificationservice.services.proyeccion.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.eventos.payload.DatosChofer;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
 import org.transportsgt.notificationservice.repositories.ChoferLicenciaRepository;
 import org.transportsgt.notificationservice.repositories.RecordatorioLicenciaRepository;
 import org.transportsgt.notificationservice.services.proyeccion.ProyeccionChoferesService;

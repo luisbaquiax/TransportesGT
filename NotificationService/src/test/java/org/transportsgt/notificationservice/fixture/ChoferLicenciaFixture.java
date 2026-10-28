@@ -9,7 +9,9 @@ import java.util.UUID;
 
 public final class ChoferLicenciaFixture {
 
-    /** Hoy en Guatemala con el {@code Clock} de las pruebas ({@link EventoFixture#AHORA}). */
+    /**
+     * Hoy en Guatemala con el {@code Clock} de las pruebas ({@link EventoFixture#AHORA}).
+     */
     public static final LocalDate HOY = LocalDate.parse("2026-10-20");
     public static final LocalDate VENCIMIENTO = LocalDate.parse("2027-03-15");
 
@@ -22,7 +24,9 @@ public final class ChoferLicenciaFixture {
                 .activo(true).version(0L).build();
     }
 
-    /** Aviso PENDIENTE de 30 días para la fecha vigente del chofer, programado para hoy. */
+    /**
+     * Aviso PENDIENTE de 30 días para la fecha vigente del chofer, programado para hoy.
+     */
     public static RecordatorioLicencia aviso(ChoferLicencia chofer) {
         return RecordatorioLicencia.builder().id(UUID.randomUUID()).chofer(chofer)
                 .fechaVencimiento(chofer.getFechaVencimientoLicencia()).diasAnticipacion((short) 30)

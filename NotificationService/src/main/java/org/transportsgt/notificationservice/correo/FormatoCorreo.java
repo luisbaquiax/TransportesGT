@@ -24,9 +24,6 @@ public class FormatoCorreo {
     private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final String SIN_DATO = "—";
 
-    /**
-     * {@code 3800.5} → {@code Q 3,800.50}.
-     */
     public String dinero(BigDecimal monto) {
         if (monto == null) {
             return SIN_DATO;
@@ -35,9 +32,6 @@ public class FormatoCorreo {
         return "Q " + formato.format(monto.setScale(2, RoundingMode.HALF_UP));
     }
 
-    /**
-     * Fecha y hora en Guatemala: acepta {@link Instant}, {@link OffsetDateTime} o {@link ZonedDateTime}.
-     */
     public String fechaHora(Object instante) {
         ZonedDateTime enGuatemala = switch (instante) {
             case Instant i -> i.atZone(Fechas.ZONA_GUATEMALA);

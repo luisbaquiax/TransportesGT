@@ -17,8 +17,8 @@ import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
 import org.transportsgt.customerwalletservice.utils.Dinero;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.util.Optional;

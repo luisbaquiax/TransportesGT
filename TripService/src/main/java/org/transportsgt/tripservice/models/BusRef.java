@@ -2,7 +2,7 @@ package org.transportsgt.tripservice.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 
 import java.util.UUID;
 

@@ -1,5 +1,9 @@
 package org.transportsgt.customerwalletservice.config.security;
 
+import org.transportsgt.customerwalletservice.config.security.filters.FiltroClaveInterna;
+import org.transportsgt.customerwalletservice.config.security.handlers.JsonAccessDeniedHandler;
+import org.transportsgt.customerwalletservice.config.security.handlers.JsonAuthenticationEntryPoint;
+
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

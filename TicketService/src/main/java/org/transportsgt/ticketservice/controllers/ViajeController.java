@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.ticketservice.config.security.FiltroClaveInterna;
+import org.transportsgt.ticketservice.config.security.filters.FiltroClaveInterna;
 import org.transportsgt.ticketservice.dto.response.AsientoMaximoResponse;
 import org.transportsgt.ticketservice.dto.response.MapaAsientosResponse;
 import org.transportsgt.ticketservice.dto.response.ViajeDisponibleResponse;

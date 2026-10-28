@@ -5,7 +5,8 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.transportsgt.ticketservice.clients.dto.PagoCarteraRequest;
 import org.transportsgt.ticketservice.exception.CarteraNoDisponibleException;
 import org.transportsgt.ticketservice.exception.PagoRechazadoException;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -28,9 +29,10 @@ import java.util.function.Supplier;
 /**
  * Adaptador de {@link PasarelaPago} sobre Cartera: Resilience4j (instancias {@code cartera} de Retry y CircuitBreaker
  */
-@Slf4j
 @Component
 public class CarteraPasarelaPago implements PasarelaPago {
+
+    private static final Logger log = LoggerFactory.getLogger(CarteraPasarelaPago.class);
 
     static final String INSTANCIA = "cartera";
 
@@ -108,7 +110,7 @@ public class CarteraPasarelaPago implements PasarelaPago {
                 mensaje = cuerpo.get("error").asString();
             }
         } catch (RuntimeException ilegible) {
-            log.warn("Respuesta de error de Cartera ilegible (status {})", e.getStatusCode().value());
+            log.warn("Respuesta de error de Cartera ilegible (status {})", String.valueOf(e.getStatusCode().value()));
         }
         return new PagoRechazadoException(status == null ? HttpStatus.UNPROCESSABLE_CONTENT : status, codigo, mensaje);
     }

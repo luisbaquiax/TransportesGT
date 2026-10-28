@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
 import org.transportsgt.customerwalletservice.dto.response.CarteraResponse;
 import org.transportsgt.customerwalletservice.dto.response.MovimientoResponse;
@@ -35,7 +35,7 @@ import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraSpecs;
 import org.transportsgt.customerwalletservice.utils.Dinero;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

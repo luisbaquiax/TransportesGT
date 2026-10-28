@@ -2,7 +2,7 @@ package org.transportsgt.notificationservice.eventos.correo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.SobreEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
 import org.transportsgt.notificationservice.models.TipoNotificacion;
 import org.transportsgt.notificationservice.services.bandeja.BandejaSalida;
 import org.transportsgt.notificationservice.services.bandeja.ClaveDedup;

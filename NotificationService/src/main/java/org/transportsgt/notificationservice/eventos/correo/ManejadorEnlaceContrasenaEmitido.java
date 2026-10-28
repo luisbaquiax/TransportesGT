@@ -2,10 +2,10 @@ package org.transportsgt.notificationservice.eventos.correo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosEnlaceContrasena;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosEnlaceContrasena;
 import org.transportsgt.notificationservice.eventos.ValidacionEventos;
 import org.transportsgt.notificationservice.services.enlace.EnlaceContrasenaService;
 

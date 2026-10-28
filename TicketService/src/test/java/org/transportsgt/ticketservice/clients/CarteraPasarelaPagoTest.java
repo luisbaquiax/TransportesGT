@@ -21,7 +21,7 @@ import org.transportsgt.ticketservice.clients.dto.PagoCarteraRequest;
 import org.transportsgt.ticketservice.clients.dto.PagoCarteraResponse;
 import org.transportsgt.ticketservice.exception.CarteraNoDisponibleException;
 import org.transportsgt.ticketservice.exception.PagoRechazadoException;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.math.BigDecimal;

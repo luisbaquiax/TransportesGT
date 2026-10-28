@@ -2,8 +2,8 @@ package org.transportsgt.privaterentalservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
 import org.transportsgt.privaterentalservice.mappers.AlquilerMapper;
 import org.transportsgt.privaterentalservice.models.Alquiler;
 

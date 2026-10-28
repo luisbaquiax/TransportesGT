@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Plantillas {@code templates/correo/<tipo>.html} (p. ej. {@code compra-boletos.html}), todas sobre
+ * Plantillas {@code templates/correo/<tipo>.html}, todas sobre
  * {@code correo/layout.html}. El asunto es el {@code <title>} de la plantilla, así vive junto al cuerpo.
  */
 @Component

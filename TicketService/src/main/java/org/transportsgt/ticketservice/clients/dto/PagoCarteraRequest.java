@@ -1,7 +1,7 @@
 package org.transportsgt.ticketservice.clients.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

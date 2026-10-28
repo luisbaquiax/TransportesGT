@@ -3,11 +3,11 @@ package org.transportsgt.notificationservice.integracion;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosChofer;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.eventos.payload.TipoLicencia;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.eventos.payload.flota.TipoLicencia;
 import org.transportsgt.notificationservice.services.licencia.AvisosLicenciaService;
 import org.transportsgt.notificationservice.utils.Fechas;
 

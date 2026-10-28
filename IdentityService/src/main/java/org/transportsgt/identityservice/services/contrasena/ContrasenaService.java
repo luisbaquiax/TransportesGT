@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.contrasena;
 
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.CambiarContrasenaRequest;
 import org.transportsgt.identityservice.dto.request.OlvideContrasenaRequest;
 import org.transportsgt.identityservice.dto.request.RestablecerContrasenaRequest;

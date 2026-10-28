@@ -7,22 +7,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.transportsgt.eventos.payload.PropositoContrasena;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.identityservice.dto.request.ActualizarUsuarioRequest;
 import org.transportsgt.identityservice.dto.request.CrearUsuarioRequest;
-import org.transportsgt.identityservice.dto.response.PaginaResponse;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;
 import org.transportsgt.identityservice.eventos.EventosIdentidad;
 import org.transportsgt.identityservice.exception.ActivacionNoPendienteException;
@@ -30,12 +24,9 @@ import org.transportsgt.identityservice.exception.CorreoDuplicadoException;
 import org.transportsgt.identityservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.identityservice.exception.RegistroModificadoException;
 import org.transportsgt.identityservice.exception.RolNoPermitidoException;
-import org.transportsgt.identityservice.exception.SucursalInactivaException;
 import org.transportsgt.identityservice.exception.SucursalNoEncontradaException;
-import org.transportsgt.identityservice.exception.SucursalNoPermitidaException;
 import org.transportsgt.identityservice.exception.UltimoAdministradorSistemaException;
 import org.transportsgt.identityservice.exception.UltimoAdministradorSucursalException;
-import org.transportsgt.identityservice.exception.UsuarioNoEncontradoException;
 import org.transportsgt.identityservice.fixtures.SucursalFixture;
 import org.transportsgt.identityservice.fixtures.UsuarioFixture;
 import org.transportsgt.identityservice.mappers.UsuarioMapper;
@@ -46,7 +37,6 @@ import org.transportsgt.identityservice.repositories.UsuarioRepository;
 import org.transportsgt.identityservice.services.contrasena.EnlacesContrasenaService;
 import org.transportsgt.identityservice.utils.GeneradorTokenSeguro;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -118,7 +108,7 @@ class GestionUsuariosServiceImplTest {
         autorizacion = new AutorizacionUsuarios();
         ValidadorUsuario validador = new ValidadorUsuario(usuarioRepository);
         reglas = new ReglasAdministradores(usuarioRepository);
-        AltaPersonalServiceImpl altaPersonal = new AltaPersonalServiceImpl(usuarioRepository, validador,
+        RegistroPersonalServiceImpl altaPersonal = new RegistroPersonalServiceImpl(usuarioRepository, validador,
                 tokenContrasenaService, passwordEncoder, generadorToken, correos, eventos);
         usuarioService = new GestionUsuariosServiceImpl(usuarioRepository, altaPersonal, tokenContrasenaService,
                 autorizacion, validador, reglas, buscador, correos, usuarioMapper, eventos);

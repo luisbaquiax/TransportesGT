@@ -2,7 +2,7 @@ package org.transportsgt.fleetservice.services.autorizacion;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.fleetservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.fleetservice.exception.RegistroModificadoException;
 import org.transportsgt.fleetservice.exception.SucursalInactivaException;

@@ -3,10 +3,10 @@ package org.transportsgt.tripservice.eventos;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosBus;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.flota.DatosBus;
 import org.transportsgt.tripservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Proyección de buses de Flota. Idempotente por versión. */

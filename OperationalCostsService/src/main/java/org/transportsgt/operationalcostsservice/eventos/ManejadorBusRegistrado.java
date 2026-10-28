@@ -1,7 +1,7 @@
 package org.transportsgt.operationalcostsservice.eventos;
 
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.TipoEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
 import org.transportsgt.operationalcostsservice.repositories.BusRefRepository;
 
 /** Proyecta BusRegistrado en bus_ref (idempotente por versionAgregado). */

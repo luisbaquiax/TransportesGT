@@ -3,10 +3,10 @@ package org.transportsgt.customerwalletservice.eventos;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.transportsgt.customerwalletservice.services.ClienteService;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosUsuario;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
 
 /**
  * Cola {@code cartera.identidad.q}, llave {@code identidad.usuario.actualizado}.

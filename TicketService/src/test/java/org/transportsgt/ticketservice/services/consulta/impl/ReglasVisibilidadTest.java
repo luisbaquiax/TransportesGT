@@ -13,7 +13,7 @@ import org.transportsgt.ticketservice.models.ClienteRef;
 import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.repositories.ClienteRefRepository;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.Optional;
 import java.util.UUID;

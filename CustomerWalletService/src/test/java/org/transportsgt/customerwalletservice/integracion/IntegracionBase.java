@@ -17,12 +17,12 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.transportsgt.eventos.ConvertidorEventos;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.TopologiaEventos;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.contrato.ConvertidorEventos;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.mensajeria.rabbit.TopologiaEventos;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -78,7 +78,9 @@ public abstract class IntegracionBase {
     private final NimbusJwtEncoder codificador = new NimbusJwtEncoder(new ImmutableSecret<>(
             new SecretKeySpec(Base64.getDecoder().decode(SECRETO_JWT), "HmacSHA256")));
 
-    /** Token como el que emite Identidad (mismos claims y emisor). */
+    /**
+     * Token como el que emite Identidad (mismos claims y emisor).
+     */
     protected String token(UUID idUsuario, Rol rol) {
         Instant ahora = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -122,7 +124,9 @@ public abstract class IntegracionBase {
         rabbit.send(TopologiaEventos.EXCHANGE, llaveRuteo, mensaje);
     }
 
-    /** Espera a que el consumidor termine (no hay Awaitility en el proyecto). */
+    /**
+     * Espera a que el consumidor termine (no hay Awaitility en el proyecto).
+     */
     protected static void esperar(String descripcion, BooleanSupplier condicion) {
         long limite = System.nanoTime() + ESPERA_MAXIMA.toNanos();
         while (System.nanoTime() < limite) {
@@ -154,7 +158,9 @@ public abstract class IntegracionBase {
         esperar("cliente " + idUsuario, () -> clientes(idUsuario) == 1);
     }
 
-    /** Cliente creado por UsuarioCreado, con NIT y saldo listos para pagar. */
+    /**
+     * Cliente creado por UsuarioCreado, con NIT y saldo listos para pagar.
+     */
     protected UUID clienteConSaldo(String saldo) {
         UUID idUsuario = UUID.randomUUID();
         publicarUsuarioCreado(idUsuario, true);

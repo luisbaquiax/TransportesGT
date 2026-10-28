@@ -1,11 +1,11 @@
 package org.transportsgt.customerwalletservice.services;
 
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
 import org.transportsgt.customerwalletservice.dto.response.PagoConsultaResponse;
 import org.transportsgt.customerwalletservice.dto.response.PagoResponse;
 import org.transportsgt.customerwalletservice.dto.response.Resultado;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.util.UUID;
 

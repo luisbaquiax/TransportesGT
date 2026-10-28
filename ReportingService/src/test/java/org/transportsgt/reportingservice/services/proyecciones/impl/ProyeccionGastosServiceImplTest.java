@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.LineaTaller;
-import org.transportsgt.eventos.payload.TipoLinea;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.costos.LineaTaller;
+import org.transportsgt.eventos.payload.costos.TipoLinea;
 import org.transportsgt.reportingservice.fixture.EventoFixture;
 import org.transportsgt.reportingservice.fixture.RepSucursalFixture;
 import org.transportsgt.reportingservice.fixture.RepViajeFixture;
@@ -131,7 +131,7 @@ class ProyeccionGastosServiceImplTest {
         void registrarTaller_cuandoNoTraeLineas_esNoRecuperable() {
             assertThrows(EventoNoRecuperableException.class, () -> servicio.registrarTaller(EventoFixture.sobre(
                     TipoEvento.GASTO_TALLER_REGISTRADO,
-                    new org.transportsgt.eventos.payload.DatosGastoTaller(UUID.randomUUID(), idBus, idSucursal,
+                    new org.transportsgt.eventos.payload.costos.DatosGastoTaller(UUID.randomUUID(), idBus, idSucursal,
                             EventoFixture.FECHA_PAGO, BigDecimal.ONE, null))));
         }
     }

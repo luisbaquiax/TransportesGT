@@ -3,8 +3,8 @@ package org.transportsgt.ticketservice.integracion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MvcResult;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 import org.transportsgt.ticketservice.jobs.RecuperacionComprasJob;
 
 import java.util.ArrayList;
@@ -225,8 +225,8 @@ class CompraEnLineaIT extends IntegracionBase {
             Future<MvcResult> compra = hilo.submit(() -> comprar(comprador, idCompra, idViaje, 9).andReturn());
             esperar("compra reservada", () -> compras(idCompra) == 1);
             publicarYEsperar(TipoEvento.VIAJE_ELIMINADO, sobre(TipoEvento.VIAJE_ELIMINADO, idViaje, 1L,
-                    new org.transportsgt.eventos.payload.DatosViajeEliminado(idViaje,
-                            org.transportsgt.eventos.payload.TipoViaje.REGULAR, null, java.time.Instant.now(),
+                    new org.transportsgt.eventos.payload.viajes.DatosViajeEliminado(idViaje,
+                            org.transportsgt.eventos.payload.viajes.TipoViaje.REGULAR, null, java.time.Instant.now(),
                             UUID.randomUUID())));
             resultado = compra.get();
         }

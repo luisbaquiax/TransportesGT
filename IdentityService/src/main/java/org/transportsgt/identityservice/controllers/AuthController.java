@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.identityservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.CambiarContrasenaRequest;
 import org.transportsgt.identityservice.dto.request.LoginRequest;
 import org.transportsgt.identityservice.dto.request.OlvideContrasenaRequest;

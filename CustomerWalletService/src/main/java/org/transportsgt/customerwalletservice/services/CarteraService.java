@@ -1,6 +1,6 @@
 package org.transportsgt.customerwalletservice.services;
 
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.RecargaRequest;
 import org.transportsgt.customerwalletservice.dto.response.CarteraResponse;
 import org.transportsgt.customerwalletservice.dto.response.MovimientoResponse;

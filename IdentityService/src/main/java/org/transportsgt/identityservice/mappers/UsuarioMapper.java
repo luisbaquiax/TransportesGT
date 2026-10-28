@@ -2,7 +2,7 @@ package org.transportsgt.identityservice.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.transportsgt.eventos.payload.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
 import org.transportsgt.identityservice.dto.response.UsuarioResponse;
 import org.transportsgt.identityservice.models.Usuario;
 

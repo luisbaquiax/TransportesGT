@@ -12,8 +12,11 @@ import java.time.LocalDate;
  * @param fechaRecarga fecha de negocio elegida por el usuario (valor inicial: hoy)
  */
 public record RecargaRequest(
-        @Schema(example = "200.00", type = "string") @NotNull @DecimalMin(value = "0.01")
-        @Digits(integer = 10, fraction = 2) BigDecimal monto,
-        @Schema(example = "2026-10-20") @NotNull LocalDate fechaRecarga
+        @Schema(example = "200.00", type = "string")
+        @NotNull @DecimalMin(value = "0.01")
+        @Digits(integer = 10, fraction = 2)
+        BigDecimal monto,
+        @Schema(example = "2026-10-20") @NotNull
+        LocalDate fechaRecarga
 ) {
 }

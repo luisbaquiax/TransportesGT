@@ -1,8 +1,8 @@
 package org.transportsgt.reportingservice.services.proyecciones;
 
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.eventos.payload.DatosChofer;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.flota.DatosBus;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
 
 /**
  * Proyecciones {@code rep_bus} y {@code rep_chofer} (eventos de Flota).

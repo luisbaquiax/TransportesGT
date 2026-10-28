@@ -4,7 +4,7 @@ import org.transportsgt.customerwalletservice.models.Cartera;
 import org.transportsgt.customerwalletservice.models.Cliente;
 import org.transportsgt.customerwalletservice.models.MovimientoCartera;
 import org.transportsgt.customerwalletservice.models.TipoMovimiento;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

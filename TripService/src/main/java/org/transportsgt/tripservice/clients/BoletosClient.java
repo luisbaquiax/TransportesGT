@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.transportsgt.eventos.ContextoCorrelacion;
+import org.transportsgt.eventos.contexto.ContextoCorrelacion;
 import org.transportsgt.tripservice.config.BoletosProperties;
 import org.transportsgt.tripservice.exception.ServicioNoDisponibleException;
 

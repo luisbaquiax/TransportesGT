@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.services.consulta;
 
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 
 import java.util.UUID;
 

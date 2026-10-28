@@ -3,7 +3,7 @@ package org.transportsgt.operationalcostsservice.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Immutable;
-import org.transportsgt.eventos.payload.TipoLinea;
+import org.transportsgt.eventos.payload.costos.TipoLinea;
 
 import java.math.BigDecimal;
 import java.util.UUID;

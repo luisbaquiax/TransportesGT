@@ -1,6 +1,6 @@
 package org.transportsgt.reportingservice.services.catalogos;
 
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.dto.response.catalogos.OpcionCatalogo;
 
 import java.util.List;

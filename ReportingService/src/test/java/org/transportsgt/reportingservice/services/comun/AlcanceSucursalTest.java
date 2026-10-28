@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.exception.BusNoEncontradoException;
 import org.transportsgt.reportingservice.exception.RutaNoEncontradaException;
 import org.transportsgt.reportingservice.exception.SinPermisoSucursalException;

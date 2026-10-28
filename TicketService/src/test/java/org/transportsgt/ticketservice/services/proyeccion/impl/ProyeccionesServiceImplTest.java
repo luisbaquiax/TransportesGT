@@ -11,8 +11,8 @@ import org.transportsgt.ticketservice.fixture.ViajeRefFixture;
 import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.repositories.ClienteRefRepository;
 import org.transportsgt.ticketservice.repositories.ViajeRefRepository;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.util.UUID;
 

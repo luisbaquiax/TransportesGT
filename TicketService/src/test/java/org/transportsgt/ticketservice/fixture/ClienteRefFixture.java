@@ -1,9 +1,9 @@
 package org.transportsgt.ticketservice.fixture;
 
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.models.ClienteRef;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.time.Instant;
 import java.util.UUID;

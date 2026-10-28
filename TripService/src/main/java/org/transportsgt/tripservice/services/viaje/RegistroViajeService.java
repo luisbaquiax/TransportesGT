@@ -1,6 +1,6 @@
 package org.transportsgt.tripservice.services.viaje;
 
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.dto.response.Responses;
 

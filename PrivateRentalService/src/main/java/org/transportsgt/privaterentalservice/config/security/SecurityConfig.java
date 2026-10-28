@@ -1,5 +1,8 @@
 package org.transportsgt.privaterentalservice.config.security;
 
+import org.transportsgt.privaterentalservice.config.security.handlers.JsonAccessDeniedHandler;
+import org.transportsgt.privaterentalservice.config.security.handlers.JsonAuthenticationEntryPoint;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
