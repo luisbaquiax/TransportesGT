@@ -3,7 +3,7 @@ package org.transportsgt.operationalcostsservice.dominio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.DatosLlegada;
+import org.transportsgt.eventos.payload.viajes.DatosLlegada;
 import org.transportsgt.operationalcostsservice.exception.ReglaIntegridadException;
 import org.transportsgt.operationalcostsservice.models.ConfiguracionDepreciacion;
 import org.transportsgt.operationalcostsservice.models.GastoCombustible;

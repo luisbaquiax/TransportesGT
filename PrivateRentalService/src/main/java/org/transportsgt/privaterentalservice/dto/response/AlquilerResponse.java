@@ -2,7 +2,7 @@ package org.transportsgt.privaterentalservice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 import org.transportsgt.privaterentalservice.models.EstadoAlquiler;
 
 import java.math.BigDecimal;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.privaterentalservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.TarifaRequest;
 import org.transportsgt.privaterentalservice.dto.response.TarifaResponse;
 import org.transportsgt.privaterentalservice.exception.RespuestaError;

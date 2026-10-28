@@ -1,10 +1,10 @@
 package org.transportsgt.notificationservice.integracion;
 
 import org.junit.jupiter.api.Test;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosCarteraRecargada;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.cartera.DatosCarteraRecargada;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -41,7 +41,7 @@ class EnvioCorreosIT extends IntegracionBase {
         // Arrange
         DatosUsuario cliente = contacto(Rol.CLIENTE, null, true);
         UUID idEvento = UUID.randomUUID();
-        var evento = new org.transportsgt.eventos.SobreEvento<>(idEvento, TipoEvento.CARTERA_RECARGADA.nombre(), 1,
+        var evento = new org.transportsgt.eventos.contrato.SobreEvento<>(idEvento, TipoEvento.CARTERA_RECARGADA.nombre(), 1,
                 java.time.Instant.now(), "servicio-clientes", UUID.randomUUID(), 1L, UUID.randomUUID(),
                 new DatosCarteraRecargada(UUID.randomUUID(), UUID.randomUUID(), cliente.idUsuario(),
                         new BigDecimal("50.00"), new BigDecimal("80.00"), LocalDate.parse("2026-10-20")));

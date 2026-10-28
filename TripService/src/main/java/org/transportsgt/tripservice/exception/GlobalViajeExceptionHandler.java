@@ -134,7 +134,7 @@ public class GlobalViajeExceptionHandler {
                 }
                 if (PG_RAISE.equals(state)) {
                     String msg = sql.getMessage() != null && sql.getMessage().startsWith("ERROR: ")
-                            ? sql.getMessage().substring(8)
+                            ? sql.getMessage().substring("ERROR: ".length())
                             : (sql.getMessage() != null ? sql.getMessage() : "Regla de negocio violada");
                     String codigo = mapCodigoPorMensaje(msg);
                     HttpStatus status = "VIAJE_NO_ELIMINABLE".equals(codigo) ? HttpStatus.CONFLICT

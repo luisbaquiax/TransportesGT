@@ -2,8 +2,8 @@ package org.transportsgt.notificationservice.eventos;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
 
 
 /**

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.ticketservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.AbordajeRequest;
 import org.transportsgt.ticketservice.dto.response.AbordajeResponse;
 import org.transportsgt.ticketservice.dto.response.PasajerosViajeResponse;

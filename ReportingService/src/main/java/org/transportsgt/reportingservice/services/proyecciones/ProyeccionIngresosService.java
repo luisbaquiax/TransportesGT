@@ -1,10 +1,10 @@
 package org.transportsgt.reportingservice.services.proyecciones;
 
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosAlquilerCancelado;
-import org.transportsgt.eventos.payload.DatosAlquilerConfirmado;
-import org.transportsgt.eventos.payload.DatosBoletosAnulados;
-import org.transportsgt.eventos.payload.DatosVentaBoletos;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerCancelado;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerConfirmado;
+import org.transportsgt.eventos.payload.boletos.DatosBoletosAnulados;
+import org.transportsgt.eventos.payload.boletos.DatosVentaBoletos;
 
 /**
  * Hechos de {@code rep_ingreso} (eventos de Boletos y Alquileres).

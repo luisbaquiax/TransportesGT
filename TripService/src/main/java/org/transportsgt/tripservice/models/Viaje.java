@@ -5,8 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 import org.transportsgt.privaterentalservice.clients.CarteraClient;
 import org.transportsgt.privaterentalservice.eventos.EventosAlquiler;
 import org.transportsgt.privaterentalservice.models.Alquiler;

@@ -1,6 +1,6 @@
 package org.transportsgt.fleetservice.dto.response;
 
-import org.transportsgt.eventos.payload.TipoLicencia;
+import org.transportsgt.eventos.payload.flota.TipoLicencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -2,7 +2,7 @@ package org.transportsgt.ticketservice.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

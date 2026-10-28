@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.notificationservice.correo.CorreoRenderizado;
 import org.transportsgt.notificationservice.correo.RenderizadorCorreo;
 import org.transportsgt.notificationservice.exception.ContactoNoDisponibleException;

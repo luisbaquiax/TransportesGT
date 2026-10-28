@@ -1,9 +1,9 @@
 package org.transportsgt.customerwalletservice.fixture;
 
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.models.Cliente;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.time.Instant;
 import java.util.UUID;

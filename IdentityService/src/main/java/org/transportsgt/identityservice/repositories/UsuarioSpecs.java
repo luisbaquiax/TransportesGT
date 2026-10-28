@@ -3,7 +3,7 @@ package org.transportsgt.identityservice.repositories;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.identityservice.models.Usuario;
 
 import java.util.ArrayList;

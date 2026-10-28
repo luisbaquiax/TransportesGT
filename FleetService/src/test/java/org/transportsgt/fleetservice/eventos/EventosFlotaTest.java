@@ -5,10 +5,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.eventos.payload.DatosChofer;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.flota.DatosBus;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
 import org.transportsgt.fleetservice.mappers.BusMapper;
 import org.transportsgt.fleetservice.mappers.ChoferMapper;
 import org.transportsgt.fleetservice.models.Bus;
@@ -62,7 +62,7 @@ class EventosFlotaTest {
         UUID id = UUID.randomUUID();
         Chofer chofer = Chofer.builder().id(id).version(0L).build();
         DatosChofer datos = new DatosChofer(id, null, null, "Nombre", "c@t.gt", "5555", "LIC",
-                org.transportsgt.eventos.payload.TipoLicencia.A, java.time.LocalDate.of(2027, 1, 1),
+                org.transportsgt.eventos.payload.flota.TipoLicencia.A, java.time.LocalDate.of(2027, 1, 1),
                 new BigDecimal("150.00"), true);
         when(choferMapper.toDatos(chofer)).thenReturn(datos);
 
@@ -76,7 +76,7 @@ class EventosFlotaTest {
         UUID id = UUID.randomUUID();
         Chofer chofer = Chofer.builder().id(id).version(5L).build();
         DatosChofer datos = new DatosChofer(id, null, null, "Nombre", "c@t.gt", "5555", "LIC",
-                org.transportsgt.eventos.payload.TipoLicencia.A, java.time.LocalDate.of(2027, 1, 1),
+                org.transportsgt.eventos.payload.flota.TipoLicencia.A, java.time.LocalDate.of(2027, 1, 1),
                 new BigDecimal("150.00"), true);
         when(choferMapper.toDatos(chofer)).thenReturn(datos);
 

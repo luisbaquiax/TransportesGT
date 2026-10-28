@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.customerwalletservice.config.security.UsuarioAutenticado;
+import org.transportsgt.customerwalletservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.customerwalletservice.dto.request.PagoRequest;
 import org.transportsgt.customerwalletservice.dto.response.PagoConsultaResponse;
 import org.transportsgt.customerwalletservice.dto.response.PagoResponse;
@@ -30,7 +30,7 @@ import org.transportsgt.customerwalletservice.models.TipoMovimiento;
 import org.transportsgt.customerwalletservice.repositories.CarteraRepository;
 import org.transportsgt.customerwalletservice.repositories.MovimientoCarteraRepository;
 import org.transportsgt.customerwalletservice.utils.Dinero;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

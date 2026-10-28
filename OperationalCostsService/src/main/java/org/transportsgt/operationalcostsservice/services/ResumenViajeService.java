@@ -1,6 +1,6 @@
 package org.transportsgt.operationalcostsservice.services;
 
-import org.transportsgt.operationalcostsservice.config.security.UsuarioAutenticado;
+import org.transportsgt.operationalcostsservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.operationalcostsservice.dto.response.ResumenCostosViajeResponse;
 
 import java.util.UUID;

@@ -15,7 +15,7 @@ import org.openpdf.text.pdf.PdfPCell;
 import org.openpdf.text.pdf.PdfPTable;
 import org.openpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 import org.transportsgt.ticketservice.models.Boleto;
 import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.ViajeRef;

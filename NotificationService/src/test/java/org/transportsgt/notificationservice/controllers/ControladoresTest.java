@@ -1,14 +1,14 @@
 package org.transportsgt.notificationservice.controllers;
 
-import org.transportsgt.notificationservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.notificationservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.notificationservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.notificationservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.notificationservice.dto.response.NotificacionDetalleResponse;
 import org.transportsgt.notificationservice.dto.response.NotificacionResumenResponse;
 import org.transportsgt.notificationservice.dto.response.PaginaResponse;

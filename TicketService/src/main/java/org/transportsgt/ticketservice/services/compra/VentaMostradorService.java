@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.services.compra;
 
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.dto.request.VentaMostradorRequest;
 import org.transportsgt.ticketservice.dto.response.CompraResponse;
 import org.transportsgt.ticketservice.dto.response.Resultado;

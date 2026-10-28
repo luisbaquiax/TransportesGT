@@ -3,7 +3,7 @@ package org.transportsgt.reportingservice.integracion;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;

@@ -8,11 +8,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.transportsgt.customerwalletservice.fixture.EventoFixture;
 import org.transportsgt.customerwalletservice.services.ClienteService;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosUsuario;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosUsuario;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.UUID;
 

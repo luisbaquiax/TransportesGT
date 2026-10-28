@@ -2,12 +2,12 @@ package org.transportsgt.ticketservice.eventos;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosPerfilClienteActualizado;
-import org.transportsgt.eventos.payload.DatosViaje;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.cartera.DatosPerfilClienteActualizado;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 
 /**
  * Validaciones y logs comunes de los manejadores.

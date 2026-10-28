@@ -15,8 +15,8 @@ public interface BusRefRepository extends JpaRepository<BusRef, UUID> {
     @Query("""
             SELECT b FROM BusRef b
              WHERE b.idSucursal = :idSucursal AND b.activo = true
-               AND b.estadoOperativo NOT IN (org.transportsgt.eventos.payload.EstadoOperativo.EN_TALLER,
-                                             org.transportsgt.eventos.payload.EstadoOperativo.FUERA_DE_SERVICIO)
+               AND b.estadoOperativo NOT IN (org.transportsgt.eventos.payload.flota.EstadoOperativo.EN_TALLER,
+                                             org.transportsgt.eventos.payload.flota.EstadoOperativo.FUERA_DE_SERVICIO)
              ORDER BY b.placa
             """)
     List<BusRef> findAsignablesPorSucursal(@Param("idSucursal") UUID idSucursal);

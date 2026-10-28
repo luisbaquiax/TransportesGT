@@ -1,7 +1,7 @@
 package org.transportsgt.privaterentalservice.services.consulta;
 
 import org.springframework.data.domain.Pageable;
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.FiltroAlquileres;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;
 import org.transportsgt.privaterentalservice.dto.response.PaginaResponse;

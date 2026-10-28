@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Immutable;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -2,14 +2,14 @@ package org.transportsgt.tripservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.BusAsignado;
-import org.transportsgt.eventos.payload.ChoferAsignado;
-import org.transportsgt.eventos.payload.DatosLlegada;
-import org.transportsgt.eventos.payload.DatosRutaEliminada;
-import org.transportsgt.eventos.payload.DatosSalida;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.flota.BusAsignado;
+import org.transportsgt.eventos.payload.flota.ChoferAsignado;
+import org.transportsgt.eventos.payload.viajes.DatosLlegada;
+import org.transportsgt.eventos.payload.viajes.DatosRutaEliminada;
+import org.transportsgt.eventos.payload.viajes.DatosSalida;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
 import org.transportsgt.tripservice.models.Ruta;
 import org.transportsgt.tripservice.models.Viaje;
 

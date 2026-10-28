@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.dto.response;
 
-import org.transportsgt.eventos.payload.Canal;
+import org.transportsgt.eventos.payload.boletos.Canal;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;

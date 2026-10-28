@@ -1,7 +1,7 @@
 package org.transportsgt.privaterentalservice.services.comun;
 
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.Nit;
+import org.transportsgt.eventos.soporte.Nit;
 import org.transportsgt.privaterentalservice.exception.SolicitudInvalidaException;
 
 /**

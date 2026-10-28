@@ -2,12 +2,12 @@ package org.transportsgt.identityservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosContrasenaCambiada;
-import org.transportsgt.eventos.payload.DatosEnlaceContrasena;
-import org.transportsgt.eventos.payload.MotivoContrasena;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosContrasenaCambiada;
+import org.transportsgt.eventos.payload.identidad.DatosEnlaceContrasena;
+import org.transportsgt.eventos.payload.identidad.MotivoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.identityservice.mappers.SucursalMapper;
 import org.transportsgt.identityservice.mappers.UsuarioMapper;
 import org.transportsgt.identityservice.models.Sucursal;

@@ -12,7 +12,7 @@ RUN chmod +x mvnw
 
 COPY src ./src
 
-RUN ./mvnw -B clean package -DskipTests
+RUN ./mvnw -B clean package
 
 # Etapa 2: ejecutar únicamente la aplicación
 FROM bellsoft/liberica-openjdk-alpine:21

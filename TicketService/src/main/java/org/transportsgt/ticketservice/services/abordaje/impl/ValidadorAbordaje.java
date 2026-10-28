@@ -2,8 +2,8 @@ package org.transportsgt.ticketservice.services.abordaje.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.EstadoViaje;
-import org.transportsgt.ticketservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
+import org.transportsgt.ticketservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.ticketservice.exception.BoletoNoValidoException;
 import org.transportsgt.ticketservice.exception.SinPermisoSucursalException;
 import org.transportsgt.ticketservice.exception.ViajeNoDisponibleException;

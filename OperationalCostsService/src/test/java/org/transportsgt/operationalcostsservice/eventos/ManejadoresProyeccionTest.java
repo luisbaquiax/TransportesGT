@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.eventos.payload.DatosSucursal;
-import org.transportsgt.eventos.payload.EstadoOperativo;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.payload.flota.DatosBus;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
+import org.transportsgt.eventos.payload.flota.EstadoOperativo;
 import org.transportsgt.operationalcostsservice.repositories.BusRefRepository;
 import org.transportsgt.operationalcostsservice.repositories.SucursalRefRepository;
 

@@ -1,5 +1,7 @@
 package org.transportsgt.ticketservice.config;
 
+import org.transportsgt.ticketservice.config.web.FiltroCorrelacion;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +10,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.transportsgt.ticketservice.clients.CarteraClient;
-import org.transportsgt.eventos.ContextoCorrelacion;
+import org.transportsgt.eventos.contexto.ContextoCorrelacion;
 
 import java.net.http.HttpClient;
 import java.time.Duration;

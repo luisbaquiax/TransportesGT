@@ -1,8 +1,8 @@
 package org.transportsgt.reportingservice.support;
 
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.transportsgt.eventos.payload.Rol;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.eventos.payload.identidad.Rol;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.services.comun.ArmadorReporteTabla;
 import org.transportsgt.reportingservice.services.comun.FilasTaller;
 import org.transportsgt.reportingservice.services.comun.TextosReporte;

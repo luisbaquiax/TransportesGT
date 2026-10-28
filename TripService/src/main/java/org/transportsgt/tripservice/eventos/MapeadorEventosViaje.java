@@ -1,10 +1,10 @@
 package org.transportsgt.tripservice.eventos;
 
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.BusAsignado;
-import org.transportsgt.eventos.payload.ChoferAsignado;
-import org.transportsgt.eventos.payload.DatosRuta;
-import org.transportsgt.eventos.payload.DatosViaje;
+import org.transportsgt.eventos.payload.flota.BusAsignado;
+import org.transportsgt.eventos.payload.flota.ChoferAsignado;
+import org.transportsgt.eventos.payload.viajes.DatosRuta;
+import org.transportsgt.eventos.payload.viajes.DatosViaje;
 import org.transportsgt.tripservice.models.Ruta;
 import org.transportsgt.tripservice.models.Viaje;
 

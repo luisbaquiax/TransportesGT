@@ -7,7 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.PropositoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
 import org.transportsgt.identityservice.config.IdentidadProperties;
 import org.transportsgt.identityservice.eventos.EventosIdentidad;
 import org.transportsgt.identityservice.exception.TokenContrasenaInvalidoException;

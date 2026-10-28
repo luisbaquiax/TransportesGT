@@ -107,7 +107,7 @@ public abstract class IntegracionBase {
                 ON CONFLICT (id) DO NOTHING""");
     }
 
-    protected String token(org.transportsgt.eventos.payload.Rol rol, UUID idSucursal, UUID idUsuario) {
+    protected String token(org.transportsgt.eventos.payload.identidad.Rol rol, UUID idSucursal, UUID idUsuario) {
         SecretKey clave = new SecretKeySpec(Base64.getDecoder().decode(SECRETO_PRUEBAS), "HmacSHA256");
         NimbusJwtEncoder encoder = new NimbusJwtEncoder(new ImmutableSecret<>(clave));
         JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
@@ -126,22 +126,22 @@ public abstract class IntegracionBase {
     }
 
     protected String tokenAdminSucursal() {
-        return token(org.transportsgt.eventos.payload.Rol.ADMIN_SUCURSAL, XELA, null);
+        return token(org.transportsgt.eventos.payload.identidad.Rol.ADMIN_SUCURSAL, XELA, null);
     }
 
     protected String tokenAdminSistema() {
-        return token(org.transportsgt.eventos.payload.Rol.ADMIN_SISTEMA, null, null);
+        return token(org.transportsgt.eventos.payload.identidad.Rol.ADMIN_SISTEMA, null, null);
     }
 
     protected String tokenCajero() {
-        return token(org.transportsgt.eventos.payload.Rol.CAJERO, XELA, null);
+        return token(org.transportsgt.eventos.payload.identidad.Rol.CAJERO, XELA, null);
     }
 
     /**
      * Chofer 1 de la semilla: idUsuario = e0000000-...-0001.
      */
     protected String tokenChofer1() {
-        return token(org.transportsgt.eventos.payload.Rol.CHOFER, XELA,
+        return token(org.transportsgt.eventos.payload.identidad.Rol.CHOFER, XELA,
                 UUID.fromString("e0000000-0000-4000-8000-000000000001"));
     }
 

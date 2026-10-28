@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.transportsgt.notificationservice.config.security.ConvertidorUsuarioAutenticado;
+import org.transportsgt.notificationservice.config.security.authentication.ConvertidorUsuarioAutenticado;
 import org.transportsgt.notificationservice.dto.response.PaginaResponse;
 import org.transportsgt.notificationservice.dto.response.RecordatorioLicenciaResponse;
 import org.transportsgt.notificationservice.exception.RespuestaError;

@@ -6,8 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.payload.TipoViaje;
+import org.transportsgt.eventos.payload.viajes.TipoViaje;
 import org.transportsgt.tripservice.exception.OperacionNoAutorizadaException;
+import org.transportsgt.tripservice.exception.SolicitudInvalidaException;
 import org.transportsgt.tripservice.exception.ViajeNoEncontradoException;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,8 @@ import org.transportsgt.tripservice.services.autorizacion.AutorizacionViaje;
 import org.transportsgt.tripservice.services.comun.BuscadorViajes;
 import org.transportsgt.tripservice.services.viaje.impl.FixturesViaje;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -139,5 +143,29 @@ class ConsultaViajesServiceImplTest {
         assertEquals(1, activos.size());
         verify(viajeRepository).findAllByIdBusAndEstadoInOrderByFechaHoraSalida(eq(f.bus1),
                 any(java.util.Set.class));
+    }
+
+    @Test
+    void resumenSinIdsEsInvalido() {
+        assertThrows(SolicitudInvalidaException.class, () -> servicio.resumen(null));
+        assertThrows(SolicitudInvalidaException.class, () -> servicio.resumen(Arrays.asList(null, null)));
+        verify(viajeRepository, never()).findAllConRutaByIdInOrderByFechaHoraSalida(any());
+    }
+
+    @Test
+    void resumenConMasDelMaximoEsInvalido() {
+        List<UUID> ids = new ArrayList<>();
+        for (int i = 0; i <= ConsultaViajesServiceImpl.MAX_IDS_RESUMEN; i++) {
+            ids.add(UUID.randomUUID());
+        }
+        assertThrows(SolicitudInvalidaException.class, () -> servicio.resumen(ids));
+    }
+
+    @Test
+    void resumenQuitaDuplicadosYNulos() {
+        UUID id = UUID.randomUUID();
+        when(viajeRepository.findAllConRutaByIdInOrderByFechaHoraSalida(java.util.Set.of(id))).thenReturn(List.of());
+
+        assertTrue(servicio.resumen(Arrays.asList(id, null, id)).isEmpty());
     }
 }

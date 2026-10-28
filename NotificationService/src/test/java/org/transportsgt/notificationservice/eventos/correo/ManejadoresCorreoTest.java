@@ -7,18 +7,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.DatosAlquilerConfirmado;
-import org.transportsgt.eventos.payload.DatosBoletosAnulados;
-import org.transportsgt.eventos.payload.DatosContrasenaCambiada;
-import org.transportsgt.eventos.payload.DatosEnlaceContrasena;
-import org.transportsgt.eventos.payload.DatosVentaBoletos;
-import org.transportsgt.eventos.payload.MotivoContrasena;
-import org.transportsgt.eventos.payload.PropositoContrasena;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerConfirmado;
+import org.transportsgt.eventos.payload.boletos.DatosBoletosAnulados;
+import org.transportsgt.eventos.payload.identidad.DatosContrasenaCambiada;
+import org.transportsgt.eventos.payload.identidad.DatosEnlaceContrasena;
+import org.transportsgt.eventos.payload.boletos.DatosVentaBoletos;
+import org.transportsgt.eventos.payload.identidad.MotivoContrasena;
+import org.transportsgt.eventos.payload.identidad.PropositoContrasena;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 import org.transportsgt.notificationservice.eventos.ValidacionEventos;
 import org.transportsgt.notificationservice.exception.ContactoNoDisponibleException;
 import org.transportsgt.notificationservice.fixture.ContactoFixture;
@@ -195,7 +195,7 @@ class ManejadoresCorreoTest {
         @Test
         void recarga_sinSaldoPosterior_esNoRecuperable() {
             // Arrange
-            var recarga = new org.transportsgt.eventos.payload.DatosCarteraRecargada(UUID.randomUUID(), UUID.randomUUID(),
+            var recarga = new org.transportsgt.eventos.payload.cartera.DatosCarteraRecargada(UUID.randomUUID(), UUID.randomUUID(),
                     idUsuario, java.math.BigDecimal.TEN, null, null);
 
             // Act & Assert

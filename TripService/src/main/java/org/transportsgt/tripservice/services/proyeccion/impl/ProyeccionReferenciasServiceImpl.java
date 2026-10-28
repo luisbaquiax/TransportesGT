@@ -2,9 +2,9 @@ package org.transportsgt.tripservice.services.proyeccion.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.transportsgt.eventos.payload.DatosBus;
-import org.transportsgt.eventos.payload.DatosChofer;
-import org.transportsgt.eventos.payload.DatosSucursal;
+import org.transportsgt.eventos.payload.flota.DatosBus;
+import org.transportsgt.eventos.payload.flota.DatosChofer;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
 import org.transportsgt.tripservice.repositories.BusRefRepository;
 import org.transportsgt.tripservice.repositories.ChoferRefRepository;
 import org.transportsgt.tripservice.repositories.SucursalRefRepository;

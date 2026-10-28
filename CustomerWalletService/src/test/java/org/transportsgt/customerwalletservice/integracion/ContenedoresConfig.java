@@ -8,7 +8,7 @@ import org.testcontainers.rabbitmq.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 /**
- * PostgreSQL 16 y RabbitMQ reales (no H2: los triggers e índices parciales son de PostgreSQL).
+ * PostgreSQL 16 y RabbitMQ reales.
  * Spring reutiliza el contexto, y con él los contenedores, entre todas las pruebas de integración.
  */
 @TestConfiguration(proxyBeanMethods = false)

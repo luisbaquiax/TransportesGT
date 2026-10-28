@@ -10,11 +10,11 @@ import org.transportsgt.ticketservice.fixture.CompraFixture;
 import org.transportsgt.ticketservice.fixture.ViajeRefFixture;
 import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.ViajeRef;
-import org.transportsgt.eventos.RegistroOutbox;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.DatosBoletosAnulados;
-import org.transportsgt.eventos.payload.DatosVentaBoletos;
+import org.transportsgt.eventos.mensajeria.publicacion.RegistroOutbox;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.boletos.DatosBoletosAnulados;
+import org.transportsgt.eventos.payload.boletos.DatosVentaBoletos;
 
 import java.util.List;
 import java.util.UUID;

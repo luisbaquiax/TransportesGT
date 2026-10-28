@@ -1,6 +1,6 @@
 package org.transportsgt.ticketservice.dto.response;
 
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 
 import java.time.OffsetDateTime;
 import java.util.List;

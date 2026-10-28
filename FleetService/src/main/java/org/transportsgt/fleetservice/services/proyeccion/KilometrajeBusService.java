@@ -1,7 +1,7 @@
 package org.transportsgt.fleetservice.services.proyeccion;
 
-import org.transportsgt.eventos.payload.DatosLlegada;
-import org.transportsgt.eventos.payload.DatosSalida;
+import org.transportsgt.eventos.payload.viajes.DatosLlegada;
+import org.transportsgt.eventos.payload.viajes.DatosSalida;
 
 /**
  * Efecto de los viajes sobre el bus. Cambios automáticos: NO incrementan la versión ni publican BusActualizado.

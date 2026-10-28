@@ -1,6 +1,6 @@
 package org.transportsgt.privaterentalservice.services.solicitud;
 
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.SolicitudAlquilerRequest;
 import org.transportsgt.privaterentalservice.dto.request.SolicitudMostradorRequest;
 import org.transportsgt.privaterentalservice.dto.response.AlquilerResponse;

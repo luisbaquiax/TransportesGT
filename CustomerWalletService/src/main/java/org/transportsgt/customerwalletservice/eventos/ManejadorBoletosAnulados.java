@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.transportsgt.customerwalletservice.services.ReembolsoService;
 import org.transportsgt.customerwalletservice.utils.Fechas;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.DatosBoletosAnulados;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.boletos.DatosBoletosAnulados;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 /**
  * Cola {@code cartera.boletos.q}, llave {@code boletos.venta.anulada}. Solo se reembolsan las compras EN_LINEA:

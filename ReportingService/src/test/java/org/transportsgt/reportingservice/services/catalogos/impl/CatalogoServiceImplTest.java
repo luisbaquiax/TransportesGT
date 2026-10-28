@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.transportsgt.reportingservice.config.security.UsuarioAutenticado;
+import org.transportsgt.reportingservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.reportingservice.dto.response.catalogos.OpcionCatalogo;
 import org.transportsgt.reportingservice.fixture.RepSucursalFixture;
 import org.transportsgt.reportingservice.repositories.catalogos.CatalogoRepository;

@@ -2,7 +2,7 @@ package org.transportsgt.identityservice.services.usuario.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.identityservice.exception.CorreoDuplicadoException;
 import org.transportsgt.identityservice.exception.OperacionNoAutorizadaException;
 import org.transportsgt.identityservice.exception.RolNoPermitidoException;

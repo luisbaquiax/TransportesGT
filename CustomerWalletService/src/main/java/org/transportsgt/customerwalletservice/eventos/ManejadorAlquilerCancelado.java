@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.transportsgt.customerwalletservice.services.ReembolsoService;
 import org.transportsgt.customerwalletservice.utils.Fechas;
-import org.transportsgt.eventos.EventoNoRecuperableException;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosAlquilerCancelado;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.mensajeria.excepciones.EventoNoRecuperableException;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerCancelado;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.time.Instant;
 

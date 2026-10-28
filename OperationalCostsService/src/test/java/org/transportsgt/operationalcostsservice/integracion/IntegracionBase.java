@@ -73,7 +73,7 @@ public abstract class IntegracionBase {
     @Autowired
     protected org.springframework.context.ApplicationContext contexto;
 
-    protected String token(org.transportsgt.eventos.payload.Rol rol, UUID idSucursal) {
+    protected String token(org.transportsgt.eventos.payload.identidad.Rol rol, UUID idSucursal) {
         SecretKey clave = new SecretKeySpec(Base64.getDecoder().decode(SECRETO_PRUEBAS), "HmacSHA256");
         NimbusJwtEncoder encoder = new NimbusJwtEncoder(new ImmutableSecret<>(clave));
         JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
@@ -92,11 +92,11 @@ public abstract class IntegracionBase {
     }
 
     protected String tokenAdminSucursal() {
-        return token(org.transportsgt.eventos.payload.Rol.ADMIN_SUCURSAL, XELA);
+        return token(org.transportsgt.eventos.payload.identidad.Rol.ADMIN_SUCURSAL, XELA);
     }
 
     protected String tokenAdminSistema() {
-        return token(org.transportsgt.eventos.payload.Rol.ADMIN_SISTEMA, null);
+        return token(org.transportsgt.eventos.payload.identidad.Rol.ADMIN_SISTEMA, null);
     }
 
     protected static <B extends org.springframework.test.web.servlet.request.AbstractMockHttpServletRequestBuilder<B>>

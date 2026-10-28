@@ -2,10 +2,10 @@ package org.transportsgt.tripservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosAlquilerConfirmado;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.alquileres.DatosAlquilerConfirmado;
 import org.transportsgt.tripservice.services.proyeccion.ViajesAlquilerService;
 
 /**

@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.sucursal;
 
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.identityservice.dto.request.ActualizarSucursalRequest;
 import org.transportsgt.identityservice.dto.request.CrearSucursalRequest;
 import org.transportsgt.identityservice.dto.response.SucursalCreadaResponse;

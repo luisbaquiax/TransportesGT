@@ -2,10 +2,10 @@ package org.transportsgt.reportingservice.eventos.viajes;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosViajeEliminado;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.viajes.DatosViajeEliminado;
 import org.transportsgt.reportingservice.services.proyecciones.ProyeccionViajesService;
 
 /**

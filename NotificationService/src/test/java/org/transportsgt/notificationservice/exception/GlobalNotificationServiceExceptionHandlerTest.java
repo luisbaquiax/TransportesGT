@@ -1,7 +1,5 @@
 package org.transportsgt.notificationservice.exception;
 
-import org.transportsgt.notificationservice.exception.FabricaRespuestaError;
-
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

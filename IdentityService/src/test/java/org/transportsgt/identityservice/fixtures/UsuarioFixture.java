@@ -1,9 +1,9 @@
 package org.transportsgt.identityservice.fixtures;
 
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.identityservice.models.Sucursal;
-import org.transportsgt.identityservice.config.security.UsuarioAutenticado;
-import org.transportsgt.identityservice.config.security.UsuarioPrincipal;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioAutenticado;
+import org.transportsgt.identityservice.config.security.authentication.UsuarioPrincipal;
 import org.transportsgt.identityservice.models.Usuario;
 
 import java.time.OffsetDateTime;

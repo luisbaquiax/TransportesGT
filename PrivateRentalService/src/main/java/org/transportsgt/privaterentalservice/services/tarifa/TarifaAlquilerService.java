@@ -1,6 +1,6 @@
 package org.transportsgt.privaterentalservice.services.tarifa;
 
-import org.transportsgt.privaterentalservice.config.security.UsuarioAutenticado;
+import org.transportsgt.privaterentalservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.privaterentalservice.dto.request.TarifaRequest;
 import org.transportsgt.privaterentalservice.dto.response.TarifaResponse;
 

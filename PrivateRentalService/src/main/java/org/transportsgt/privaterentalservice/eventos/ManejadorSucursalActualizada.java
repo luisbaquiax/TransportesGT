@@ -2,10 +2,10 @@ package org.transportsgt.privaterentalservice.eventos;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.ManejadorEvento;
-import org.transportsgt.eventos.SobreEvento;
-import org.transportsgt.eventos.TipoEvento;
-import org.transportsgt.eventos.payload.DatosSucursal;
+import org.transportsgt.eventos.mensajeria.consumo.ManejadorEvento;
+import org.transportsgt.eventos.contrato.SobreEvento;
+import org.transportsgt.eventos.contrato.TipoEvento;
+import org.transportsgt.eventos.payload.identidad.DatosSucursal;
 import org.transportsgt.privaterentalservice.services.proyeccion.ProyeccionReferenciasService;
 
 /** Misma proyección que SucursalCreada: actualiza nombre/activa si la versión es mayor. */

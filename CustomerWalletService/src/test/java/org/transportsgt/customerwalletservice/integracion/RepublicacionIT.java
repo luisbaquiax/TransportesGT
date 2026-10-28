@@ -1,7 +1,7 @@
 package org.transportsgt.customerwalletservice.integracion;
 
 import org.junit.jupiter.api.Test;
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.UUID;
 
@@ -12,7 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class RepublicacionIT extends IntegracionBase {
 
-    /** Cliente de los datos iniciales (docs/datos-semilla.md). */
+    /**
+     * Cliente de los datos iniciales.
+     */
     private static final UUID CLIENTE_SEMILLA = UUID.fromString("00000000-0000-4000-8000-000000000031");
     private static final UUID ADMIN_SISTEMA = UUID.fromString("00000000-0000-4000-8000-000000000001");
 

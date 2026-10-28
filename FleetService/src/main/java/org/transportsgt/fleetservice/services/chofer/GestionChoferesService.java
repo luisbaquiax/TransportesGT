@@ -1,6 +1,6 @@
 package org.transportsgt.fleetservice.services.chofer;
 
-import org.transportsgt.fleetservice.config.security.UsuarioAutenticado;
+import org.transportsgt.fleetservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.fleetservice.dto.request.ActualizarChoferRequest;
 import org.transportsgt.fleetservice.dto.request.CambiarActivoRequest;
 import org.transportsgt.fleetservice.dto.request.CrearChoferRequest;

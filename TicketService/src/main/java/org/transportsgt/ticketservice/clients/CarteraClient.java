@@ -10,7 +10,7 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.transportsgt.ticketservice.clients.dto.PagoCarteraConsulta;
 import org.transportsgt.ticketservice.clients.dto.PagoCarteraRequest;
 import org.transportsgt.ticketservice.clients.dto.PagoCarteraResponse;
-import org.transportsgt.eventos.payload.TipoReferencia;
+import org.transportsgt.eventos.payload.costos.TipoReferencia;
 
 import java.util.UUID;
 

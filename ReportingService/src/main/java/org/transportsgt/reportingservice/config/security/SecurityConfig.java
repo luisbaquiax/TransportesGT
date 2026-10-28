@@ -1,5 +1,8 @@
 package org.transportsgt.reportingservice.config.security;
 
+import org.transportsgt.reportingservice.config.security.handlers.JsonAccessDeniedHandler;
+import org.transportsgt.reportingservice.config.security.handlers.JsonAuthenticationEntryPoint;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -3,7 +3,7 @@ package org.transportsgt.tripservice.services.ruta.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.transportsgt.tripservice.config.security.UsuarioAutenticado;
+import org.transportsgt.tripservice.config.security.authentication.UsuarioAutenticado;
 import org.transportsgt.tripservice.dto.request.Requests;
 import org.transportsgt.tripservice.dto.response.Responses;
 import org.transportsgt.tripservice.eventos.EventosViaje;

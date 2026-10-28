@@ -1,6 +1,6 @@
 package org.transportsgt.identityservice.services.usuario;
 
-import org.transportsgt.eventos.payload.Rol;
+import org.transportsgt.eventos.payload.identidad.Rol;
 import org.transportsgt.identityservice.models.Sucursal;
 import org.transportsgt.identityservice.models.Usuario;
 

@@ -1,7 +1,7 @@
 package org.transportsgt.ticketservice.fixture;
 
 import org.transportsgt.ticketservice.models.ViajeRef;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 
 import java.math.BigDecimal;
 import java.time.Instant;

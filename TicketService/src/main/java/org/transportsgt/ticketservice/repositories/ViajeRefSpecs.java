@@ -3,7 +3,7 @@ package org.transportsgt.ticketservice.repositories;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 import org.transportsgt.ticketservice.models.ViajeRef;
 
 import java.time.OffsetDateTime;

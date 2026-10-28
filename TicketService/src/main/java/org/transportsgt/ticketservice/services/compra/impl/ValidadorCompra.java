@@ -14,8 +14,8 @@ import org.transportsgt.ticketservice.models.Compra;
 import org.transportsgt.ticketservice.models.ViajeRef;
 import org.transportsgt.ticketservice.repositories.ClienteRefRepository;
 import org.transportsgt.ticketservice.repositories.ViajeRefRepository;
-import org.transportsgt.eventos.payload.Canal;
-import org.transportsgt.eventos.payload.EstadoViaje;
+import org.transportsgt.eventos.payload.boletos.Canal;
+import org.transportsgt.eventos.payload.viajes.EstadoViaje;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
