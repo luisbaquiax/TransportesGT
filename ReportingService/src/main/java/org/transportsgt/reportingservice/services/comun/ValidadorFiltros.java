@@ -15,7 +15,9 @@ import java.util.Locale;
 @Component
 public class ValidadorFiltros {
 
-    /** {@code desde} posterior a {@code hasta} → 400. Cualquiera de los dos puede faltar. */
+    /**
+     * {@code desde} posterior a {@code hasta} → 400. Cualquiera de los dos puede faltar.
+     */
     public FiltroFechas intervalo(LocalDate desde, LocalDate hasta) {
         if (desde != null && hasta != null && desde.isAfter(hasta)) {
             throw new IntervaloInvalidoException();
@@ -23,7 +25,9 @@ public class ValidadorFiltros {
         return new FiltroFechas(desde, hasta);
     }
 
-    /** Sin formato = JSON; solo se aceptan {@code json} y {@code pdf}. */
+    /**
+     * Sin formato = JSON; solo se aceptan {@code json} y {@code pdf}.
+     */
     public FormatoReporte formato(String formato) {
         if (formato == null || formato.isBlank()) {
             return FormatoReporte.JSON;

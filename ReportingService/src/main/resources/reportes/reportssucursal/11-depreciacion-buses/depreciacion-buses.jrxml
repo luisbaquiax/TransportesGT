@@ -1,0 +1,117 @@
+<jasperReport name="ReporteTransportesGT" language="java" pageWidth="842" pageHeight="595"
+              orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20"
+              topMargin="18" bottomMargin="22" whenNoDataType="AllSectionsNoDetail"
+              uuid="f9de69c1-dc35-4b8f-a3d1-82cf82462f5f">
+    <style name="Base" default="true" fontName="DejaVu Sans" fontSize="8.0" forecolor="#182431"/>
+    <parameter name="TITULO" class="java.lang.String"/>
+    <parameter name="PERIODO" class="java.lang.String"/>
+    <parameter name="GENERADO_EN" class="java.lang.String"/>
+    <parameter name="FILTROS" class="java.lang.String"/>
+    <parameter name="TOTALES" class="java.lang.String"/>
+    <parameter name="H1" class="java.lang.String"/><parameter name="H2" class="java.lang.String"/>
+    <parameter name="H3" class="java.lang.String"/><parameter name="H4" class="java.lang.String"/>
+    <parameter name="H5" class="java.lang.String"/><parameter name="H6" class="java.lang.String"/>
+    <parameter name="H7" class="java.lang.String"/><parameter name="H8" class="java.lang.String"/>
+    <field name="grupo1" class="java.lang.String"/><field name="grupo2" class="java.lang.String"/>
+    <field name="c1" class="java.lang.String"/><field name="c2" class="java.lang.String"/>
+    <field name="c3" class="java.lang.String"/><field name="c4" class="java.lang.String"/>
+    <field name="c5" class="java.lang.String"/><field name="c6" class="java.lang.String"/>
+    <field name="c7" class="java.lang.String"/><field name="c8" class="java.lang.String"/>
+    <field name="numero1" class="java.math.BigDecimal"/><field name="numero2" class="java.math.BigDecimal"/>
+    <variable name="TOTAL_NUMERO_1" class="java.math.BigDecimal" calculation="Sum">
+        <expression><![CDATA[$F{numero1}]]></expression>
+    </variable>
+    <variable name="SUBTOTAL_GRUPO_1" class="java.math.BigDecimal" resetType="Group" resetGroup="GRUPO_1" calculation="Sum">
+        <expression><![CDATA[$F{numero1}]]></expression>
+    </variable>
+    <group name="GRUPO_1">
+        <expression><![CDATA[$F{grupo1}]]></expression>
+        <groupHeader>
+            <band height="22">
+                <element kind="textField" mode="Opaque" x="0" y="2" width="802" height="18" backcolor="#E8F3F7"
+                         forecolor="#123B52" bold="true" fontSize="9.0" vTextAlign="Middle">
+                    <expression><![CDATA[$F{grupo1}]]></expression>
+                    <printWhenExpression><![CDATA[$F{grupo1} != null]]></printWhenExpression>
+                </element>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="19">
+                <element kind="textField" mode="Opaque" x="602" y="1" width="200" height="17" backcolor="#E8F3F7"
+                         forecolor="#123B52" bold="true" hTextAlign="Right" vTextAlign="Middle">
+                    <expression><![CDATA["Subtotal: Q " + new java.text.DecimalFormat("#,##0.00").format($V{SUBTOTAL_GRUPO_1})]]></expression>
+                    <printWhenExpression><![CDATA[$F{grupo1} != null]]></printWhenExpression>
+                </element>
+            </band>
+        </groupFooter>
+    </group>
+    <group name="GRUPO_2">
+        <expression><![CDATA[$F{grupo2}]]></expression>
+        <groupHeader>
+            <band height="18">
+                <element kind="textField" x="12" y="1" width="790" height="16" forecolor="#176B87" bold="true">
+                    <expression><![CDATA[$F{grupo2}]]></expression>
+                    <printWhenExpression><![CDATA[$F{grupo2} != null]]></printWhenExpression>
+                </element>
+            </band>
+        </groupHeader>
+    </group>
+    <title height="99">
+        <element kind="rectangle" x="0" y="0" width="802" height="44" mode="Opaque" backcolor="#176B87" radius="6"/>
+        <element kind="staticText" x="15" y="9" width="52" height="25" mode="Opaque" backcolor="#FF8A65"
+                 forecolor="#FFFFFF" bold="true" fontSize="11.0" hTextAlign="Center" vTextAlign="Middle">
+            <text><![CDATA[TG]]></text>
+        </element>
+        <element kind="staticText" x="78" y="8" width="180" height="13" forecolor="#FFFFFF" bold="true" fontSize="9.0">
+            <text><![CDATA[TRANSPORTES GT]]></text>
+        </element>
+        <element kind="textField" x="78" y="21" width="700" height="17" forecolor="#FFFFFF" bold="true" fontSize="14.0">
+            <expression><![CDATA[$P{TITULO}]]></expression>
+        </element>
+        <element kind="textField" mode="Opaque" x="0" y="51" width="250" height="21" backcolor="#F4F7FA" vTextAlign="Middle">
+            <expression><![CDATA["Periodo: " + $P{PERIODO}]]></expression>
+        </element>
+        <element kind="textField" mode="Opaque" x="258" y="51" width="250" height="21" backcolor="#F4F7FA" vTextAlign="Middle">
+            <expression><![CDATA["Generado: " + $P{GENERADO_EN}]]></expression>
+        </element>
+        <element kind="textField" mode="Opaque" x="516" y="51" width="286" height="21" backcolor="#F4F7FA" vTextAlign="Middle">
+            <expression><![CDATA[$P{FILTROS} == null || $P{FILTROS}.isBlank() ? "Sin filtros adicionales" : $P{FILTROS}]]></expression>
+        </element>
+        <element kind="textField" x="0" y="79" width="802" height="16" forecolor="#647180" bold="true">
+            <expression><![CDATA[$P{TOTALES}]]></expression>
+        </element>
+    </title>
+    <pageHeader height="26">
+        <element kind="textField" mode="Opaque" x="0" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H1}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="100" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H2}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="200" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H3}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="300" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H4}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="400" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H5}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="500" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H6}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="600" y="0" width="100" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H7}]]></expression></element>
+        <element kind="textField" mode="Opaque" x="700" y="0" width="102" height="24" backcolor="#176B87" forecolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle"><expression><![CDATA[$P{H8}]]></expression></element>
+    </pageHeader>
+    <detail>
+        <band height="23" splitType="Prevent">
+            <element kind="textField" x="0" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c1}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="100" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c2}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="200" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c3}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="300" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c4}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="400" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c5}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="500" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c6}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="600" y="0" width="100" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c7}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+            <element kind="textField" x="700" y="0" width="102" height="22" vTextAlign="Middle" textAdjust="StretchHeight"><expression><![CDATA[$F{c8}]]></expression><box><bottomPen lineWidth="0.4" lineColor="#DDE4EA"/></box></element>
+        </band>
+    </detail>
+    <summary height="31">
+        <element kind="textField" mode="Opaque" x="0" y="5" width="802" height="24" backcolor="#123B52"
+                 forecolor="#FFFFFF" bold="true" hTextAlign="Right" vTextAlign="Middle">
+            <expression><![CDATA["TOTAL CALCULADO: Q " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL_NUMERO_1} == null ? java.math.BigDecimal.ZERO : $V{TOTAL_NUMERO_1})]]></expression>
+        </element>
+    </summary>
+    <pageFooter height="18">
+        <element kind="staticText" x="0" y="2" width="570" height="14" forecolor="#647180"><text><![CDATA[Transportes GT · Documento generado automáticamente]]></text></element>
+        <element kind="textField" x="570" y="2" width="180" height="14" forecolor="#647180" hTextAlign="Right"><expression><![CDATA["Página " + $V{PAGE_NUMBER} + " de"]]></expression></element>
+        <element kind="textField" x="750" y="2" width="52" height="14" forecolor="#647180" evaluationTime="Report"><expression><![CDATA[" " + $V{PAGE_NUMBER}]]></expression></element>
+    </pageFooter>
+</jasperReport>

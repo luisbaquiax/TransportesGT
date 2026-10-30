@@ -35,8 +35,13 @@ public class ProyeccionViajesServiceImpl implements ProyeccionViajesService {
     public void aplicarRuta(SobreEvento<DatosRuta> evento) {
         DatosRuta datos = campos.datos(evento);
         campos.exigir(evento, "idRuta", datos.idRuta());
-        int filas = rutaRepository.upsert(datos.idRuta(), datos.idSucursalOrigen(), datos.idSucursalDestino(),
-                datos.distanciaKm(), datos.precioBoleto(), versionAgregado.de(evento));
+        int filas = rutaRepository.upsert(
+                datos.idRuta(),
+                datos.idSucursalOrigen(),
+                datos.idSucursalDestino(),
+                datos.distanciaKm(),
+                datos.precioBoleto(),
+                versionAgregado.de(evento));
         log.info("{} {} ruta {} ({}) idCorrelacion={}", evento.tipoEvento(), evento.idEvento(), datos.idRuta(),
                 filas == 0 ? "versión vieja, ignorado" : "aplicado", evento.idCorrelacion());
     }

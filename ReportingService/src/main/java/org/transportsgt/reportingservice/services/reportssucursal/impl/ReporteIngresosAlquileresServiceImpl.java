@@ -34,10 +34,20 @@ public class ReporteIngresosAlquileresServiceImpl implements ReporteIngresosAlqu
     public ReporteTabla<FilaIngresoAlquiler> generar(UsuarioAutenticado usuario, UUID idSucursal,
                                                      FiltroFechas intervalo) {
         RepSucursal sucursal = alcance.sucursalDelReporte(usuario, idSucursal);
-        List<FilaIngresoAlquiler> filas = repository.consultar(sucursal.getId(), intervalo.desde(), intervalo.hasta())
+        List<FilaIngresoAlquiler> filas = repository.consultar(
+                        sucursal.getId(),
+                        intervalo.desde(),
+                        intervalo.hasta())
                 .stream()
-                .map(c -> new FilaIngresoAlquiler(c.getIdAlquiler(), c.getCliente(), c.getNit(), c.getOrigen(),
-                        c.getDestino(), fechas.enGuatemala(c.getFechaSalida()), fechas.enGuatemala(c.getFechaRetorno()), c.getPlaca(), c.getFechaPago(),
+                .map(c -> new FilaIngresoAlquiler(c.getIdAlquiler(),
+                        c.getCliente(),
+                        c.getNit(),
+                        c.getOrigen(),
+                        c.getDestino(),
+                        fechas.enGuatemala(c.getFechaSalida()),
+                        fechas.enGuatemala(c.getFechaRetorno()),
+                        c.getPlaca(),
+                        c.getFechaPago(),
                         c.getPrecioTotal()))
                 .toList();
         Map<String, Object> totales = armador.totales()

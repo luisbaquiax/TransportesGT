@@ -35,9 +35,15 @@ public class ReporteGananciasServiceImpl implements ReporteGananciasService {
     @Override
     public ReporteTabla<FilaGanancia> generar(FiltroFechas intervalo, UUID idSucursal) {
         Optional<RepSucursal> sucursal = alcance.sucursalOpcional(idSucursal);
-        List<FilaGanancia> filas = repository.consultar(intervalo.desde(), intervalo.hasta(), idSucursal).stream()
-                .map(c -> new FilaGanancia(c.getIdSucursal(), c.getSucursal(), dinero.escalar(c.getIngresos()),
-                        dinero.escalar(c.getGastos()), dinero.escalar(c.getGanancia())))
+        List<FilaGanancia> filas = repository.consultar(
+                        intervalo.desde(),
+                        intervalo.hasta(),
+                        idSucursal).stream()
+                .map(c -> new FilaGanancia(c.getIdSucursal(),
+                        c.getSucursal(),
+                        dinero.escalar(c.getIngresos()),
+                        dinero.escalar(c.getGastos()),
+                        dinero.escalar(c.getGanancia())))
                 .toList();
         // Una sucursal por grupo: así el orden alfabético usa la misma regla que los demás reportes
         List<GrupoReporte<FilaGanancia>> grupos = armador.ordenarPorTitulo(armador.agrupar(filas,
