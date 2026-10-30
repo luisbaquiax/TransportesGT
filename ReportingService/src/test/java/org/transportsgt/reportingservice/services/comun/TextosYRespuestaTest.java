@@ -15,7 +15,6 @@ import org.transportsgt.reportingservice.dto.response.ReporteTabla;
 import org.transportsgt.reportingservice.exception.FormatoNoSoportadoException;
 import org.transportsgt.reportingservice.fixture.RepGastoFixture;
 import org.transportsgt.reportingservice.services.exportacion.GeneradorPdf;
-import org.transportsgt.reportingservice.services.exportacion.impl.GeneradorPdfNoDisponible;
 import org.transportsgt.reportingservice.support.Soporte;
 
 import java.util.List;
@@ -110,10 +109,5 @@ class TextosYRespuestaTest {
             );
         }
 
-        @Test
-        void generadorPdfNoDisponible_lanza400HastaQueExistaJasper() {
-            assertThrows(FormatoNoSoportadoException.class,
-                    () -> new GeneradorPdfNoDisponible().generar("ingresos", reporte));
-        }
     }
 }

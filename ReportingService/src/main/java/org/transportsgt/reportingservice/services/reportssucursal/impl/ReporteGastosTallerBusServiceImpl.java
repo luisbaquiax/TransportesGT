@@ -39,7 +39,8 @@ public class ReporteGastosTallerBusServiceImpl implements ReporteGastosTallerBus
         RepSucursal sucursal = alcance.sucursalDelReporte(usuario, idSucursal);
         Map<String, String> otros = new LinkedHashMap<>();
         otros.put("sucursal", sucursal.getNombre());
-        alcance.busDeSucursal(idBus, sucursal.getId()).ifPresent(b -> otros.put("bus", b.getPlaca()));
+        alcance.busDeSucursal(idBus, sucursal.getId())
+                .ifPresent(b -> otros.put("bus", b.getPlaca()));
         List<FilaGastoTaller> filas = filasTaller.de(
                 repository.consultar(intervalo.desde(), intervalo.hasta(), sucursal.getId(), idBus));
 

@@ -30,7 +30,9 @@ public class AlcanceSucursal {
     private final RepBusRepository busRepository;
     private final RepRutaRepository rutaRepository;
 
-    /** Reportes de sucursal (7 a 12): obligatoria para el ADMIN_SISTEMA, la del token para el ADMIN_SUCURSAL. */
+    /**
+     * Reportes de sucursal (7 a 12): obligatoria para el ADMIN_SISTEMA, la del token para el ADMIN_SUCURSAL.
+     */
     public RepSucursal sucursalDelReporte(UsuarioAutenticado usuario, UUID idSucursalPedida) {
         UUID idSucursal = usuario.esAdminSistema() ? idSucursalPedida : sucursalDelToken(usuario, idSucursalPedida);
         if (idSucursal == null) {
@@ -39,12 +41,16 @@ public class AlcanceSucursal {
         return buscarSucursal(idSucursal);
     }
 
-    /** Filtro opcional de sucursal (reportes del sistema). */
+    /**
+     * Filtro opcional de sucursal (reportes del sistema).
+     */
     public Optional<RepSucursal> sucursalOpcional(UUID idSucursal) {
         return idSucursal == null ? Optional.empty() : Optional.of(buscarSucursal(idSucursal));
     }
 
-    /** Catálogos: el ADMIN_SISTEMA puede omitir la sucursal (todas); el ADMIN_SUCURSAL solo ve la suya. */
+    /**
+     * Catálogos: el ADMIN_SISTEMA puede omitir la sucursal (todas); el ADMIN_SUCURSAL solo ve la suya.
+     */
     public UUID sucursalDelCatalogo(UsuarioAutenticado usuario, UUID idSucursalPedida) {
         return usuario.esAdminSistema() ? idSucursalPedida : sucursalDelToken(usuario, idSucursalPedida);
     }
@@ -54,7 +60,9 @@ public class AlcanceSucursal {
                 .orElseThrow(() -> new SucursalNoEncontradaException(idSucursal));
     }
 
-    /** Filtro opcional de bus; si se indica sucursal, el bus debe pertenecer a ella. */
+    /**
+     * Filtro opcional de bus; si se indica sucursal, el bus debe pertenecer a ella.
+     */
     public Optional<RepBus> busDeSucursal(UUID idBus, UUID idSucursal) {
         if (idBus == null) {
             return Optional.empty();
@@ -66,7 +74,9 @@ public class AlcanceSucursal {
         return Optional.of(bus);
     }
 
-    /** Filtro opcional de ruta; la ruta debe salir de la sucursal indicada. */
+    /**
+     * Filtro opcional de ruta; la ruta debe salir de la sucursal indicada.
+     */
     public Optional<RepRuta> rutaDeSucursal(UUID idRuta, UUID idSucursal) {
         if (idRuta == null) {
             return Optional.empty();

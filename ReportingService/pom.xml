@@ -22,6 +22,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <jasperreports.version>7.0.8</jasperreports.version>
         <!-- Coberturas mínimas que exige "mvn verify". -->
         <jacoco.minimo.unitarias>0.85</jacoco.minimo.unitarias>
         <jacoco.minimo.integracion>0.60</jacoco.minimo.integracion>
@@ -89,6 +90,53 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- Reportes -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>${jasperreports.version}</version>
+            <!-- Java 21 ya aporta las APIs XML usadas por nuestras plantillas tabulares. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis-ext</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-pdf</artifactId>
+            <version>${jasperreports.version}</version>
+            <exclusions>
+                <exclusion><groupId>xml-apis</groupId><artifactId>xml-apis-ext</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Compila expresiones JRXML desde el JAR ejecutable sin depender de javac en producción. -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-jdt</artifactId>
+            <version>${jasperreports.version}</version>
+            <exclusions>
+                <exclusion><groupId>xml-apis</groupId><artifactId>xml-apis-ext</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-functions</artifactId>
+            <version>${jasperreports.version}</version>
+            <exclusions>
+                <exclusion><groupId>xml-apis</groupId><artifactId>xml-apis-ext</artifactId></exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+            <version>${jasperreports.version}</version>
+            <exclusions>
+                <exclusion><groupId>xml-apis</groupId><artifactId>xml-apis-ext</artifactId></exclusion>
+            </exclusions>
         </dependency>
 
         <!--  Utilidades -->
@@ -182,6 +230,20 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- AWT necesita acceso de archivo real a los TTF; no puede leerlos directamente
+                         desde el JAR anidado de Spring Boot. El launcher los extrae al iniciar. -->
+                    <requiresUnpack>
+                        <dependency>
+                            <groupId>net.sf.jasperreports</groupId>
+                            <artifactId>jasperreports</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sf.jasperreports</groupId>
+                            <artifactId>jasperreports-fonts</artifactId>
+                        </dependency>
+                    </requiresUnpack>
+                </configuration>
             </plugin>
 
             <!-- Lombok + MapStruct: el orden importa. lombok-mapstruct-binding evita que MapStruct
@@ -237,6 +299,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.awt.headless>true</java.awt.headless>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <plugin>

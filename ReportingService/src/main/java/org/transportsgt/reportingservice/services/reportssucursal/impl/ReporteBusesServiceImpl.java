@@ -38,8 +38,14 @@ public class ReporteBusesServiceImpl implements ReporteBusesService {
         RepSucursal sucursal = alcance.sucursalDelReporte(usuario, idSucursal);
         List<FilaBus> filas = repository.consultar(sucursal.getId(), estado == null ? null : estado.name(),
                         fechas.ahora(), intervalo.desde(), intervalo.hasta()).stream()
-                .map(c -> new FilaBus(c.getIdBus(), c.getPlaca(), c.getMarca(), c.getModelo(), c.getCapacidad(),
-                        c.getEstadoOperativo(), c.getChofer(), c.getKilometrajeActual(),
+                .map(c -> new FilaBus(c.getIdBus(),
+                        c.getPlaca(),
+                        c.getMarca(),
+                        c.getModelo(),
+                        c.getCapacidad(),
+                        c.getEstadoOperativo(),
+                        c.getChofer(),
+                        c.getKilometrajeActual(),
                         c.getViajesRealizados() == null ? 0 : c.getViajesRealizados(),
                         Boolean.TRUE.equals(c.getActivo())))
                 .toList();

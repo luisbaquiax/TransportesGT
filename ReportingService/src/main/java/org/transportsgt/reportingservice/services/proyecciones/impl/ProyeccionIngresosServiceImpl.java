@@ -35,9 +35,17 @@ public class ProyeccionIngresosServiceImpl implements ProyeccionIngresosService 
         campos.exigir(evento, "idCompra", datos.idCompra());
         campos.exigir(evento, "fechaPago", datos.fechaPago());
         campos.exigir(evento, "canal", datos.canal());
-        int filas = ingresoRepository.insertar(TipoIngreso.VENTA_BOLETOS.name(), datos.idCompra(),
-                datos.idSucursalIngreso(), datos.fechaPago(), datos.montoTotal(), datos.idViaje(), datos.idRuta(),
-                datos.asientos() == null ? 0 : datos.asientos().size(), datos.canal().name(), datos.nitComprador(),
+        int filas = ingresoRepository.insertar(
+                TipoIngreso.VENTA_BOLETOS.name(),
+                datos.idCompra(),
+                datos.idSucursalIngreso(),
+                datos.fechaPago(),
+                datos.montoTotal(),
+                datos.idViaje(),
+                datos.idRuta(),
+                datos.asientos() == null ? 0 : datos.asientos().size(),
+                datos.canal().name(),
+                datos.nitComprador(),
                 datos.nombreComprador(), null, null, null, null);
         registrarResultado(evento, datos.idCompra(), filas);
     }
@@ -74,7 +82,9 @@ public class ProyeccionIngresosServiceImpl implements ProyeccionIngresosService 
                 fechas.enGuatemala(datos.canceladoEn() == null ? evento.ocurridoEn() : datos.canceladoEn()));
     }
 
-    /** La anulación se aplica sobre la fecha de pago original (cambio retroactivo del periodo). */
+    /**
+     * La anulación se aplica sobre la fecha de pago original (cambio retroactivo del periodo).
+     */
     private void anular(SobreEvento<?> evento, TipoIngreso tipo, UUID idReferencia, OffsetDateTime anuladoEn) {
         if (!ingresoRepository.existsByTipoIngresoAndIdReferencia(tipo, idReferencia)) {
             throw new ProyeccionNoDisponibleException("El ingreso " + tipo + " " + idReferencia + " aún no llega");

@@ -29,7 +29,9 @@ import java.util.UUID;
 public class ReporteGastosServiceImpl implements ReporteGastosService {
 
     static final String TITULO = "Reporte de gastos por sucursal";
-    /** Tipos del desglose, en el orden en que se muestran (taller separado en mano de obra y repuesto). */
+    /**
+     * Tipos del desglose, en el orden en que se muestran (taller separado en mano de obra y repuesto).
+     */
     static final List<String> TIPOS = List.of("COMBUSTIBLE", "TALLER", "REPUESTO", "DEPRECIACION", "SALARIO_CHOFER");
 
     private final ReporteGastosRepository repository;
@@ -40,17 +42,23 @@ public class ReporteGastosServiceImpl implements ReporteGastosService {
     @Override
     public ReporteTabla<FilaGasto> generar(FiltroFechas intervalo, UUID idSucursal) {
         Optional<RepSucursal> sucursal = alcance.sucursalOpcional(idSucursal);
-        List<FilaGasto> filas = repository.consultar(intervalo.desde(), intervalo.hasta(), idSucursal).stream()
+        List<FilaGasto> filas = repository.consultar(intervalo.desde(), intervalo.hasta(), idSucursal)
+                .stream()
                 .map(this::aFila)
                 .toList();
-        List<GrupoReporte<FilaGasto>> grupos = armador.ordenarPorTitulo(armador.agrupar(filas,
-                f -> String.valueOf(f.idSucursal()), FilaGasto::sucursal, this::subtotales));
+        List<GrupoReporte<FilaGasto>> grupos = armador.ordenarPorTitulo(
+                armador.agrupar(
+                        filas,
+                        f -> String.valueOf(f.idSucursal()),
+                        FilaGasto::sucursal, this::subtotales));
         Map<String, String> otros = new LinkedHashMap<>();
         sucursal.ifPresent(s -> otros.put("sucursal", s.getNombre()));
         return armador.tabla(TITULO, armador.filtros(intervalo, otros), grupos, subtotales(filas));
     }
 
-    /** Total y desglose por tipo de gasto (los tipos sin gastos salen en cero). */
+    /**
+     * Total y desglose por tipo de gasto (los tipos sin gastos salen en cero).
+     */
     private Map<String, Object> subtotales(List<FilaGasto> filas) {
         Totales totales = armador.totales().dinero("monto", armador.sumar(filas, FilaGasto::monto));
         for (String tipo : TIPOS) {

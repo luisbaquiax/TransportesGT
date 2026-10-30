@@ -30,7 +30,9 @@ public class ReporteMapaRutasServiceImpl implements ReporteMapaRutasService {
     private final ArmadorReporteTabla armador;
     private final TextosReporte textos;
 
-    /** Las rutas no tienen fecha de negocio: el intervalo solo se informa en los filtros. */
+    /**
+     * Las rutas no tienen fecha de negocio: el intervalo solo se informa en los filtros.
+     */
     @Override
     public ReporteTabla<FilaMapaRuta> generar(FiltroFechas intervalo, UUID idSucursal) {
         if (idSucursal == null) {

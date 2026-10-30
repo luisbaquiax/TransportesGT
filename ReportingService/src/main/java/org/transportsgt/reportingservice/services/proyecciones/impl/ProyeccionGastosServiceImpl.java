@@ -35,8 +35,14 @@ public class ProyeccionGastosServiceImpl implements ProyeccionGastosService {
     public void registrarCombustible(SobreEvento<DatosGastoCombustible> evento) {
         DatosGastoCombustible d = campos.datos(evento);
         campos.exigir(evento, "idGasto", d.idGasto());
-        int filas = gastoRepository.insertar(TipoGasto.COMBUSTIBLE.name(), d.idGasto(), d.idSucursal(), d.idBus(),
-                d.idViaje(), d.fechaGasto(), d.monto(), null, null, null, null, null, null);
+        int filas = gastoRepository.insertar(
+                TipoGasto.COMBUSTIBLE.name(),
+                d.idGasto(),
+                d.idSucursal(),
+                d.idBus(),
+                d.idViaje(),
+                d.fechaGasto(),
+                d.monto(), null, null, null, null, null, null);
         registrarResultado(evento, d.idGasto(), filas);
     }
 
