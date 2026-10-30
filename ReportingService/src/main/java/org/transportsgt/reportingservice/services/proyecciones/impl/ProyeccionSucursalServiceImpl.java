@@ -23,8 +23,14 @@ public class ProyeccionSucursalServiceImpl implements ProyeccionSucursalService 
     public void aplicarSucursal(SobreEvento<DatosSucursal> evento) {
         DatosSucursal datos = campos.datos(evento);
         campos.exigir(evento, "idSucursal", datos.idSucursal());
-        int filas = sucursalRepository.upsert(datos.idSucursal(), datos.nombre(), datos.departamento(),
-                datos.latitud(), datos.longitud(), datos.activa(), versionAgregado.de(evento));
+        int filas = sucursalRepository.upsert(
+                datos.idSucursal(),
+                datos.nombre(),
+                datos.departamento(),
+                datos.latitud(),
+                datos.longitud(),
+                datos.activa(),
+                versionAgregado.de(evento));
         log.info("{} {} sucursal {} ({}) idCorrelacion={}", evento.tipoEvento(), evento.idEvento(),
                 datos.idSucursal(), filas == 0 ? "versión vieja, ignorado" : "aplicado", evento.idCorrelacion());
     }

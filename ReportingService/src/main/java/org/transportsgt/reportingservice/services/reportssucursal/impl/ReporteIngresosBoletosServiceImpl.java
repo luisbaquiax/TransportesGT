@@ -40,16 +40,22 @@ public class ReporteIngresosBoletosServiceImpl implements ReporteIngresosBoletos
                                                    FiltroFechas intervalo, UUID idRuta, UUID idBus) {
         RepSucursal sucursal = alcance.sucursalDelReporte(usuario, idSucursal);
         Map<String, String> otros = new LinkedHashMap<>();
+
         otros.put("sucursal", sucursal.getNombre());
         alcance.rutaDeSucursal(idRuta, sucursal.getId()).ifPresent(r -> otros.put("ruta",
                 textos.trayecto(nombreSucursal(r.getIdSucursalOrigen()), nombreSucursal(r.getIdSucursalDestino()))));
         alcance.busDeSucursal(idBus, sucursal.getId()).ifPresent(b -> otros.put("bus", b.getPlaca()));
-        List<FilaIngresoBoleto> filas = repository.consultar(sucursal.getId(), intervalo.desde(), intervalo.hasta(),
+
+        List<FilaIngresoBoleto> filas = repository.consultar(
+                        sucursal.getId(),
+                        intervalo.desde(),
+                        intervalo.hasta(),
                         idRuta, idBus).stream()
                 .map(c -> new FilaIngresoBoleto(c.getIdViaje(), textos.trayecto(c.getOrigen(), c.getDestino()),
                         fechas.enGuatemala(c.getFechaHoraSalida()), c.getPlaca(),
                         c.getBoletosVendidos() == null ? 0 : c.getBoletosVendidos(), c.getIngreso()))
                 .toList();
+
         Map<String, Object> totales = armador.totales()
                 .cantidad("boletosVendidos", armador.contar(filas, FilaIngresoBoleto::boletosVendidos))
                 .dinero("ingreso", armador.sumar(filas, FilaIngresoBoleto::ingreso))

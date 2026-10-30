@@ -32,7 +32,8 @@ public class RespuestaReporte {
         String archivo = "reporte-" + nombre + "-" + fechas.hoy() + ".pdf";
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename(archivo).build().toString())
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename(archivo).build().toString())
                 .body(pdf);
     }
 }

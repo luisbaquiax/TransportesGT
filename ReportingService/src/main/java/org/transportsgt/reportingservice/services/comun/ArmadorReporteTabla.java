@@ -64,7 +64,7 @@ public class ArmadorReporteTabla {
     }
 
     /**
-     * Grupos ordenados alfabéticamente por título (sucursales), con reglas del español.
+     * Grupos ordenados alfabéticamente por título (sucursales)
      */
     public <F> List<GrupoReporte<F>> ordenarPorTitulo(List<GrupoReporte<F>> grupos) {
         Collator collator = Collator.getInstance(ESPANOL);

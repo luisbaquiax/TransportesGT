@@ -44,7 +44,10 @@ public class ReporteDepreciacionBusesServiceImpl implements ReporteDepreciacionB
                 .findFirstByVigenteDesdeLessThanEqualOrderByVigenteDesdeDesc(fechas.hoy())
                 .map(RepTarifaDepreciacion::getMontoPorKm)
                 .orElse(null);
-        List<FilaDepreciacionBus> filas = repository.consultar(sucursal.getId(), intervalo.desde(), intervalo.hasta())
+        List<FilaDepreciacionBus> filas = repository.consultar(
+                        sucursal.getId(),
+                        intervalo.desde(),
+                        intervalo.hasta())
                 .stream()
                 .map(c -> new FilaDepreciacionBus(c.getIdBus(), c.getPlaca(), c.getKmRecorridos(),
                         tarifaActual == null ? null : dinero.escalar(tarifaActual),

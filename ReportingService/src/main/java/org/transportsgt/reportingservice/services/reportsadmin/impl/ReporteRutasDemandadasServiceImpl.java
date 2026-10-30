@@ -30,7 +30,8 @@ public class ReporteRutasDemandadasServiceImpl implements ReporteRutasDemandadas
 
     @Override
     public ReporteTabla<FilaRutaDemandada> generar(FiltroFechas intervalo) {
-        List<FilaRutaDemandada> filas = repository.consultar(intervalo.desde(), intervalo.hasta()).stream()
+        List<FilaRutaDemandada> filas = repository.consultar(intervalo.desde(), intervalo.hasta())
+                .stream()
                 .map(this::aFila)
                 .toList();
         Map<String, Object> totales = armador.totales()
@@ -42,8 +43,13 @@ public class ReporteRutasDemandadasServiceImpl implements ReporteRutasDemandadas
     }
 
     private FilaRutaDemandada aFila(RutaDemandadaConsulta c) {
-        return new FilaRutaDemandada(c.getIdRuta(), textos.valor(c.getOrigen()), textos.valor(c.getDestino()),
-                c.getDistanciaKm(), dinero.escalar(c.getPrecioBoleto()), c.getBoletosVendidos() == null ? 0 : c.getBoletosVendidos(),
+        return new FilaRutaDemandada(
+                c.getIdRuta(),
+                textos.valor(c.getOrigen()),
+                textos.valor(c.getDestino()),
+                c.getDistanciaKm(),
+                dinero.escalar(c.getPrecioBoleto()),
+                c.getBoletosVendidos() == null ? 0 : c.getBoletosVendidos(),
                 c.getViajesConVentas() == null ? 0 : c.getViajesConVentas(), dinero.escalar(c.getIngreso()),
                 Boolean.TRUE.equals(c.getEliminada()));
     }

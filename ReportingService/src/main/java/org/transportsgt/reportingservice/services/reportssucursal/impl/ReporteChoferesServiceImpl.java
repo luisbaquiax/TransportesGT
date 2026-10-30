@@ -37,8 +37,12 @@ public class ReporteChoferesServiceImpl implements ReporteChoferesService {
         RepSucursal sucursal = alcance.sucursalDelReporte(usuario, idSucursal);
         LocalDate hoy = fechas.hoy();
         List<FilaChofer> filas = repository.consultar(sucursal.getId(), intervalo.desde(), intervalo.hasta()).stream()
-                .map(c -> new FilaChofer(c.getIdChofer(), c.getNumeroLicencia(), c.getNombre(), c.getTipoLicencia(),
-                        c.getFechaVencimiento(), estadoLicencia(c.getFechaVencimiento(), hoy),
+                .map(c -> new FilaChofer(c.getIdChofer(),
+                        c.getNumeroLicencia(),
+                        c.getNombre(),
+                        c.getTipoLicencia(),
+                        c.getFechaVencimiento(),
+                        estadoLicencia(c.getFechaVencimiento(), hoy),
                         Boolean.TRUE.equals(c.getActivo()),
                         c.getViajesRealizados() == null ? 0 : c.getViajesRealizados()))
                 .toList();

@@ -26,9 +26,15 @@ public class ProyeccionFlotaServiceImpl implements ProyeccionFlotaService {
     public void aplicarBus(SobreEvento<DatosBus> evento) {
         DatosBus datos = campos.datos(evento);
         campos.exigir(evento, "idBus", datos.idBus());
-        int filas = busRepository.upsert(datos.idBus(), datos.idSucursal(), datos.placa(), datos.marca(),
-                datos.modelo(), (short) datos.capacidadPasajeros(),
-                datos.estadoOperativo() == null ? null : datos.estadoOperativo().name(), datos.activo(),
+        int filas = busRepository.upsert(
+                datos.idBus(),
+                datos.idSucursal(),
+                datos.placa(),
+                datos.marca(),
+                datos.modelo(),
+                (short) datos.capacidadPasajeros(),
+                datos.estadoOperativo() == null ? null : datos.estadoOperativo().name(),
+                datos.activo(),
                 versionAgregado.de(evento));
         log.info("{} {} bus {} ({}) idCorrelacion={}", evento.tipoEvento(), evento.idEvento(), datos.idBus(),
                 filas == 0 ? "versión vieja, ignorado" : "aplicado", evento.idCorrelacion());

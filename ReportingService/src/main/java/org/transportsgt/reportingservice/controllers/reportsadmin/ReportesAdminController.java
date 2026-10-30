@@ -84,7 +84,8 @@ public class ReportesAdminController {
     public ResponseEntity<?> ganancias(@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
                                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta,
                                        @RequestParam(required = false) UUID idSucursal,
-                                       @Parameter(description = "json | pdf") @RequestParam(required = false) String formato) {
+                                       @Parameter(description = "json | pdf")
+                                       @RequestParam(required = false) String formato) {
         FiltroFechas intervalo = validador.intervalo(desde, hasta);
         FormatoReporte salida = validador.formato(formato);
         return respuesta.responder(gananciasService.generar(intervalo, idSucursal), salida,
