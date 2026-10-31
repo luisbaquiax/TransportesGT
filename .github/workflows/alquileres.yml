@@ -1,0 +1,32 @@
+name: Alquileres
+
+on:
+  push:
+    branches: [main, develop, 'ci/**']
+    paths:
+      - 'PrivateRentalService/**'
+      - '.github/workflows/alquileres.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'PrivateRentalService/**'
+      - '.github/workflows/alquileres.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/servicio-ec2.yml
+    with:
+      directory: PrivateRentalService
+      service: private-rental-service
+      environment: aws-alquileres
+    secrets: inherit

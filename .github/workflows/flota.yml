@@ -1,0 +1,32 @@
+name: Flota
+
+on:
+  push:
+    branches: [main, develop, 'ci/**']
+    paths:
+      - 'FleetService/**'
+      - '.github/workflows/flota.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'FleetService/**'
+      - '.github/workflows/flota.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/servicio-ec2.yml
+    with:
+      directory: FleetService
+      service: fleet-service
+      environment: aws-flota
+    secrets: inherit

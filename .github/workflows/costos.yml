@@ -1,0 +1,32 @@
+name: Costos
+
+on:
+  push:
+    branches: [main, develop, 'ci/**']
+    paths:
+      - 'OperationalCostsService/**'
+      - '.github/workflows/costos.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'OperationalCostsService/**'
+      - '.github/workflows/costos.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/servicio-ec2.yml
+    with:
+      directory: OperationalCostsService
+      service: operational-costs-service
+      environment: aws-costos
+    secrets: inherit
