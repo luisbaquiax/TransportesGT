@@ -52,7 +52,7 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
     AlmacenamientoFotosNube(FotosProperties propiedades, Supplier<Storage> proveedor) {
         this.propiedades = propiedades;
         this.proveedor = proveedor;
-        if (propiedades.nubeBucket() == null || propiedades.nubeBucket().isBlank()) {
+        if (propiedades.nube().bucket() == null || propiedades.nube().bucket().isBlank()) {
             throw new IllegalStateException(
                     "FOTOS_NUBE_HABILITADA=true pero falta FOTOS_NUBE_BUCKET "
                             + "(nombre del bucket de Cloud Storage)");
@@ -60,7 +60,7 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
     }
 
     @Override
-    public String guardar(String clave, byte[] contenido, String contentType) {
+    public void guardar(String clave, byte[] contenido, String contentType) {
         // Borra también las extensiones anteriores al reemplazar (png/webp → jpg)
         borrarPorPrefijo(baseSinExtension(clave));
         BlobInfo info = BlobInfo.newBuilder(bucket(), clave).setContentType(contentType).build();
@@ -68,7 +68,6 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
         // GET /buses/{id}/foto o /choferes/{id}/foto con la autorización del registro.
         storage().create(info, contenido);
         log.debug("Foto subida al bucket {} como {}", bucket(), clave);
-        return urlPublica(clave);
     }
 
     @Override
@@ -106,13 +105,8 @@ public class AlmacenamientoFotosNube implements AlmacenamientoFotos {
         }
     }
 
-    @Override
-    public String urlPublica(String clave) {
-        return "https://storage.googleapis.com/" + bucket() + "/" + clave;
-    }
-
     private String bucket() {
-        return propiedades.nubeBucket();
+        return propiedades.nube().bucket();
     }
 
     private String baseSinExtension(String clave) {

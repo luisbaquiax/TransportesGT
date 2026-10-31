@@ -14,8 +14,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * Almacenamiento local (desarrollo): escribe en {@code FOTOS_DIRECTORIO} por defecto
- * {@code ./public/fotos} y devuelve la URL pública de {@code GET /fotos/**}.
+ * Almacenamiento local
  *
  * <p>Es la implementación activa mientras {@code FOTOS_NUBE_HABILITADA} no sea {@code true}.
  */
@@ -32,7 +31,7 @@ public class AlmacenamientoFotosLocal implements AlmacenamientoFotos {
     }
 
     @Override
-    public String guardar(String clave, byte[] contenido, String contentType) {
+    public void guardar(String clave, byte[] contenido, String contentType) {
         Path destino = ruta(clave);
         try {
             Files.createDirectories(destino.getParent());
@@ -43,7 +42,6 @@ public class AlmacenamientoFotosLocal implements AlmacenamientoFotos {
             throw new UncheckedIOException("No se pudo guardar la imagen", e);
         }
         log.debug("Foto guardada en {}", destino);
-        return urlPublica(clave);
     }
 
     @Override
@@ -85,12 +83,9 @@ public class AlmacenamientoFotosLocal implements AlmacenamientoFotos {
         }
     }
 
-    @Override
-    public String urlPublica(String clave) {
-        return propiedades.urlPublica() + "/" + clave;
-    }
-
-    /** Ruta absoluta, normalizada y siempre dentro del directorio configurado. */
+    /**
+     * Ruta absoluta, normalizada y siempre dentro del directorio configurado.
+     */
     private Path ruta(String clave) {
         Path base = Path.of(propiedades.directorio()).toAbsolutePath().normalize();
         Path ruta = base.resolve(clave).normalize();
@@ -100,7 +95,9 @@ public class AlmacenamientoFotosLocal implements AlmacenamientoFotos {
         return ruta;
     }
 
-    /** {@code buses/1-2-3.jpg} → {@code buses/1-2-3.} (prefijo que cubre todas las extensiones). */
+    /**
+     * {@code buses/1-2-3.jpg} → {@code buses/1-2-3.} (prefijo que cubre todas las extensiones).
+     */
     private String baseSinExtension(String clave) {
         int punto = clave.lastIndexOf('.');
         return punto < 0 ? clave + "." : clave.substring(0, punto + 1);

@@ -51,8 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "eventos.outbox.lote=50",
         // Viajes no existe en las pruebas: desactivar un bus debe fallar cerrado (503)
         "viajes.url=http://127.0.0.1:9/v1/trips",
-        "flota.fotos.directorio=target/fotos-test",
-        "flota.fotos.url-publica=http://localhost/fotos"
+        "flota.fotos.directorio=target/fotos-test"
 })
 @AutoConfigureMockMvc
 @Import(ContenedoresConfig.class)

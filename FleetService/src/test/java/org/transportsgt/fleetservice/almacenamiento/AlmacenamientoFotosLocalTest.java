@@ -22,15 +22,14 @@ class AlmacenamientoFotosLocalTest {
 
     private AlmacenamientoFotosLocal almacenamiento() {
         return new AlmacenamientoFotosLocal(new FotosProperties(
-                directorio.toString(), "http://localhost/fotos", 5_000_000, false, ""));
+                directorio.toString(), 5_000_000, new FotosProperties.Nube(false, "")));
     }
 
     @Test
-    void guardarCreaElArchivoYDevuelveUrl() throws Exception {
+    void guardarCreaElArchivo() throws Exception {
         byte[] bytes = {1, 2, 3, 4};
-        String url = almacenamiento().guardar("buses/abc.jpg", bytes, "image/jpeg");
+        almacenamiento().guardar("buses/abc.jpg", bytes, "image/jpeg");
 
-        assertEquals("http://localhost/fotos/buses/abc.jpg", url);
         assertArrayEquals(bytes, Files.readAllBytes(directorio.resolve("buses/abc.jpg")));
     }
 

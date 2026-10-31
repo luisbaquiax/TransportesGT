@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Fotos privadas de buses/choferes: subida a almacenamiento local (directorio de prueba), lectura con token por
  * GET /buses/{id}/foto y /choferes/{id}/foto con autorización por sucursal, reemplazo y validación de formato.
- * La ruta anterior GET /fotos/** ya no es pública (queda para administradores mientras se retira).
  */
 class FotosIT extends IntegracionBase {
 
@@ -64,12 +63,6 @@ class FotosIT extends IntegracionBase {
         // Administrador de otra sucursal
         mockMvc.perform(conToken(get("/buses/" + id + "/foto"), token(Rol.ADMIN_SUCURSAL, CAPITAL)))
                 .andExpect(status().isForbidden());
-        // La ruta anterior ya no es pública
-        String nombre = nombreFoto("SELECT foto_url FROM bus WHERE id = ?", id);
-        mockMvc.perform(get("/fotos/buses/" + nombre))
-                .andExpect(status().isUnauthorized());
-        mockMvc.perform(conToken(get("/fotos/buses/" + nombre), token(Rol.CLIENTE, null)))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -81,6 +74,20 @@ class FotosIT extends IntegracionBase {
         mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.codigo").value("FOTO_NO_ENCONTRADA"));
+    }
+
+    @Test
+    void fotoUrlSinArchivoOConNombreInseguroDevuelve404() throws Exception {
+        String id = crearBus(unico("PFAL"));
+        // La referencia quedó en la base pero el archivo ya no está en el almacenamiento
+        jdbc.update("UPDATE bus SET foto_url = ? WHERE id = ?", "buses/" + id + ".jpg", UUID.fromString(id));
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value("FOTO_NO_ENCONTRADA"));
+        // Un nombre fuera del patrón nunca llega al almacenamiento
+        jdbc.update("UPDATE bus SET foto_url = ? WHERE id = ?", "buses/con espacio.jpg", UUID.fromString(id));
+        mockMvc.perform(conToken(get("/buses/" + id + "/foto"), tokenAdminSucursal()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -99,8 +106,8 @@ class FotosIT extends IntegracionBase {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.IMAGE_PNG))
                 .andExpect(content().bytes(PNG));
         // La anterior ya no existe (se borró del almacenamiento)
-        mockMvc.perform(conToken(get("/fotos/buses/" + nombreJpg), tokenAdminSucursal()))
-                .andExpect(status().isNotFound());
+        assertThat(java.nio.file.Path.of("target/fotos-test/buses", nombreJpg)).doesNotExist();
+        assertThat(java.nio.file.Path.of("target/fotos-test/buses", nombrePng)).exists();
     }
 
     @Test

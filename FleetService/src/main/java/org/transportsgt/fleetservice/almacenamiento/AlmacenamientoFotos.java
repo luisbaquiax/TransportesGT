@@ -9,22 +9,21 @@ import java.util.Optional;
  * variable de entorno {@code FOTOS_NUBE_HABILITADA} (plan §5, decisión 1):
  *
  * <ul>
- *   <li>{@code false} (por defecto, desarrollo): disco local bajo {@code FOTOS_DIRECTORIO},
- *       servidas por {@code GET /fotos/**}.</li>
+ *   <li>{@code false} (por defecto, desarrollo): disco local bajo {@code FOTOS_DIRECTORIO}.</li>
  *   <li>{@code true} (producción): bucket de Google Cloud Storage ({@code FOTOS_NUBE_BUCKET} +
  *       credenciales por {@code GOOGLE_APPLICATION_CREDENTIALS} o identidad de la plataforma).</li>
  * </ul>
  *
  * Todas las operaciones trabajan con <em>claves</em> de la forma {@code buses/{uuid}.jpg},
- * sin barra inicial: {@code FotosFlotaService} valida el nombre antes de llamar.
+ * sin barra inicial: {@code FotosFlotaService} valida el nombre antes de llamar. La clave es lo que queda en
+ * {@code foto_url}; las fotos son privadas y se sirven por GET /buses/{id}/foto y GET /choferes/{id}/foto.
  */
 public interface AlmacenamientoFotos {
 
     /**
-     * Guarda (o reemplaza) el objeto y devuelve su URL pública, que es la que se
-     * guarda en {@code foto_url}.
+     * Guarda (o reemplaza) el objeto.
      */
-    String guardar(String clave, byte[] contenido, String contentType);
+    void guardar(String clave, byte[] contenido, String contentType);
 
     /** Lee un objeto; vacío si no existe. */
     Optional<Resource> leer(String clave);
@@ -37,7 +36,4 @@ public interface AlmacenamientoFotos {
      * foto para eliminar también las extensiones anteriores ({@code buses/{uuid}.png} → …jpg).
      */
     void borrarPorPrefijo(String prefijo);
-
-    /** URL pública del objeto (la que verá el frontend en {@code <img src>}). */
-    String urlPublica(String clave);
 }
