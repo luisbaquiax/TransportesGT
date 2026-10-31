@@ -33,7 +33,6 @@ cd ../infra && docker compose up -d
 | `JWT_SECRET` | sí | Secreto HS256 en **Base64** (mínimo 32 bytes decodificados), el mismo del gateway |
 | `VIAJES_URL` | no | URL base de TripService (`http://localhost:8083/v1/trips`) |
 | `FOTOS_DIRECTORIO` | no | Carpeta local de fotos (por defecto `./public/fotos`) |
-| `FOTOS_URL_PUBLICA` | no | Prefijo público de las fotos |
 | `FOTOS_NUBE_HABILITADA` / `FOTOS_NUBE_BUCKET` | no | Almacenamiento en Google Cloud Storage (por defecto local) |
 | `SERVER_PORT` | no | Por defecto `8082` |
 | `SPRING_PROFILES_ACTIVE` | no | `dev` (por defecto) o `prod` |
@@ -72,7 +71,7 @@ propia sucursal; `ADMIN_SISTEMA` puede consultar todo.
 | PUT | `/choferes/{id}` | SUC | Actualiza (con `version`) |
 | PATCH | `/choferes/{id}/activo` | SUC | Activa/desactiva |
 | POST | `/choferes/{id}/foto` | SUC | Sube foto |
-| GET | `/fotos/{tipo}/{nombre}` | público | Lee la imagen (`buses` o `choferes`); el frontend la sirve en `<img src>` sin token |
+| GET | `/buses/{id}/foto`, `/choferes/{id}/foto` | SIS, SUC | Lee la foto (privada, con la autorización por sucursal del registro); `fotoUrl` de la respuesta apunta aquí con `?v={version}` |
 | POST | `/admin/republicar-eventos` | SIS | Encola los eventos de todo lo existente |
 
 Códigos de error estables: `NO_AUTENTICADO` (401), `ACCESO_DENEGADO` / `OPERACION_NO_AUTORIZADA` (403),

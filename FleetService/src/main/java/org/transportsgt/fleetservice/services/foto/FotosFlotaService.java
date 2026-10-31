@@ -5,7 +5,6 @@ import org.transportsgt.fleetservice.config.security.authentication.UsuarioAuten
 import org.transportsgt.fleetservice.dto.response.BusResponse;
 import org.transportsgt.fleetservice.dto.response.ChoferResponse;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,9 +27,4 @@ public interface FotosFlotaService {
     ChoferResponse guardarFotoChofer(UUID id, MultipartFile archivo, UsuarioAutenticado autenticado);
 
     FotoLeida leerFotoChofer(UUID id, UsuarioAutenticado autenticado);
-
-    /**
-     * Ruta obsoleta GET /fotos/{tipo}/{nombre}: vacío si el nombre no es seguro o no existe.
-     */
-    Optional<FotoLeida> leerPorNombre(TipoFoto tipo, String nombre);
 }
