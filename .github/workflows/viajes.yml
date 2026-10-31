@@ -1,0 +1,32 @@
+name: Viajes
+
+on:
+  push:
+    branches: [main, develop, 'ci/**']
+    paths:
+      - 'TripService/**'
+      - '.github/workflows/viajes.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'TripService/**'
+      - '.github/workflows/viajes.yml'
+      - '.github/workflows/servicio-ec2.yml'
+      - '.github/scripts/**'
+      - '.github/tests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/servicio-ec2.yml
+    with:
+      directory: TripService
+      service: trip-service
+      environment: aws-viajes
+    secrets: inherit

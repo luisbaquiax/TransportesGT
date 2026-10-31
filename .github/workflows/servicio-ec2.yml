@@ -1,0 +1,129 @@
+name: Servicio - CI y EC2
+
+on:
+  workflow_call:
+    inputs:
+      directory:
+        required: true
+        type: string
+      service:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Pruebas e imagen Docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      SERVICE_DIRECTORY: ${{ inputs.directory }}
+      IMAGE: transportesgt/${{ inputs.service }}:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar script de despliegue
+        run: |
+          bash -n .github/scripts/deploy-ec2.sh
+          python3 .github/tests/test_deploy.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: ${{ inputs.directory }}/pom.xml
+      - name: Pruebas unitarias, integración y cobertura
+        working-directory: ${{ inputs.directory }}
+        run: bash ./mvnw --batch-mode --no-transfer-progress clean verify
+      - name: Guardar resultados de pruebas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pruebas-${{ inputs.service }}
+          path: |
+            ${{ inputs.directory }}/target/surefire-reports/
+            ${{ inputs.directory }}/target/failsafe-reports/
+            ${{ inputs.directory }}/target/site/jacoco*/
+          retention-days: 7
+      - name: Construir imagen
+        run: docker build --tag "$IMAGE" "$SERVICE_DIRECTORY"
+      - name: Exportar imagen para EC2
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: docker save "$IMAGE" | gzip > "$RUNNER_TEMP/image.tar.gz"
+      - name: Guardar imagen
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: imagen-${{ inputs.service }}
+          path: ${{ runner.temp }}/image.tar.gz
+          retention-days: 1
+          compression-level: 0
+
+  deploy:
+    name: Desplegar en EC2
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: ${{ inputs.environment }}
+    concurrency:
+      group: deploy-${{ inputs.service }}
+      cancel-in-progress: false
+    env:
+      SERVICE: ${{ inputs.service }}
+      IMAGE: transportesgt/${{ inputs.service }}:${{ github.sha }}
+      EC2_HOST: ${{ vars.EC2_HOST }}
+      EC2_USER: ${{ vars.EC2_USER }}
+      EC2_PORT: ${{ vars.EC2_PORT || '22' }}
+      COMPOSE_FILE: ${{ vars.COMPOSE_FILE }}
+      HEALTH_URL: ${{ vars.HEALTH_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: imagen-${{ inputs.service }}
+          path: ${{ runner.temp }}/deploy
+      - name: Configurar SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.EC2_SSH_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${EC2_HOST:?Configura EC2_HOST}" "${EC2_USER:?Configura EC2_USER}"
+          : "${COMPOSE_FILE:?Configura COMPOSE_FILE}" "${HEALTH_URL:?Configura HEALTH_URL}"
+          : "${SSH_PRIVATE_KEY:?Configura EC2_SSH_PRIVATE_KEY}"
+          : "${SSH_KNOWN_HOSTS:?Configura EC2_SSH_KNOWN_HOSTS}"
+          [[ "$EC2_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
+          [[ "$EC2_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$EC2_PORT" =~ ^[0-9]+$ ]]
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Transferir imagen y actualizar servicio
+        shell: bash
+        run: |
+          set -euo pipefail
+          remote="${EC2_USER}@${EC2_HOST}"
+          remote_dir="/tmp/transportes-${SERVICE}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          ssh_options=(-o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15)
+          ssh "${ssh_options[@]}" -p "$EC2_PORT" "$remote" "mkdir -m 700 '$remote_dir'"
+          cleanup() {
+            ssh "${ssh_options[@]}" -p "$EC2_PORT" "$remote" "rm -rf -- '$remote_dir'" || true
+          }
+          trap cleanup EXIT
+          scp "${ssh_options[@]}" -P "$EC2_PORT" \
+            "$RUNNER_TEMP/deploy/image.tar.gz" .github/scripts/deploy-ec2.sh \
+            "$remote:$remote_dir/"
+          printf -v command 'bash %q %q %q %q %q %q' \
+            "$remote_dir/deploy-ec2.sh" "$COMPOSE_FILE" "$SERVICE" \
+            "$IMAGE" "$HEALTH_URL" "$remote_dir/image.tar.gz"
+          ssh "${ssh_options[@]}" -p "$EC2_PORT" "$remote" "$command"
+      - name: Limpiar credenciales
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts
