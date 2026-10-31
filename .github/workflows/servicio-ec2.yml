@@ -97,13 +97,17 @@ jobs:
           : "${EC2_HOST:?Configura EC2_HOST}" "${EC2_USER:?Configura EC2_USER}"
           : "${COMPOSE_FILE:?Configura COMPOSE_FILE}" "${HEALTH_URL:?Configura HEALTH_URL}"
           : "${SSH_PRIVATE_KEY:?Configura EC2_SSH_PRIVATE_KEY}"
-          : "${SSH_KNOWN_HOSTS:?Configura EC2_SSH_KNOWN_HOSTS}"
           [[ "$EC2_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]]
           [[ "$EC2_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$EC2_PORT" =~ ^[0-9]+$ ]]
           install -m 700 -d ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          if [[ -n "${SSH_KNOWN_HOSTS:-}" ]]; then
+            printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "$EC2_PORT" -H "$EC2_HOST" > ~/.ssh/known_hosts
+            test -s ~/.ssh/known_hosts
+          fi
           chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
       - name: Transferir imagen y actualizar servicio
         shell: bash
