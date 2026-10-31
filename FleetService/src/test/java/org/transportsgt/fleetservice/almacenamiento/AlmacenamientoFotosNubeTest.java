@@ -8,6 +8,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.api.gax.paging.Page;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.core.io.Resource;
 import org.transportsgt.fleetservice.config.FotosProperties;
 
@@ -32,7 +33,7 @@ class AlmacenamientoFotosNubeTest {
     private static final String BUCKET = "bucket-prueba";
 
     private static FotosProperties propiedades() {
-        return new FotosProperties("./fotos", "http://localhost/fotos", 5_000_000, true, BUCKET);
+        return new FotosProperties("./fotos", 5_000_000, new FotosProperties.Nube(true, BUCKET));
     }
 
     private static StorageException prohibido() {
@@ -46,8 +47,7 @@ class AlmacenamientoFotosNubeTest {
 
     @Test
     void sinBucketNoArranca() {
-        FotosProperties sinBucket = new FotosProperties("./fotos", "http://localhost/fotos",
-                5_000_000, true, "");
+        FotosProperties sinBucket = new FotosProperties("./fotos", 5_000_000, new FotosProperties.Nube(true, ""));
         assertThrows(IllegalStateException.class, () -> new AlmacenamientoFotosNube(sinBucket));
     }
 
@@ -60,11 +60,11 @@ class AlmacenamientoFotosNubeTest {
         AlmacenamientoFotosNube almacenamiento =
                 new AlmacenamientoFotosNube(propiedades(), () -> storage);
 
-        String url = almacenamiento.guardar(CLAVE, new byte[]{1}, "image/jpeg");
+        almacenamiento.guardar(CLAVE, new byte[]{1}, "image/jpeg");
 
-        // La referencia se guarda en foto_url pero nunca se expone: las fotos se sirven por el servicio
-        assertEquals("https://storage.googleapis.com/" + BUCKET + "/" + CLAVE, url);
-        verify(storage).create(any(BlobInfo.class), eq(new byte[]{1}));
+        ArgumentCaptor<BlobInfo> info = ArgumentCaptor.forClass(BlobInfo.class);
+        verify(storage).create(info.capture(), eq(new byte[]{1}));
+        assertEquals(BlobId.of(BUCKET, CLAVE), info.getValue().getBlobId());
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.transportsgt.eventos.payload.identidad.Rol;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -112,8 +113,6 @@ class CasosFlotaIT extends IntegracionBase {
                 .andExpect(status().isOk());
         mockMvc.perform(conToken(get("/buses").param("idSucursal", CAPITAL.toString()), tokenAdminSucursal()))
                 .andExpect(status().isForbidden());
-        mockMvc.perform(conToken(get("/fotos/desconocido/x.jpg"), tokenAdminSistema()))
-                .andExpect(status().isNotFound());
         String chofer = crearChofer(unico("LICA"));
         enviar(patch("/choferes/" + chofer + "/activo"), "{\"activo\":true}").andExpect(status().isOk());
     }
@@ -133,10 +132,6 @@ class CasosFlotaIT extends IntegracionBase {
                         .file(new MockMultipartFile("archivo", "texto.gif", "image/gif", "no es imagen".getBytes())),
                         tokenAdminSucursal()))
                 .andExpect(status().isBadRequest());
-        mockMvc.perform(conToken(get("/fotos/buses/..%2Fsecreto.jpg"), tokenAdminSistema()))
-                .andExpect(status().is4xxClientError());
-        mockMvc.perform(conToken(get("/fotos/buses/no-existe.jpg"), tokenAdminSistema()))
-                .andExpect(status().isNotFound());
     }
 
     private static final byte[] PNG = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
@@ -145,7 +140,7 @@ class CasosFlotaIT extends IntegracionBase {
             0x42, 0x60, (byte) 0x82};
 
     @Test
-    void fotosPngDeBusYChoferSeLeenPorRutaYPorNombre() throws Exception {
+    void fotosPngDeBusYChoferSeLeenPorSuRuta() throws Exception {
         String idBus = crearBus(placa());
         String idChofer = crearChofer(unico("LICF"));
         mockMvc.perform(conToken(multipart("/buses/" + idBus + "/foto")
@@ -158,12 +153,9 @@ class CasosFlotaIT extends IntegracionBase {
         mockMvc.perform(conToken(get("/buses/" + idBus + "/foto"), tokenAdminSucursal())).andExpect(status().isOk());
         mockMvc.perform(conToken(get("/choferes/" + idChofer + "/foto"), tokenAdminSucursal()))
                 .andExpect(status().isOk());
-        // foto_url guarda la URL pública (.../fotos/buses/<nombre>)
-        String url = jdbc.queryForObject("SELECT foto_url FROM bus WHERE id = ?::uuid", String.class, idBus);
-        mockMvc.perform(conToken(get(url.substring(url.indexOf("/fotos/"))), tokenAdminSistema()))
-                .andExpect(status().isOk());
-        mockMvc.perform(conToken(get("/fotos/buses/con espacio.jpg"), tokenAdminSistema()))
-                .andExpect(status().isNotFound());
+        // foto_url guarda la clave del almacenamiento, no una URL
+        assertEquals("buses/" + idBus + ".png",
+                jdbc.queryForObject("SELECT foto_url FROM bus WHERE id = ?::uuid", String.class, idBus));
         mockMvc.perform(conToken(multipart("/buses/" + idBus + "/foto")
                         .file(new MockMultipartFile("archivo", "sin-tipo", null, PNG)), tokenAdminSucursal()))
                 .andExpect(status().isBadRequest());

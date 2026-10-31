@@ -49,15 +49,12 @@ class SeguridadIT extends IntegracionBase {
     }
 
     @Test
-    void fotosYaNoSonRutaPublica() throws Exception {
+    void fotosNoSonRutaPublica() throws Exception {
         // Las fotos son privadas: sin token se rechaza antes de buscar el archivo
-        mockMvc.perform(get("/fotos/buses/no-existe.jpg"))
-                .andExpect(status().isUnauthorized());
         mockMvc.perform(get("/buses/" + java.util.UUID.randomUUID() + "/foto"))
                 .andExpect(status().isUnauthorized());
-        // Con token de administrador sí llega al almacenamiento (no existe: 404)
-        mockMvc.perform(conToken(get("/fotos/buses/no-existe.jpg"), tokenAdminSistema()))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/choferes/" + java.util.UUID.randomUUID() + "/foto"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

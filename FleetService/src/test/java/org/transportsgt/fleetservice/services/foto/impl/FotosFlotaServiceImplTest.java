@@ -26,7 +26,6 @@ import org.transportsgt.fleetservice.repositories.SucursalRefRepository;
 import org.transportsgt.fleetservice.services.autorizacion.AutorizacionSucursal;
 import org.transportsgt.fleetservice.services.comun.BuscadorFlota;
 import org.transportsgt.fleetservice.services.foto.FotoLeida;
-import org.transportsgt.fleetservice.services.foto.TipoFoto;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -72,7 +71,7 @@ class FotosFlotaServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        FotosProperties propiedades = new FotosProperties("./fotos", "http://localhost/fotos", 1024, false, "");
+        FotosProperties propiedades = new FotosProperties("./fotos", 1024, new FotosProperties.Nube(false, ""));
         FormatosFoto formatos = new FormatosFoto();
         servicio = new FotosFlotaServiceImpl(almacenamiento, new ValidadorFoto(propiedades, formatos), formatos,
                 new BuscadorFlota(busRepository, choferRepository), new AutorizacionSucursal(sucursalRefRepository),
@@ -126,12 +125,12 @@ class FotosFlotaServiceImplTest {
     void guardarFotoBusDelegaConLaClaveYActualizaElBus() {
         Bus entity = bus(null);
         byte[] bytes = {1, 2, 3};
-        when(almacenamiento.guardar(eq("buses/" + id + ".jpg"), eq(bytes), eq("image/jpeg")))
-                .thenReturn("buses/" + id + ".jpg");
         when(busRepository.saveAndFlush(entity)).thenAnswer(inv -> inv.getArgument(0));
 
         servicio.guardarFotoBus(id, archivo("image/jpeg", bytes), adminSucursal);
 
+        // foto_url guarda la clave, no una URL
+        verify(almacenamiento).guardar(eq("buses/" + id + ".jpg"), eq(bytes), eq("image/jpeg"));
         assertEquals("buses/" + id + ".jpg", entity.getFotoUrl());
         // Fuerza una versión nueva para invalidar la caché del navegador, con el reloj del contexto
         assertEquals(OffsetDateTime.now(clock), entity.getActualizadoEn());
@@ -142,12 +141,12 @@ class FotosFlotaServiceImplTest {
         Chofer entity = Chofer.builder().id(id).idSucursal(idSucursal).activo(true).version(1L).build();
         when(choferRepository.findById(id)).thenReturn(Optional.of(entity));
         byte[] bytes = {9};
-        when(almacenamiento.guardar(eq("choferes/" + id + ".png"), eq(bytes), eq("image/png"))).thenReturn("ok");
         when(choferRepository.saveAndFlush(entity)).thenAnswer(inv -> inv.getArgument(0));
 
         servicio.guardarFotoChofer(id, archivo("IMAGE/PNG", bytes), adminSucursal);
 
-        assertEquals("ok", entity.getFotoUrl());
+        verify(almacenamiento).guardar(eq("choferes/" + id + ".png"), eq(bytes), eq("image/png"));
+        assertEquals("choferes/" + id + ".png", entity.getFotoUrl());
     }
 
     @Test
@@ -180,19 +179,21 @@ class FotosFlotaServiceImplTest {
     }
 
     @Test
-    void leerPorNombreInseguroDevuelveVacioSinTocarAlmacenamiento() {
-        assertTrue(servicio.leerPorNombre(TipoFoto.BUSES, "../secreto.jpg").isEmpty());
-        assertTrue(servicio.leerPorNombre(TipoFoto.BUSES, null).isEmpty());
+    void leerFotoConNombreInseguroLanza404SinTocarAlmacenamiento() {
+        bus("buses/..%2Fsecreto.jpg");
+        assertThrows(FotoNoEncontradaException.class, () -> servicio.leerFotoBus(id, adminSucursal));
         verify(almacenamiento, never()).leer(anyString());
     }
 
     @Test
-    void leerPorNombreDevuelveElRecursoConSuTipo() {
+    void leerFotoChoferConClaveDevuelveElRecursoConSuTipo() {
+        Chofer entity = Chofer.builder().id(id).idSucursal(idSucursal).activo(true).version(1L)
+                .fotoUrl("choferes/" + id + ".webp").build();
+        when(choferRepository.findById(id)).thenReturn(Optional.of(entity));
         when(almacenamiento.leer("choferes/" + id + ".webp")).thenReturn(Optional.of(new ByteArrayResource(new byte[]{1})));
 
-        Optional<FotoLeida> foto = servicio.leerPorNombre(TipoFoto.CHOFERES, id + ".webp");
+        FotoLeida foto = servicio.leerFotoChofer(id, adminSucursal);
 
-        assertTrue(foto.isPresent());
-        assertEquals(MediaType.parseMediaType("image/webp"), foto.get().tipo());
+        assertEquals(MediaType.parseMediaType("image/webp"), foto.tipo());
     }
 }

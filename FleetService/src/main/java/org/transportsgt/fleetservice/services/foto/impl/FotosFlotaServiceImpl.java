@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -91,15 +90,9 @@ public class FotosFlotaServiceImpl implements FotosFlotaService {
         return leerGuardada(TipoFoto.CHOFERES, chofer.getFotoUrl());
     }
 
-    @Override
-    public Optional<FotoLeida> leerPorNombre(TipoFoto tipo, String nombre) {
-        if (nombre == null || !NOMBRE_SEGURO.matcher(nombre).matches()) {
-            return Optional.empty();
-        }
-        return almacenamiento.leer(tipo.carpeta() + "/" + nombre)
-                .map(contenido -> new FotoLeida(contenido, formatos.tipoDe(nombre)));
-    }
-
+    /**
+     * Guarda la imagen y devuelve su clave ({@code buses/{id}.jpg}), que es lo que queda en foto_url.
+     */
     private String guardar(TipoFoto tipo, UUID id, MultipartFile archivo) {
         String extension = validador.validar(archivo);
         byte[] contenido;
@@ -108,18 +101,24 @@ public class FotosFlotaServiceImpl implements FotosFlotaService {
         } catch (IOException e) {
             throw new UncheckedIOException("No se pudo leer la imagen enviada", e);
         }
-        return almacenamiento.guardar(tipo.carpeta() + "/" + id + "." + extension, contenido,
-                formatos.normalizar(archivo.getContentType()));
+        String clave = tipo.carpeta() + "/" + id + "." + extension;
+        almacenamiento.guardar(clave, contenido, formatos.normalizar(archivo.getContentType()));
+        return clave;
     }
 
     /**
-     * foto_url puede traer la URL completa (registros anteriores) o la clave: basta el nombre del archivo.
+     * foto_url trae la clave (o una URL completa en registros anteriores): basta el nombre del archivo.
      */
     private FotoLeida leerGuardada(TipoFoto tipo, String fotoGuardada) {
         if (fotoGuardada == null || fotoGuardada.isBlank()) {
             throw new FotoNoEncontradaException();
         }
         String nombre = fotoGuardada.substring(fotoGuardada.lastIndexOf('/') + 1);
-        return leerPorNombre(tipo, nombre).orElseThrow(FotoNoEncontradaException::new);
+        if (!NOMBRE_SEGURO.matcher(nombre).matches()) {
+            throw new FotoNoEncontradaException();
+        }
+        return almacenamiento.leer(tipo.carpeta() + "/" + nombre)
+                .map(contenido -> new FotoLeida(contenido, formatos.tipoDe(nombre)))
+                .orElseThrow(FotoNoEncontradaException::new);
     }
 }
