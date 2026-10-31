@@ -1,1 +1,5 @@
 run-services.sh
+
+**/.env.local
+
+**/.env.prod
