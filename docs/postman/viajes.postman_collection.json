@@ -1,0 +1,197 @@
+{
+  "info": {
+    "_postman_id": "6e7f8a90-1b2c-4d5e-9f01-viajes000001",
+    "name": "TransportesGT - Viajes",
+    "description": "servicio-viajes. baseUrl directo: http://localhost:8083/v1/trips · por el gateway: http://localhost:8080/v1/trips. Ejecute Login en la colección Identidad y copie el token correspondiente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8083/v1/trips" },
+    { "key": "token", "value": "" },
+    { "key": "tokenSistema", "value": "" },
+    { "key": "tokenSucursal", "value": "" },
+    { "key": "tokenChofer", "value": "" },
+    { "key": "claveInterna", "value": "cambiar-en-local" },
+    { "key": "idRuta", "value": "40000000-0000-4000-8000-000000000001" },
+    { "key": "idRutaDestino", "value": "40000000-0000-4000-8000-000000000002" },
+    { "key": "idViaje", "value": "50000000-0000-4000-8000-000000000001" },
+    { "key": "idViajeFinalizado", "value": "50000000-0000-4000-8000-000000000002" },
+    { "key": "idViajeAlquiler", "value": "50000000-0000-4000-8000-000000000003" },
+    { "key": "idSucursalOrigen", "value": "10000000-0000-4000-8000-000000000001" },
+    { "key": "idSucursalDestino", "value": "10000000-0000-4000-8000-000000000002" },
+    { "key": "idBus", "value": "b0000000-0000-4000-8000-000000000001" },
+    { "key": "idBusAlterno", "value": "b0000000-0000-4000-8000-000000000002" },
+    { "key": "idChofer", "value": "c0000000-0000-4000-8000-000000000001" },
+    { "key": "fechaSalida", "value": "{{$isoTimestamp}}" },
+    { "key": "fechaLlegadaEstimada", "value": "{{$isoTimestamp}}" },
+    { "key": "fechaSalidaReal", "value": "{{$isoTimestamp}}" },
+    { "key": "fechaLlegadaReal", "value": "{{$isoTimestamp}}" }
+  ],
+  "item": [
+    {
+      "name": "Rutas",
+      "item": [
+        {
+          "name": "Listar rutas",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/rutas?idSucursalOrigen={{idSucursalOrigen}}"
+          }
+        },
+        {
+          "name": "Obtener ruta por id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/rutas/{{idRuta}}"
+          }
+        },
+        {
+          "name": "Crear ruta",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idSucursalOrigen\": \"{{idSucursalOrigen}}\",\n  \"idSucursalDestino\": \"{{idSucursalDestino}}\",\n  \"distanciaKm\": 120.00,\n  \"precioBoleto\": 55.00\n}"
+            },
+            "url": "{{baseUrl}}/rutas",
+            "description": "Requiere tokenSucursal. Use sucursales que no tengan ruta existente.",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Actualizar ruta",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idSucursalOrigen\": \"{{idSucursalOrigen}}\",\n  \"idSucursalDestino\": \"{{idSucursalDestino}}\",\n  \"distanciaKm\": 121.00,\n  \"precioBoleto\": 56.00\n}"
+            },
+            "url": "{{baseUrl}}/rutas/{{idRuta}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Eliminar ruta",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/rutas/{{idRuta}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] } }
+        }
+      ]
+    },
+    {
+      "name": "Viajes",
+      "item": [
+        {
+          "name": "Listar viajes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/viajes?tipoViaje=REGULAR&estado=PROGRAMADO&pagina=0&tamano=20"
+          }
+        },
+        {
+          "name": "Resumen de viajes por ids",
+          "request": { "method": "GET", "url": "{{baseUrl}}/viajes/resumen?ids={{idViaje}},{{idViajeFinalizado}}" }
+        },
+        {
+          "name": "Obtener viaje por id",
+          "request": { "method": "GET", "url": "{{baseUrl}}/viajes/{{idViaje}}" }
+        },
+        {
+          "name": "Programar viaje regular",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idRuta\": \"{{idRutaDestino}}\",\n  \"idBus\": \"{{idBusAlterno}}\",\n  \"idChofer\": \"{{idChofer}}\",\n  \"fechaHoraSalida\": \"{{fechaSalida}}\",\n  \"fechaHoraLlegadaEstimada\": \"{{fechaLlegadaEstimada}}\"\n}"
+            },
+            "url": "{{baseUrl}}/viajes",
+            "description": "Requiere tokenSucursal. Use fechas futuras y recursos disponibles.",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Actualizar viaje",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idBus\": \"{{idBusAlterno}}\",\n  \"idChofer\": \"{{idChofer}}\",\n  \"fechaHoraSalida\": \"{{fechaSalida}}\",\n  \"fechaHoraLlegadaEstimada\": \"{{fechaLlegadaEstimada}}\"\n}"
+            },
+            "url": "{{baseUrl}}/viajes/{{idViaje}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Asignar bus y chofer a alquiler",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"idBus\": \"{{idBusAlterno}}\",\n  \"idChofer\": \"{{idChofer}}\"\n}" },
+            "url": "{{baseUrl}}/viajes/{{idViajeAlquiler}}/asignacion",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Eliminar viaje",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/viajes/{{idViaje}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] } }
+        },
+        {
+          "name": "Registrar salida",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fechaHoraSalidaReal\": \"{{fechaSalidaReal}}\",\n  \"kilometrajeInicial\": 123450.0\n}" },
+            "url": "{{baseUrl}}/viajes/{{idViaje}}/salida",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        },
+        {
+          "name": "Registrar llegada",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fechaHoraLlegadaReal\": \"{{fechaLlegadaReal}}\",\n  \"kilometrajeFinal\": 123655.5,\n  \"gastoCombustibleTotal\": 420.00\n}" },
+            "url": "{{baseUrl}}/viajes/{{idViaje}}/llegada",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSucursal}}", "type": "string" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integracion y administracion",
+      "item": [
+        {
+          "name": "Viajes activos de un bus (interno)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "X-Clave-Interna", "value": "{{claveInterna}}" }],
+            "url": "{{baseUrl}}/viajes/activos?idBus={{idBus}}",
+            "description": "Requiere X-Clave-Interna. No usa Authorization.",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "Republicar eventos",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/republicar-eventos",
+            "description": "Requiere tokenSistema. Republica RutaCreada y ViajeProgramado en el outbox.",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{tokenSistema}}", "type": "string" }] }
+          }
+        }
+      ]
+    }
+  ]
+}
