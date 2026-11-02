@@ -210,62 +210,58 @@ class PagoServiceImplTest {
         }
     }
 
-    @Nested
-    class ConsultarPago {
+    @Test
+    void consultarPago_cuandoEsDelUsuario_devuelveElPago() {
+        // Arrange
+        MovimientoCartera pago = CarteraFixture.pago(cartera, TipoReferencia.ALQUILER, idReferencia, "3800.00");
+        when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
+                TipoMovimiento.PAGO, TipoReferencia.ALQUILER, idReferencia)).thenReturn(Optional.of(pago));
 
-        @Test
-        void consultarPago_cuandoEsDelUsuario_devuelveElPago() {
-            // Arrange
-            MovimientoCartera pago = CarteraFixture.pago(cartera, TipoReferencia.ALQUILER, idReferencia, "3800.00");
-            when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
-                    TipoMovimiento.PAGO, TipoReferencia.ALQUILER, idReferencia)).thenReturn(Optional.of(pago));
+        // Act
+        PagoConsultaResponse respuesta = servicio.consultarPago(idUsuario, TipoReferencia.ALQUILER, idReferencia);
 
-            // Act
-            PagoConsultaResponse respuesta = servicio.consultarPago(idUsuario, TipoReferencia.ALQUILER, idReferencia);
+        // Assert
+        assertAll(
+                () -> assertEquals(pago.getId(), respuesta.idPago()),
+                () -> assertEquals(new BigDecimal("3800.00"), respuesta.monto()),
+                () -> assertEquals(CarteraFixture.FECHA, respuesta.fechaPago())
+        );
+    }
 
-            // Assert
-            assertAll(
-                    () -> assertEquals(pago.getId(), respuesta.idPago()),
-                    () -> assertEquals(new BigDecimal("3800.00"), respuesta.monto()),
-                    () -> assertEquals(CarteraFixture.FECHA, respuesta.fechaPago())
-            );
-        }
+    @Test
+    void consultarPago_cuandoEsInterno_devuelveCualquierPago() {
+        // Arrange
+        MovimientoCartera pago = CarteraFixture.pago(cartera, TipoReferencia.BOLETOS, idReferencia, "170.00");
+        when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
+                TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia)).thenReturn(Optional.of(pago));
 
-        @Test
-        void consultarPago_cuandoEsInterno_devuelveCualquierPago() {
-            // Arrange
-            MovimientoCartera pago = CarteraFixture.pago(cartera, TipoReferencia.BOLETOS, idReferencia, "170.00");
-            when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
-                    TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia)).thenReturn(Optional.of(pago));
+        // Act
+        PagoConsultaResponse respuesta = servicio.consultarPago(null, TipoReferencia.BOLETOS, idReferencia);
 
-            // Act
-            PagoConsultaResponse respuesta = servicio.consultarPago(null, TipoReferencia.BOLETOS, idReferencia);
+        // Assert
+        assertEquals(pago.getId(), respuesta.idPago());
+    }
 
-            // Assert
-            assertEquals(pago.getId(), respuesta.idPago());
-        }
+    @Test
+    void consultarPago_cuandoEsDeOtroUsuario_lanzaPagoNoEncontrado() {
+        // Arrange
+        when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
+                TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia))
+                .thenReturn(Optional.of(CarteraFixture.pago(cartera, TipoReferencia.BOLETOS, idReferencia, "1.00")));
 
-        @Test
-        void consultarPago_cuandoEsDeOtroUsuario_lanzaPagoNoEncontrado() {
-            // Arrange
-            when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
-                    TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia))
-                    .thenReturn(Optional.of(CarteraFixture.pago(cartera, TipoReferencia.BOLETOS, idReferencia, "1.00")));
+        // Act & Assert
+        assertThrows(PagoNoEncontradoException.class,
+                () -> servicio.consultarPago(UUID.randomUUID(), TipoReferencia.BOLETOS, idReferencia));
+    }
 
-            // Act & Assert
-            assertThrows(PagoNoEncontradoException.class,
-                    () -> servicio.consultarPago(UUID.randomUUID(), TipoReferencia.BOLETOS, idReferencia));
-        }
+    @Test
+    void consultarPago_cuandoNoExiste_lanzaPagoNoEncontrado() {
+        // Arrange
+        when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
+                TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia)).thenReturn(Optional.empty());
 
-        @Test
-        void consultarPago_cuandoNoExiste_lanzaPagoNoEncontrado() {
-            // Arrange
-            when(movimientoRepository.findByTipoAndTipoReferenciaAndIdReferencia(
-                    TipoMovimiento.PAGO, TipoReferencia.BOLETOS, idReferencia)).thenReturn(Optional.empty());
-
-            // Act & Assert
-            assertThrows(PagoNoEncontradoException.class,
-                    () -> servicio.consultarPago(null, TipoReferencia.BOLETOS, idReferencia));
-        }
+        // Act & Assert
+        assertThrows(PagoNoEncontradoException.class,
+                () -> servicio.consultarPago(null, TipoReferencia.BOLETOS, idReferencia));
     }
 }

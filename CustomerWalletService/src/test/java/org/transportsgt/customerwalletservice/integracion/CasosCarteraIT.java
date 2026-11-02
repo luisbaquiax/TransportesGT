@@ -26,7 +26,7 @@ class CasosCarteraIT extends IntegracionBase {
     private static final LocalDate FECHA = LocalDate.parse("2026-10-20");
 
     private static String nitDe(UUID idUsuario) {
-        return "88" + idUsuario.toString().substring(0, 6).replaceAll("[^0-9]", "2") + "-5";
+        return "88" + idUsuario.toString().substring(0, 6).replaceAll("[^0-9]", "2");
     }
 
     private static String dpiDe(UUID idUsuario) {
