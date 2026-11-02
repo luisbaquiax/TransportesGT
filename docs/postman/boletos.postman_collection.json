@@ -1,0 +1,638 @@
+{
+  "info": {
+    "name": "Boletos (servicio-boletos)",
+    "_postman_id": "5b7d2f10-3c4e-4a8b-9d61-boletos000001",
+    "description": "Endpoints de TicketService (puerto 8084, context-path /v1/tickets). Variables: baseUrl (directo http://localhost:8084/v1/tickets o por gateway http://localhost:8080/v1/tickets), token (JWT de un CLIENTE emitido por Identidad, con NIT en su perfil de Cartera), tokenCajero (JWT de CAJERO o ADMIN_SUCURSAL de la sucursal de origen del viaje), claveInterna (= variable CLAVE_INTERNA), idViaje (un viaje PROGRAMADO proyectado; 'Viajes a la venta' lo guarda). idCompra se genera con {{$guid}} en cada compra nueva; para probar la idempotencia, reenvíe la misma petición desde 'Repetir la última compra'. asiento-maximo con X-Clave-Interna no se publica en el gateway: usar el puerto 8084.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8084/v1/tickets"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenCajero",
+      "value": ""
+    },
+    {
+      "key": "claveInterna",
+      "value": "cambiar-en-local"
+    },
+    {
+      "key": "idViaje",
+      "value": ""
+    },
+    {
+      "key": "idCompra",
+      "value": ""
+    },
+    {
+      "key": "nit",
+      "value": "1234567-K"
+    },
+    {
+      "key": "fechaHoy",
+      "value": ""
+    },
+    {
+      "key": "codigoBoleto",
+      "value": "BOL-7K3MPQ2A"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set(\"fechaHoy\", new Date().toISOString().slice(0, 10));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Viajes",
+      "item": [
+        {
+          "name": "Viajes a la venta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes?fecha={{fechaHoy}}&destino=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes"
+              ],
+              "query": [
+                {
+                  "key": "fecha",
+                  "value": "{{fechaHoy}}"
+                },
+                {
+                  "key": "destino",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "PROGRAMADO, no eliminados, con bus y salida futura. Filtros opcionales: idOrigen, idRuta, destino (texto), fecha (día en hora de Guatemala). Guarda el primer viaje en {{idViaje}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "const v = pm.response.json(); if (v.length) { pm.collectionVariables.set(\"idViaje\", v[0].idViaje); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mapa de asientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes/{{idViaje}}/asientos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes",
+                "{{idViaje}}",
+                "asientos"
+              ]
+            },
+            "description": "Capacidad del bus y asientos ocupados (reservados o vendidos)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Asiento máximo (JWT)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes/{{idViaje}}/asiento-maximo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes",
+                "{{idViaje}}",
+                "asiento-maximo"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Asiento máximo (X-Clave-Interna)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Clave-Interna",
+                "value": "{{claveInterna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes/{{idViaje}}/asiento-maximo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes",
+                "{{idViaje}}",
+                "asiento-maximo"
+              ]
+            },
+            "description": "Lo usa Viajes antes de cambiar el bus. Sin Authorization. Clave incorrecta → 401."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Compras en línea",
+      "item": [
+        {
+          "name": "Comprar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras"
+              ]
+            },
+            "description": "Saga: reserva, cobra en Cartera (JWT reenviado, Clave-Idempotencia = idCompra) y confirma. 201 CONFIRMADA · 202 RESERVADA si Cartera no respondió (el job la resuelve) · 409 asiento ocupado o viaje no disponible · 422 SALDO_INSUFICIENTE / PERFIL_INCOMPLETO.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCompra\": \"{{idCompra}}\",\n  \"idViaje\": \"{{idViaje}}\",\n  \"asientos\": [\n    12,\n    13\n  ],\n  \"fechaPago\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"idCompra\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (201, 202)\", () => pm.expect(pm.response.code).to.be.oneOf([201, 202]));",
+                  "if (pm.response.code < 300) { pm.collectionVariables.set(\"idCompra\", pm.response.json().idCompra); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Repetir la última compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras"
+              ]
+            },
+            "description": "Mismo idCompra y mismos datos: 200 con la compra original, sin cobrar de nuevo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCompra\": \"{{idCompra}}\",\n  \"idViaje\": \"{{idViaje}}\",\n  \"asientos\": [\n    12,\n    13\n  ],\n  \"fechaPago\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mis compras",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras/mias?pagina=0&tamano=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras",
+                "mias"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamano",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Compras en línea del usuario y ventas de mostrador con el NIT de su perfil."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle de una compra",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras/{{idCompra}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras",
+                "{{idCompra}}"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mostrador",
+      "item": [
+        {
+          "name": "Vender en mostrador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/ventas-mostrador",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "ventas-mostrador"
+              ]
+            },
+            "description": "CAJERO o ADMIN_SUCURSAL de la sucursal de origen del viaje (otra sucursal → 403 SIN_PERMISO). Sin nitComprador = CF. Sin nombre: el del perfil con ese NIT o 'Consumidor final'.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idCompra\": \"{{idCompra}}\",\n  \"idViaje\": \"{{idViaje}}\",\n  \"asientos\": [\n    20\n  ],\n  \"nitComprador\": \"{{nit}}\",\n  \"nombreComprador\": \"Ana López\",\n  \"fechaPago\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"idCompra\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (201)\", () => pm.expect(pm.response.code).to.be.oneOf([201]));",
+                  "if (pm.response.code < 300) { pm.collectionVariables.set(\"idCompra\", pm.response.json().idCompra); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Compras de mi sucursal",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras?idViaje={{idViaje}}&estado=CONFIRMADA&pagina=0&tamano=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "idViaje",
+                  "value": "{{idViaje}}"
+                },
+                {
+                  "key": "estado",
+                  "value": "CONFIRMADA"
+                },
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamano",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle (cajero)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras/{{idCompra}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras",
+                "{{idCompra}}"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Abordaje y PDF",
+      "item": [
+        {
+          "name": "Boletos en PDF (comprador)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/compras/{{idCompra}}/pdf",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "compras",
+                "{{idCompra}}",
+                "pdf"
+              ]
+            },
+            "description": "PDF con un QR por boleto. Mismos permisos que el detalle; 409 si la compra no está CONFIRMADA. En Postman use Send and Download."
+          }
+        },
+        {
+          "name": "Lista de pasajeros (CAJ/SUC)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes/{{idViaje}}/pasajeros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes",
+                "{{idViaje}}",
+                "pasajeros"
+              ]
+            },
+            "description": "Boletos CONFIRMADO del viaje con su hora de abordaje. Solo la sucursal de origen."
+          }
+        },
+        {
+          "name": "Registrar abordaje (CAJ/SUC)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"{{codigoBoleto}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/boletos/viajes/{{idViaje}}/abordajes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "boletos",
+                "viajes",
+                "{{idViaje}}",
+                "abordajes"
+              ]
+            },
+            "description": "201 la primera vez, 200 si se repite. 409 si el boleto es de otro viaje, está anulado o el viaje ya salió."
+          }
+        }
+      ]
+    }
+  ]
+}

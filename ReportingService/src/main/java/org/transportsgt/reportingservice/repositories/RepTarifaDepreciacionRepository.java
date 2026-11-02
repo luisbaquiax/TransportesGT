@@ -12,10 +12,14 @@ import java.util.Optional;
 
 public interface RepTarifaDepreciacionRepository extends JpaRepository<RepTarifaDepreciacion, LocalDate> {
 
-    /** Tarifa configurada a una fecha (reporte de depreciación por bus). */
+    /**
+     * Tarifa configurada a una fecha (reporte de depreciación por bus).
+     */
     Optional<RepTarifaDepreciacion> findFirstByVigenteDesdeLessThanEqualOrderByVigenteDesdeDesc(LocalDate fecha);
 
-    /** TarifaDepreciacionCambiada: un segundo cambio el mismo día reemplaza al primero. */
+    /**
+     * TarifaDepreciacionCambiada: un segundo cambio el mismo día reemplaza al primero.
+     */
     @Modifying
     @Query(nativeQuery = true, value = """
             INSERT INTO rep_tarifa_depreciacion (vigente_desde, monto_por_km)

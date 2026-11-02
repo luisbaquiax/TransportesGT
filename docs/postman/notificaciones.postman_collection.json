@@ -1,0 +1,335 @@
+{
+  "info": {
+    "name": "Notificaciones (servicio-notificaciones)",
+    "_postman_id": "4a6c8e10-2b3d-4f5e-8a71-notificaciones1",
+    "description": "Endpoints de NotificationService (puerto 8088, context-path /v1/notifications). Variables: baseUrl (directo http://localhost:8088/v1/notifications o por gateway http://localhost:8080/v1/notifications), token (JWT de ADMIN_SISTEMA emitido por Identidad), tokenSucursal (JWT de ADMIN_SUCURSAL), idSucursal (la del ADMIN_SUCURSAL). Los correos los generan los eventos: este servicio no tiene endpoints para crearlos. 'Bitácora' guarda la primera notificación en {{idNotificacion}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8088/v1/notifications"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenSucursal",
+      "value": ""
+    },
+    {
+      "key": "idSucursal",
+      "value": ""
+    },
+    {
+      "key": "idNotificacion",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Bitácora de correos",
+      "item": [
+        {
+          "name": "Bitácora",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones?estado=&tipo=&desde=&hasta=&pagina=0&tamano=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": ""
+                },
+                {
+                  "key": "tipo",
+                  "value": ""
+                },
+                {
+                  "key": "desde",
+                  "value": ""
+                },
+                {
+                  "key": "hasta",
+                  "value": ""
+                },
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamano",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "ADMIN_SISTEMA. Más recientes primero, sin el cuerpo. estado: PENDIENTE | ENVIADA | FALLIDA. desde/hasta: días (yyyy-MM-dd) en hora de Guatemala."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "const c = pm.response.json().contenido || []; if (c.length) { pm.collectionVariables.set(\"idNotificacion\", c[0].idNotificacion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Correos fallidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones?estado=FALLIDA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "FALLIDA"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "const c = pm.response.json().contenido || []; if (c.length) { pm.collectionVariables.set(\"idNotificacion\", c[0].idNotificacion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/{{idNotificacion}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "{{idNotificacion}}"
+              ]
+            },
+            "description": "Incluye el cuerpo HTML ([contenido sensible no almacenado] en ENLACE_CONTRASENA)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reintentar un FALLIDA",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/{{idNotificacion}}/reintentar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "{{idNotificacion}}",
+                "reintentar"
+              ]
+            },
+            "description": "200: queda PENDIENTE con 0 intentos. 409 si no está FALLIDA o es un ENLACE_CONTRASENA."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200, 409)\", () => pm.expect(pm.response.code).to.be.oneOf([200, 409]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Avisos de licencia",
+      "item": [
+        {
+          "name": "Avisos (sistema)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/licencias?idSucursal=&estado=PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "licencias"
+              ],
+              "query": [
+                {
+                  "key": "idSucursal",
+                  "value": ""
+                },
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                }
+              ]
+            },
+            "description": "ADMIN_SISTEMA: todas las sucursales, o la del filtro."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Avisos de mi sucursal",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenSucursal}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/licencias?idSucursal={{idSucursal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "licencias"
+              ],
+              "query": [
+                {
+                  "key": "idSucursal",
+                  "value": "{{idSucursal}}"
+                }
+              ]
+            },
+            "description": "ADMIN_SUCURSAL: solo su sucursal. Otra sucursal → 403 SIN_PERMISO."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Procesamiento",
+      "item": [
+        {
+          "name": "Ejecutar los jobs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notificaciones/interno/procesar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notificaciones",
+                "interno",
+                "procesar"
+              ]
+            },
+            "description": "ADMIN_SISTEMA. Avisos de licencia del día y un lote de envío de correos. Útil para probar sin esperar 30 s o las 7:00."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

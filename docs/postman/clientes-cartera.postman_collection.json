@@ -1,0 +1,794 @@
+{
+  "info": {
+    "name": "Clientes y Cartera (servicio-clientes)",
+    "_postman_id": "8c1e5c55-7f0a-4b8e-9a51-clientescartera",
+    "description": "Endpoints de CustomerWalletService (puerto 8085, context-path /v1/customers). Variables: baseUrl (directo http://localhost:8085/v1/customers o por gateway http://localhost:8080/v1/customers), token (JWT de un CLIENTE emitido por Identidad), tokenCajero (JWT de CAJERO o ADMIN_SUCURSAL), claveInterna (= variable CLAVE_INTERNA del servicio). GET /cartera/pagos con X-Clave-Interna no se publica en el gateway: usar el puerto 8085.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8085/v1/customers"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "tokenCajero",
+      "value": ""
+    },
+    {
+      "key": "claveInterna",
+      "value": "cambiar-en-local"
+    },
+    {
+      "key": "nit",
+      "value": "1234567-K"
+    },
+    {
+      "key": "idReferencia",
+      "value": ""
+    },
+    {
+      "key": "fechaHoy",
+      "value": ""
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.collectionVariables.set(\"fechaHoy\", new Date().toISOString().slice(0, 10));"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Mi perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/yo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clientes",
+                "yo"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar mi perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/yo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clientes",
+                "yo"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nit\": \"{{nit}}\",\n  \"dpi\": \"2456789010101\",\n  \"telefono\": \"55551234\",\n  \"direccion\": \"4a. Calle 12-35, Zona 1, Quetzaltenango\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "pm.test(\"NIT normalizado\", () => pm.expect(pm.response.json().nit).to.not.include(\"-\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Perfil con NIT CF (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/yo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clientes",
+                "yo"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nit\": \"CF\",\n  \"dpi\": null,\n  \"telefono\": null,\n  \"direccion\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (400)\", () => pm.expect(pm.response.code).to.be.oneOf([400]));",
+                  "pm.test(\"Código VALIDACION_FALLIDA\", () => pm.expect(pm.response.json().codigo).to.eql(\"VALIDACION_FALLIDA\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar cliente por NIT (mostrador)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCajero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/buscar?nit={{nit}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clientes",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nit",
+                  "value": "{{nit}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200, 404)\", () => pm.expect(pm.response.code).to.be.oneOf([200, 404]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar con rol CLIENTE (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/buscar?nit={{nit}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clientes",
+                "buscar"
+              ],
+              "query": [
+                {
+                  "key": "nit",
+                  "value": "{{nit}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (403)\", () => pm.expect(pm.response.code).to.be.oneOf([403]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cartera",
+      "item": [
+        {
+          "name": "Mi saldo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/yo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "yo"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recargar saldo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Clave-Idempotencia",
+                "value": "{{claveRecarga}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/recargas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "recargas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": \"200.00\",\n  \"fechaRecarga\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"claveRecarga\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (201)\", () => pm.expect(pm.response.code).to.be.oneOf([201]));",
+                  "pm.test(\"saldoPosterior como texto\", () => pm.expect(pm.response.json().saldoPosterior).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Repetir la última recarga (200, no suma)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Clave-Idempotencia",
+                "value": "{{claveRecarga}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/recargas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "recargas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": \"200.00\",\n  \"fechaRecarga\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Recarga sin Clave-Idempotencia (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/recargas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "recargas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": \"10.00\",\n  \"fechaRecarga\": \"{{fechaHoy}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (400)\", () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mis movimientos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/yo/movimientos?tipo=&desde=&hasta=&pagina=0&tamano=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "yo",
+                "movimientos"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": ""
+                },
+                {
+                  "key": "desde",
+                  "value": ""
+                },
+                {
+                  "key": "hasta",
+                  "value": ""
+                },
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamano",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200)\", () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pagos (Interno: Boletos, Alquileres)",
+      "item": [
+        {
+          "name": "Pagar una compra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Clave-Idempotencia",
+                "value": "{{idReferencia}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/pagos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "pagos"
+              ]
+            },
+            "description": "Lo llaman Boletos y Alquileres reenviando el JWT del usuario. 422 SALDO_INSUFICIENTE o PERFIL_INCOMPLETO.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoReferencia\": \"BOLETOS\",\n  \"idReferencia\": \"{{idReferencia}}\",\n  \"monto\": \"85.00\",\n  \"fechaPago\": \"{{fechaHoy}}\",\n  \"descripcion\": \"1 boleto Xela → Capital\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// La clave debe ser igual a idReferencia (idCompra)",
+                  "pm.collectionVariables.set(\"idReferencia\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (201, 422)\", () => pm.expect(pm.response.code).to.be.oneOf([201, 422]));",
+                  "if (pm.response.code === 201) { pm.test(\"Location\", () => pm.response.to.have.header(\"Location\")); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Repetir el pago (200, mismo idPago)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Clave-Idempotencia",
+                "value": "{{idReferencia}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/pagos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "pagos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoReferencia\": \"BOLETOS\",\n  \"idReferencia\": \"{{idReferencia}}\",\n  \"monto\": \"85.00\",\n  \"fechaPago\": \"{{fechaHoy}}\",\n  \"descripcion\": \"1 boleto Xela → Capital\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200, 422)\", () => pm.expect(pm.response.code).to.be.oneOf([200, 422]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar pago con JWT",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/pagos?tipoReferencia=BOLETOS&idReferencia={{idReferencia}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "pagos"
+              ],
+              "query": [
+                {
+                  "key": "tipoReferencia",
+                  "value": "BOLETOS"
+                },
+                {
+                  "key": "idReferencia",
+                  "value": "{{idReferencia}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200, 404)\", () => pm.expect(pm.response.code).to.be.oneOf([200, 404]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar pago con X-Clave-Interna",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Clave-Interna",
+                "value": "{{claveInterna}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/pagos?tipoReferencia=BOLETOS&idReferencia={{idReferencia}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "pagos"
+              ],
+              "query": [
+                {
+                  "key": "tipoReferencia",
+                  "value": "BOLETOS"
+                },
+                {
+                  "key": "idReferencia",
+                  "value": "{{idReferencia}}"
+                }
+              ]
+            },
+            "description": "Jobs de recuperación sin usuario. Directo al puerto 8085 (no pasa por el gateway)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (200, 404)\", () => pm.expect(pm.response.code).to.be.oneOf([200, 404]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consultar pago con X-Clave-Interna incorrecta (401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Clave-Interna",
+                "value": "clave-equivocada"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cartera/pagos?tipoReferencia=BOLETOS&idReferencia={{idReferencia}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cartera",
+                "pagos"
+              ],
+              "query": [
+                {
+                  "key": "tipoReferencia",
+                  "value": "BOLETOS"
+                },
+                {
+                  "key": "idReferencia",
+                  "value": "{{idReferencia}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado esperado (401)\", () => pm.expect(pm.response.code).to.be.oneOf([401]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Administración (ADMIN_SISTEMA)",
+      "item": [
+        {
+          "name": "Republicar perfiles de cliente (outbox)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/republicar-eventos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "republicar-eventos"
+              ]
+            },
+            "description": "Encola PerfilClienteActualizado de todos los clientes con su versión actual. Idempotente. Use en {{token}} el JWT de un ADMIN_SISTEMA."
+          }
+        }
+      ]
+    }
+  ]
+}
