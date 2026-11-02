@@ -14,7 +14,9 @@ import java.util.UUID;
 
 public interface RepIngresoRepository extends JpaRepository<RepIngreso, UUID> {
 
-    /** {@code uq_rep_ingreso}: un ingreso por compra o alquiler. */
+    /**
+     * {@code uq_rep_ingreso}: un ingreso por compra o alquiler.
+     */
     boolean existsByTipoIngresoAndIdReferencia(TipoIngreso tipoIngreso, UUID idReferencia);
 
     /**
@@ -42,7 +44,9 @@ public interface RepIngresoRepository extends JpaRepository<RepIngreso, UUID> {
                  @Param("origen") String origen, @Param("destino") String destino,
                  @Param("fechaSalida") OffsetDateTime fechaSalida, @Param("fechaRetorno") OffsetDateTime fechaRetorno);
 
-    /** BoletosAnulados / AlquilerCancelado: revierte el ingreso sin borrarlo (queda en su fecha de pago original). */
+    /**
+     * BoletosAnulados / AlquilerCancelado: revierte el ingreso sin borrarlo (queda en su fecha de pago original).
+     */
     @Modifying
     @Query("""
             UPDATE RepIngreso i SET i.anulado = true, i.anuladoEn = :anuladoEn

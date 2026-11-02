@@ -11,12 +11,18 @@ import java.util.UUID;
  */
 public interface CatalogoService {
 
-    /** Todas las sucursales en orden alfabético (ADMIN_SISTEMA). */
+    /**
+     * Todas las sucursales en orden alfabético (ADMIN_SISTEMA).
+     */
     List<OpcionCatalogo> sucursales();
 
-    /** Rutas que salen de la sucursal; el ADMIN_SUCURSAL solo ve las de la suya. */
+    /**
+     * Rutas que salen de la sucursal; el ADMIN_SUCURSAL solo ve las de la suya.
+     */
     List<OpcionCatalogo> rutas(UsuarioAutenticado usuario, UUID idSucursal);
 
-    /** Buses de la sucursal; el ADMIN_SUCURSAL solo ve los de la suya. */
+    /**
+     * Buses de la sucursal; el ADMIN_SUCURSAL solo ve los de la suya.
+     */
     List<OpcionCatalogo> buses(UsuarioAutenticado usuario, UUID idSucursal);
 }

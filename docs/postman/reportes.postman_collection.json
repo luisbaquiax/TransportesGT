@@ -1,0 +1,1612 @@
+{
+  "info": {
+    "_postman_id": "3d5b3129-9b33-566f-8f93-95766b6e0c50",
+    "name": "TransportesGT - Reportes",
+    "description": "servicio-reportes. baseUrl directo: http://localhost:8089/v1/reports · por el gateway: http://localhost:8080/v1/reports. Copie a {{tokenSistema}} el token de un ADMIN_SISTEMA y a {{tokenSucursal}} el de un ADMIN_SUCURSAL (login en la colección Identidad). Deje desde/hasta vacíos para obtener todos los registros.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8089/v1/reports"
+    },
+    {
+      "key": "tokenSistema",
+      "value": ""
+    },
+    {
+      "key": "tokenSucursal",
+      "value": ""
+    },
+    {
+      "key": "desde",
+      "value": ""
+    },
+    {
+      "key": "hasta",
+      "value": ""
+    },
+    {
+      "key": "idSucursal",
+      "value": "10000000-0000-4000-8000-000000000001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Administrador del sistema (1-6)",
+      "description": "Solo ADMIN_SISTEMA (un ADMIN_SUCURSAL recibe 403).",
+      "item": [
+        {
+          "name": "1. Ingresos por sucursal",
+          "item": [
+            {
+              "name": "1. Ingresos por sucursal (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Agrupado por sucursal (alfabético) con subtotal y total global. Sin desde/hasta = todos los registros."
+              }
+            },
+            {
+              "name": "1. Ingresos por sucursal (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Agrupado por sucursal (alfabético) con subtotal y total global. Sin desde/hasta = todos los registros. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Gastos por sucursal",
+          "item": [
+            {
+              "name": "2. Gastos por sucursal (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Combustible, taller (mano de obra), repuesto, depreciación y salario del chofer; desglose por tipo."
+              }
+            },
+            {
+              "name": "2. Gastos por sucursal (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Combustible, taller (mano de obra), repuesto, depreciación y salario del chofer; desglose por tipo. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Ganancias por sucursal",
+          "item": [
+            {
+              "name": "3. Ganancias por sucursal (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ganancias?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ganancias"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Ingresos, gastos y ganancia neta por sucursal, incluye sucursales en cero."
+              }
+            },
+            {
+              "name": "3. Ganancias por sucursal (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ganancias?desde={{desde}}&hasta={{hasta}}&idSucursal=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ganancias"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Ingresos, gastos y ganancia neta por sucursal, incluye sucursales en cero. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Rutas más demandadas",
+          "item": [
+            {
+              "name": "4. Rutas más demandadas (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/rutas-demandadas?desde={{desde}}&hasta={{hasta}}&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "rutas-demandadas"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "De mayor a menor por boletos vendidos (ventas no anuladas)."
+              }
+            },
+            {
+              "name": "4. Rutas más demandadas (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/rutas-demandadas?desde={{desde}}&hasta={{hasta}}&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "rutas-demandadas"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "De mayor a menor por boletos vendidos (ventas no anuladas). PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Taller por categoría",
+          "item": [
+            {
+              "name": "5. Taller por categoría (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos-taller-por-categoria?desde={{desde}}&hasta={{hasta}}&idSucursal=&idBus=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos-taller-por-categoria"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Categorías de mayor a menor gasto con gran total."
+              }
+            },
+            {
+              "name": "5. Taller por categoría (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos-taller-por-categoria?desde={{desde}}&hasta={{hasta}}&idSucursal=&idBus=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos-taller-por-categoria"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idSucursal",
+                      "value": ""
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Categorías de mayor a menor gasto con gran total. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Mapa de rutas",
+          "item": [
+            {
+              "name": "6. Mapa de rutas (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/mapa-rutas?idSucursal={{idSucursal}}&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "mapa-rutas"
+                  ],
+                  "query": [
+                    {
+                      "key": "idSucursal",
+                      "value": "{{idSucursal}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "idSucursal obligatorio. Coordenadas de origen y destino para Leaflet."
+              }
+            },
+            {
+              "name": "6. Mapa de rutas (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSistema}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/mapa-rutas?idSucursal={{idSucursal}}&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "mapa-rutas"
+                  ],
+                  "query": [
+                    {
+                      "key": "idSucursal",
+                      "value": "{{idSucursal}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "idSucursal obligatorio. Coordenadas de origen y destino para Leaflet. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Administrador de sucursal (7-12)",
+      "description": "El ADMIN_SUCURSAL ve siempre su sucursal (403 si pasa otra idSucursal). Con {{tokenSistema}} agregue idSucursal.",
+      "item": [
+        {
+          "name": "7. Listado de buses",
+          "item": [
+            {
+              "name": "7. Listado de buses (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/buses?desde={{desde}}&hasta={{hasta}}&estado=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "buses"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "estado",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "estado: DISPONIBLE | EN_TRANSITO | EN_TALLER | FUERA_DE_SERVICIO."
+              }
+            },
+            {
+              "name": "7. Listado de buses (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/buses?desde={{desde}}&hasta={{hasta}}&estado=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "buses"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "estado",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "estado: DISPONIBLE | EN_TRANSITO | EN_TALLER | FUERA_DE_SERVICIO. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Listado de choferes",
+          "item": [
+            {
+              "name": "8. Listado de choferes (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/choferes?desde={{desde}}&hasta={{hasta}}&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "choferes"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Marca licencias VENCIDA / POR_VENCER (30 días)."
+              }
+            },
+            {
+              "name": "8. Listado de choferes (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/choferes?desde={{desde}}&hasta={{hasta}}&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "choferes"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Marca licencias VENCIDA / POR_VENCER (30 días). PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Ingresos por boletos",
+          "item": [
+            {
+              "name": "9. Ingresos por boletos (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos-boletos?desde={{desde}}&hasta={{hasta}}&idRuta=&idBus=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos-boletos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idRuta",
+                      "value": ""
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Por viaje. El filtro por bus usa rep_viaje.id_bus."
+              }
+            },
+            {
+              "name": "9. Ingresos por boletos (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos-boletos?desde={{desde}}&hasta={{hasta}}&idRuta=&idBus=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos-boletos"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idRuta",
+                      "value": ""
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Por viaje. El filtro por bus usa rep_viaje.id_bus. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Ingresos por alquileres",
+          "item": [
+            {
+              "name": "10. Ingresos por alquileres (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos-alquileres?desde={{desde}}&hasta={{hasta}}&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos-alquileres"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Bus asignado por rep_viaje.id_alquiler."
+              }
+            },
+            {
+              "name": "10. Ingresos por alquileres (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/ingresos-alquileres?desde={{desde}}&hasta={{hasta}}&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ingresos-alquileres"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Bus asignado por rep_viaje.id_alquiler. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Depreciación por bus",
+          "item": [
+            {
+              "name": "11. Depreciación por bus (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/depreciacion-buses?desde={{desde}}&hasta={{hasta}}&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "depreciacion-buses"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Tarifa vigente hoy y promedio aplicado por km."
+              }
+            },
+            {
+              "name": "11. Depreciación por bus (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/depreciacion-buses?desde={{desde}}&hasta={{hasta}}&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "depreciacion-buses"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Tarifa vigente hoy y promedio aplicado por km. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Taller por bus y categoría",
+          "item": [
+            {
+              "name": "12. Taller por bus y categoría (JSON)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos-taller-por-bus?desde={{desde}}&hasta={{hasta}}&idBus=&formato=json",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos-taller-por-bus"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "json"
+                    }
+                  ]
+                },
+                "description": "Buses de mayor a menor gasto; subtotal por categoría."
+              }
+            },
+            {
+              "name": "12. Taller por bus y categoría (PDF)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/pdf"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{tokenSucursal}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/reportes/gastos-taller-por-bus?desde={{desde}}&hasta={{hasta}}&idBus=&formato=pdf",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "gastos-taller-por-bus"
+                  ],
+                  "query": [
+                    {
+                      "key": "desde",
+                      "value": "{{desde}}"
+                    },
+                    {
+                      "key": "hasta",
+                      "value": "{{hasta}}"
+                    },
+                    {
+                      "key": "idBus",
+                      "value": ""
+                    },
+                    {
+                      "key": "formato",
+                      "value": "pdf"
+                    }
+                  ]
+                },
+                "description": "Buses de mayor a menor gasto; subtotal por categoría. PDF: application/pdf, Content-Disposition attachment (cuando esté JasperReports; hoy responde 400)."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Administrador del sistema abre reportes de sucursal",
+      "item": [
+        {
+          "name": "Buses de una sucursal (SIS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSistema}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/buses?idSucursal={{idSucursal}}&formato=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "buses"
+              ],
+              "query": [
+                {
+                  "key": "idSucursal",
+                  "value": "{{idSucursal}}"
+                },
+                {
+                  "key": "formato",
+                  "value": "json"
+                }
+              ]
+            },
+            "description": "El ADMIN_SISTEMA debe indicar idSucursal (400 si falta)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catálogos para filtros",
+      "item": [
+        {
+          "name": "Sucursales (SIS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSistema}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/catalogos/sucursales",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "catalogos",
+                "sucursales"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Rutas de la sucursal",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSucursal}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/catalogos/rutas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "catalogos",
+                "rutas"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Buses de la sucursal",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSucursal}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/catalogos/buses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "catalogos",
+                "buses"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "Rutas de una sucursal (SIS)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSistema}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/catalogos/rutas?idSucursal={{idSucursal}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "catalogos",
+                "rutas"
+              ],
+              "query": [
+                {
+                  "key": "idSucursal",
+                  "value": "{{idSucursal}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Errores",
+      "item": [
+        {
+          "name": "400 desde > hasta",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSistema}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/ingresos?desde=2026-10-31&hasta=2026-10-01",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "ingresos"
+              ],
+              "query": [
+                {
+                  "key": "desde",
+                  "value": "2026-10-31"
+                },
+                {
+                  "key": "hasta",
+                  "value": "2026-10-01"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "403 sucursal en reporte del sistema",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSucursal}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/ingresos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "ingresos"
+              ],
+              "query": []
+            }
+          }
+        },
+        {
+          "name": "400 formato no soportado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenSistema}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/reportes/ingresos?formato=xlsx",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reportes",
+                "ingresos"
+              ],
+              "query": [
+                {
+                  "key": "formato",
+                  "value": "xlsx"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
