@@ -17,7 +17,9 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
 
     Optional<RepViaje> findByIdAlquiler(UUID idAlquiler);
 
-    /** Total de viajes realizados (listados de buses y choferes). */
+    /**
+     * Total de viajes realizados (listados de buses y choferes).
+     */
     long countByIdBusAndEstadoAndEliminadoFalse(UUID idBus, EstadoViaje estado);
 
     long countByIdChoferAndEstadoAndEliminadoFalse(UUID idChofer, EstadoViaje estado);
@@ -57,7 +59,9 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
                @Param("fechaHoraLlegadaEstimada") OffsetDateTime fechaHoraLlegadaEstimada,
                @Param("version") long version);
 
-    /** SalidaRegistrada. Si la llegada ya se aplicó (desorden), no pisa sus datos. */
+    /**
+     * SalidaRegistrada. Si la llegada ya se aplicó (desorden), no pisa sus datos.
+     */
     @Modifying
     @Query("""
             UPDATE RepViaje v SET v.fechaHoraSalidaReal = :fechaHoraSalidaReal, v.kilometrajeInicial = :kilometrajeInicial
@@ -66,7 +70,9 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
     int registrarSalida(@Param("id") UUID id, @Param("fechaHoraSalidaReal") OffsetDateTime fechaHoraSalidaReal,
                         @Param("kilometrajeInicial") BigDecimal kilometrajeInicial);
 
-    /** LlegadaRegistrada: trae también los datos de salida, por si SalidaRegistrada llegó después. */
+    /**
+     * LlegadaRegistrada: trae también los datos de salida, por si SalidaRegistrada llegó después.
+     */
     @Modifying
     @Query("""
             UPDATE RepViaje v
@@ -82,7 +88,9 @@ public interface RepViajeRepository extends JpaRepository<RepViaje, UUID>, JpaSp
                          @Param("kilometrajeFinal") BigDecimal kilometrajeFinal,
                          @Param("distanciaRecorridaKm") BigDecimal distanciaRecorridaKm);
 
-    /** ViajeEliminado. */
+    /**
+     * ViajeEliminado.
+     */
     @Modifying
     @Query("UPDATE RepViaje v SET v.eliminado = true WHERE v.id = :id")
     int marcarEliminado(@Param("id") UUID id);

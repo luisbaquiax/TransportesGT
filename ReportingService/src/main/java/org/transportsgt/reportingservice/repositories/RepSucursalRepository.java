@@ -12,10 +12,14 @@ import java.util.UUID;
 
 public interface RepSucursalRepository extends JpaRepository<RepSucursal, UUID> {
 
-    /** Los reportes de ganancias muestran las sucursales en orden alfabético. */
+    /**
+     * Los reportes de ganancias muestran las sucursales en orden alfabético.
+     */
     List<RepSucursal> findAllByOrderByNombre();
 
-    /** Aplica SucursalCreada/Actualizada. Ignora el evento si su versión no es mayor que la guardada. */
+    /**
+     * Aplica SucursalCreada/Actualizada. Ignora el evento si su versión no es mayor que la guardada.
+     */
     @Modifying
     @Query(nativeQuery = true, value = """
             INSERT INTO rep_sucursal (id, nombre, departamento, latitud, longitud, activa, version)
