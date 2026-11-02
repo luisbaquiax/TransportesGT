@@ -6,11 +6,11 @@ import jakarta.validation.constraints.Size;
 
 /**
  * Perfil comercial. El nombre y el correo no se editan aquí: vienen de Identidad.
- * El NIT debe contener exactamente 9 dígitos.
+ * El NIT debe contener entre 8 y 9 dígitos.
  */
 public record ActualizarPerfilRequest(
-        @Schema(example = "123456789", description = "Exactamente 9 dígitos, sin espacios ni guiones.")
-        @Pattern(regexp = "^[0-9]{9}$", message = "debe tener 9 dígitos")
+        @Schema(example = "123456789", description = "Entre 8 y 9 dígitos, sin espacios ni guiones.")
+        @Pattern(regexp = "^[0-9]{8,9}$", message = "debe tener entre 8 y 9 dígitos")
         String nit,
         @Schema(example = "2456789010101")
         @Pattern(regexp = "^[0-9]{13}$", message = "debe tener 13 dígitos")
