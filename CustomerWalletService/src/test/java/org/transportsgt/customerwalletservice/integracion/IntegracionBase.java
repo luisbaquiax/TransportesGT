@@ -164,7 +164,7 @@ public abstract class IntegracionBase {
     protected UUID clienteConSaldo(String saldo) {
         UUID idUsuario = UUID.randomUUID();
         publicarUsuarioCreado(idUsuario, true);
-        String nit = idUsuario.toString().replace("-", "").substring(0, 12).toUpperCase();
+        String nit = String.format("%09d", Math.floorMod(idUsuario.getLeastSignificantBits(), 1_000_000_000L));
         jdbc.update("UPDATE cliente SET nit = ? WHERE id_usuario = ?", nit, idUsuario);
         jdbc.update("UPDATE cartera SET saldo = ? WHERE id_cliente = (SELECT id FROM cliente WHERE id_usuario = ?)",
                 new BigDecimal(saldo), idUsuario);

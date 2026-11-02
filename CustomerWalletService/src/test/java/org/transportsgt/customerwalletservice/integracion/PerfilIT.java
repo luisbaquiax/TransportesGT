@@ -1,6 +1,8 @@
 package org.transportsgt.customerwalletservice.integracion;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.transportsgt.customerwalletservice.dto.request.ActualizarPerfilRequest;
 import org.transportsgt.eventos.payload.identidad.Rol;
@@ -16,26 +18,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PerfilIT extends IntegracionBase {
 
     @Test
-    void perfil_cuandoSeActualizaElNit_seGuardaNormalizadoYSePublica() throws Exception {
+    void perfil_cuandoSeActualizaElNit_seGuardaYSePublica() throws Exception {
         // Arrange
         UUID idUsuario = UUID.randomUUID();
         publicarUsuarioCreado(idUsuario, true);
         String token = token(idUsuario, Rol.CLIENTE);
-        String nit = "77" + idUsuario.toString().substring(0, 6).replaceAll("[^0-9]", "1") + "-k";
+        String nit = "77" + idUsuario.toString().substring(0, 6).replaceAll("[^0-9]", "1") + "5";
 
         // Act
         mockMvc.perform(conToken(put("/clientes/yo"), token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new ActualizarPerfilRequest(nit, null, "55551234", "Zona 1"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nit").value(nit.replace("-", "").toUpperCase()))
+                .andExpect(jsonPath("$.nit").value(nit))
                 .andExpect(jsonPath("$.saldo").value("0.00"));
 
         // Assert
         mockMvc.perform(conToken(get("/clientes/yo"), token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.telefono").value("55551234"));
-        assertEquals(nit.replace("-", "").toUpperCase(), jdbc.queryForObject("""
+        assertEquals(nit, jdbc.queryForObject("""
                 SELECT datos ->> 'nit' FROM outbox_evento
                  WHERE tipo_evento = 'PerfilClienteActualizado' AND id_agregado = ? ORDER BY version_agregado DESC LIMIT 1
                 """, String.class, idUsuario));
@@ -51,6 +53,21 @@ class PerfilIT extends IntegracionBase {
         mockMvc.perform(conToken(put("/clientes/yo"), token(idUsuario, Rol.CLIENTE))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(new ActualizarPerfilRequest("cf", null, null, null))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.codigo").value("VALIDACION_FALLIDA"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1234567", "1234567890", "1234567-8"})
+    void perfil_cuandoElNitNoTieneEntre8y9Digitos_responde400(String nit) throws Exception {
+        // Arrange
+        UUID idUsuario = UUID.randomUUID();
+        publicarUsuarioCreado(idUsuario, true);
+
+        // Act & Assert
+        mockMvc.perform(conToken(put("/clientes/yo"), token(idUsuario, Rol.CLIENTE))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(new ActualizarPerfilRequest(nit, null, null, null))))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.codigo").value("VALIDACION_FALLIDA"));
     }

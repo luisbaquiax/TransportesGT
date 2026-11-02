@@ -18,7 +18,9 @@ public final class ClienteFixture {
     private ClienteFixture() {
     }
 
-    /** Cliente activo, con NIT, ya sincronizado con la versión 0 del usuario. */
+    /**
+     * Cliente activo, con NIT, ya sincronizado con la versión 0 del usuario.
+     */
     public static Cliente cliente(UUID idUsuario) {
         return Cliente.builder()
                 .id(UUID.randomUUID())
@@ -52,7 +54,9 @@ public final class ClienteFixture {
         return usuario(id, Rol.CLIENTE);
     }
 
-    /** JWT ya validado, como lo entrega Spring Security al controlador. */
+    /**
+     * JWT ya validado, como lo entrega Spring Security al controlador.
+     */
     public static Jwt jwt(UUID id, Rol rol) {
         return Jwt.withTokenValue("token-de-prueba")
                 .header("alg", "HS256")
