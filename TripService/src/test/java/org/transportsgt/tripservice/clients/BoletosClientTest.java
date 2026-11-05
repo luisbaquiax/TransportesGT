@@ -23,17 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class BoletosClientTest {
 
+    private static final String CLAVE_INTERNA = "clave-interna-prueba";
+
     private HttpServer servidor;
     private String baseUrl;
     private final AtomicInteger peticiones = new AtomicInteger();
     private volatile int codigo = 200;
     private volatile String cuerpo = "{\"asientoMaximo\":42}";
+    private volatile String claveRecibida;
 
     @BeforeEach
     void arrancar() throws IOException {
         servidor = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         servidor.createContext("/v1/tickets/boletos/viajes", exchange -> {
             peticiones.incrementAndGet();
+            claveRecibida = exchange.getRequestHeaders().getFirst(BoletosClient.CABECERA_CLAVE_INTERNA);
             byte[] bytes = cuerpo.getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             exchange.sendResponseHeaders(codigo, bytes.length);
@@ -52,7 +56,7 @@ class BoletosClientTest {
 
     private BoletosClient cliente() {
         return new BoletosClient(org.springframework.web.client.RestClient.builder(),
-                new BoletosProperties(baseUrl));
+                new BoletosProperties(baseUrl), CLAVE_INTERNA);
     }
 
     @Test
@@ -61,6 +65,12 @@ class BoletosClientTest {
         cuerpo = "{\"idViaje\":\"" + idViaje + "\",\"asientoMaximo\":42}";
         assertEquals(42, cliente().asientoMaximo(idViaje));
         assertEquals(1, peticiones.get());
+    }
+
+    @Test
+    void enviaLaClaveInterna() {
+        cliente().asientoMaximo(UUID.randomUUID());
+        assertEquals(CLAVE_INTERNA, claveRecibida);
     }
 
     @Test

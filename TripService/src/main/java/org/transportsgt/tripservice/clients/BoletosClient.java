@@ -2,6 +2,7 @@ package org.transportsgt.tripservice.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -16,18 +17,24 @@ import java.util.UUID;
  * Cuarta llamada síncrona del catálogo: Viajes → Boletos
  * {@code GET /boletos/viajes/{idViaje}/asiento-maximo}. Solo se usa al cambiar el bus de un viaje
  * que ya tiene boletos vendidos. Si Boletos no responde, se rechaza el cambio (falla cerrada).
+ * Se autentica con {@code X-Clave-Interna}: la llamada no lleva el JWT del usuario.
  */
 @Component
 public class BoletosClient {
 
     private static final Logger log = LoggerFactory.getLogger(BoletosClient.class);
 
-    private final RestClient restClient;
+    static final String CABECERA_CLAVE_INTERNA = "X-Clave-Interna";
 
-    public BoletosClient(RestClient.Builder builder, BoletosProperties propiedades) {
+    private final RestClient restClient;
+    private final String claveInterna;
+
+    public BoletosClient(RestClient.Builder builder, BoletosProperties propiedades,
+                         @Value("${seguridad.clave-interna}") String claveInterna) {
         this.restClient = builder
                 .baseUrl(propiedades.url())
                 .build();
+        this.claveInterna = claveInterna;
     }
 
     /**
@@ -40,6 +47,7 @@ public class BoletosClient {
             AsientoMaximo cuerpo = restClient.get()
                     .uri("/boletos/viajes/{id}/asiento-maximo", idViaje)
                     .headers(encabezados -> {
+                        encabezados.set(CABECERA_CLAVE_INTERNA, claveInterna);
                         UUID correlacion = ContextoCorrelacion.actual();
                         if (correlacion != null) {
                             encabezados.set("X-Correlation-Id", correlacion.toString());
